@@ -1,4 +1,5 @@
 import 'package:distribution/Screen/DashBoardScreen.dart';
+import 'package:distribution/Screen/splashview/splashLogo.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -16,9 +17,9 @@ class MyApp extends StatelessWidget {
       title: 'Distribution System ',
       theme: ThemeData(
 
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        colorScheme: ColorScheme.fromSeed(seedColor: Color(0xFF5B86E5)),
       ),
-      home: const Dashboardscreen(),
+      home: const SplashLogo(),
     );
   }
 }

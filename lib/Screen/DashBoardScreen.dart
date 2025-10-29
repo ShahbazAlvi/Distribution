@@ -1,3 +1,4 @@
+import 'package:distribution/Screen/SalesView/SalesScreen.dart';
 import 'package:distribution/Screen/dashBoardView/calender.dart';
 import 'package:distribution/Screen/dashBoardView/chartdashboard.dart';
 import 'package:distribution/Screen/dashBoardView/recoverienChart.dart';
@@ -85,6 +86,151 @@ class _DashboardscreenState extends State<Dashboardscreen> {
               end: Alignment.bottomRight,
             ),
           ),
+        ),
+      ),
+      drawer: Drawer(
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: [
+            DrawerHeader(
+              decoration: const BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [Color(0xFF5B86E5), Color(0xFF36D1DC)],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
+              ),
+              child: FutureBuilder<String?>(
+                future: _getUsername(), // async method defined above
+                builder: (context, snapshot) {
+                  final username = snapshot.data ?? "Admin";
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      CircleAvatar(
+                        radius: 28,
+                        backgroundColor: Colors.white,
+                        child: Icon(
+                          Icons.person,
+                          color: Color(0xFF5B86E5),
+                          size: 35,
+                        ),
+                      ),
+                      SizedBox(height: 10),
+                      Text(
+                        'Welcome $username',
+                        style: const TextStyle(
+                          color: Colors.black87,
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ],
+                  );
+                },
+              ),
+            ),
+
+            // Now add username text outside const
+            
+
+            ListTile(
+              leading: const Icon(Icons.dashboard, color: Color(0xFF5B86E5)),
+              title: const Text('Dashboard'),
+              onTap: () {
+                Navigator.pop(context);
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.shop, color: Color(0xFF5B86E5)),
+              title: const Text('Sales'),
+              onTap: () {
+                Navigator.push(context, MaterialPageRoute(builder: (context)=>SalesScreen()));
+                
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.follow_the_signs, color: Color(0xFF5B86E5)),
+              title: const Text('Follow Up'),
+              onTap: () {
+                
+              },
+            ),
+            
+              ListTile(
+                leading: const Icon(Icons.assignment_ind, color: Color(0xFF5B86E5)),
+                title: const Text('Assign To'),
+                onTap: () {
+                  
+                },
+              ),
+            
+              ListTile(
+                leading: const Icon(Icons.phone, color: Color(0xFF5B86E5)),
+                title: const Text('Call Track'),
+                onTap: () {
+                  
+                },
+              ),
+            ListTile(
+              leading: const Icon(Icons.done, color: Color(0xFF5B86E5)),
+              title: const Text('Success Client'),
+              onTap: () {
+                
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.calendar_month, color: Color(0xFF5B86E5)),
+              title: const Text('Calendar'),
+              onTap: () {
+                
+              },
+            ),
+            
+              ListTile(
+                leading: const Icon(Icons.history_outlined, color: Color(0xFF5B86E5)),
+                title: const Text('Activity Track '),
+                onTap: () {
+                  
+                },
+              ),
+            ListTile(
+              leading: const Icon(Icons.settings, color: Color(0xFF5B86E5)),
+              title: const Text('Settings'),
+              onTap: () {
+                Navigator.pop(context);
+              },
+            ),
+            const Divider(),
+            ListTile(
+              leading: const Icon(Icons.logout, color: Colors.red),
+              title: const Text('Logout'),
+              onTap: () async {
+                Navigator.pop(context);
+                final shouldLogout = await showDialog<bool>(
+                  context: context,
+                  builder: (context) => AlertDialog(
+                    title: const Text('Confirm Logout'),
+                    content: const Text('Are you sure you want to logout?'),
+                    actions: [
+                      TextButton(
+                        onPressed: () => Navigator.pop(context, false),
+                        child: const Text('Cancel'),
+                      ),
+                      ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.red,
+                        ),
+                        onPressed: () => Navigator.pop(context, true),
+                        child: const Text('Logout',),
+                      ),
+                    ],
+                  ),
+                );
+                
+              },
+            ),
+          ],
         ),
       ),
       body: SafeArea(
@@ -198,6 +344,8 @@ class _DashboardscreenState extends State<Dashboardscreen> {
       ),
     );
   }
+
+  Future<String?>? _getUsername() async {}
 }
 
 class AnimatedDashboardCard extends StatefulWidget {

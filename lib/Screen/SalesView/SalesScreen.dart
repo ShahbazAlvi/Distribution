@@ -5,6 +5,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import '../../compoents/AppColors.dart';
 import '../DashBoardScreen.dart';
 import 'AnimationCard.dart';
+import 'Sales/SalesScreen.dart';
 
 class SalesScreen extends StatefulWidget {
   const SalesScreen({super.key});
@@ -75,9 +76,14 @@ class _SalesScreenState extends State<SalesScreen> {
                           icon: Icons.add_chart_rounded,
                           title: "Sales Invoice ",
                         ),
-                        AnimationCard(
-                          icon: Icons.sim_card_alert_rounded,
-                          title: "Sales",
+                        GestureDetector(
+                          onTap: (){
+                            Navigator.push(context,MaterialPageRoute(builder: (context)=>SalessScreen()));
+                          },
+                          child: AnimationCard(
+                            icon: Icons.sim_card_alert_rounded,
+                            title: "Sales",
+                          ),
                         ),
                         AnimationCard(
                           icon: Icons.wallet,

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../Provider/OrderTakingProvider/OrderTakingProvider.dart';
 import '../../../compoents/AppColors.dart';
+import 'AddOrder.dart';
 
 class OrderTakingScreen extends StatefulWidget {
   const OrderTakingScreen({super.key});
@@ -47,30 +48,62 @@ class _OrderTakingScreenState extends State<OrderTakingScreen> {
           ),
         ),
         actions: [
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-              child: ElevatedButton.icon(
-                onPressed: () {
-                  // Navigator.push(
-                  //   context,
-                  //   MaterialPageRoute(builder: (context) => AddProductScreen()),
-                  // );
-                },
-                icon: const Icon(Icons.add_circle_outline, color: Colors.white),
-                label: const Text(
-                  "Add Order",
-                  style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-                ),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.transparent,
-                  shadowColor: Colors.transparent,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+            child: ElevatedButton.icon(
+              onPressed: () {
+                final provider = Provider.of<OrderTakingProvider>(context, listen: false);
+
+                String nextOrderId = "ORD-001"; // Default if no orders found
+
+                // ✅ Check if data exists and not empty
+                if (provider.orderData != null && provider.orderData!.data.isNotEmpty) {
+                  // ✅ Extract numeric parts from all order IDs
+                  final allNumbers = provider.orderData!.data.map((order) {
+                    final id = order.orderId?.toString() ?? "";
+                    final regex = RegExp(r'ORD-(\d+)$');
+                    final match = regex.firstMatch(id);
+                    return match != null ? int.tryParse(match.group(1)!) ?? 0 : 0;
+                  }).toList();
+
+                  // ✅ Find the maximum existing number
+                  final maxNumber = allNumbers.isNotEmpty ? allNumbers.reduce((a, b) => a > b ? a : b) : 0;
+
+                  // ✅ Generate the next order ID
+                  final incremented = maxNumber + 1;
+                  nextOrderId = "ORD-${incremented.toString().padLeft(3, '0')}";
+                }
+
+                print("✅ Last Max Order ID: $nextOrderId");
+
+                // ✅ Navigate to AddOrderScreen with incremented ID
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => AddOrderScreen(nextOrderId: nextOrderId),
                   ),
+                );
+              },
+              icon: const Icon(Icons.add_circle_outline, color: Colors.white),
+              label: const Text(
+                "Add Order",
+                style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+              ),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.transparent,
+                shadowColor: Colors.transparent,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20),
                 ),
               ),
             ),
+          ),
         ],
+
+
+
+
+
       ),
       body: provider.isLoading
           ? const Center(child: CircularProgressIndicator())

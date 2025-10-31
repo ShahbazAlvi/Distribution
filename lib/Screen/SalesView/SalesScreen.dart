@@ -3,9 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import '../../compoents/AppColors.dart';
+import '../CustomerScreen/CustomersDefineScreen.dart';
 import '../DashBoardScreen.dart';
 import 'AnimationCard.dart';
 import 'Sales/SalesScreen.dart';
+import 'SetUp/EmployeeDefine/EmployeeDefine.dart';
 
 class SalesScreen extends StatefulWidget {
   const SalesScreen({super.key});
@@ -179,13 +181,23 @@ class _SalesScreenState extends State<SalesScreen> {
                         icon: Icons.newspaper,
                         title: "List of Items",
                       ),
-                      AnimationCard(
-                        icon: Icons.people,
-                        title: "Define Customers ",
+                      GestureDetector(
+                        onTap: (){
+                          Navigator.push(context,MaterialPageRoute(builder: (context)=>CustomersDefineScreen()));
+                        },
+                        child: AnimationCard(
+                          icon: Icons.people,
+                          title: "Define Customers ",
+                        ),
                       ),
-                      AnimationCard(
-                        icon: Icons.person,
-                        title: "Employee Information",
+                      GestureDetector(
+                        onTap: (){
+                          Navigator.push(context, MaterialPageRoute(builder: (context)=>EmployeesScreen()));
+                        },
+                        child: AnimationCard(
+                          icon: Icons.person,
+                          title: "Employee Information",
+                        ),
                       ),
                       AnimationCard(
                         icon: Icons.car_crash,

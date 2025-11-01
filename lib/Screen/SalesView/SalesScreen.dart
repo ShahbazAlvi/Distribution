@@ -1,4 +1,6 @@
 import 'package:distribution/Screen/SalesView/OrderTakeingscreen/OrderTakingScreen.dart';
+import 'package:distribution/Screen/SalesView/SaleInvoise/SaleInvoiseScreen.dart';
+import 'package:distribution/Screen/SalesView/SetUp/ItemsListScreen/ItemsListsScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
@@ -8,6 +10,7 @@ import '../DashBoardScreen.dart';
 import 'AnimationCard.dart';
 import 'Sales/SalesScreen.dart';
 import 'SetUp/EmployeeDefine/EmployeeDefine.dart';
+import 'SetUp/SalesAreaScreen/SalesAreaScreen.dart';
 
 class SalesScreen extends StatefulWidget {
   const SalesScreen({super.key});
@@ -74,9 +77,14 @@ class _SalesScreenState extends State<SalesScreen> {
                           icon: Icons.newspaper,
                           title: "Load Sheet",
                         ),
-                        AnimationCard(
-                          icon: Icons.add_chart_rounded,
-                          title: "Sales Invoice ",
+                        GestureDetector(
+                          onTap: (){
+                            Navigator.push(context,MaterialPageRoute(builder: (context)=>SaleInvoiseScreen()));
+                          },
+                          child: AnimationCard(
+                            icon: Icons.add_chart_rounded,
+                            title: "Sales Invoice ",
+                          ),
                         ),
                         GestureDetector(
                           onTap: (){
@@ -173,13 +181,23 @@ class _SalesScreenState extends State<SalesScreen> {
                     spacing: 10,
                     runSpacing: 10,
                     children: [
-                      AnimationCard(
-                        icon:Icons.location_on_rounded,
-                        title: "Order Taking ",
+                      GestureDetector(
+                        onTap: (){
+                          Navigator.push(context,MaterialPageRoute(builder: (context)=>SalesAreaScreen()));
+                        },
+                        child: AnimationCard(
+                          icon:Icons.location_on_rounded,
+                          title: "Sales Areas ",
+                        ),
                       ),
-                      AnimationCard(
-                        icon: Icons.newspaper,
-                        title: "List of Items",
+                      GestureDetector(
+                        onTap: (){
+                          Navigator.push(context,MaterialPageRoute(builder: (context)=>ItemListScreen()));
+                        },
+                        child: AnimationCard(
+                          icon: Icons.newspaper,
+                          title: "List of Items",
+                        ),
                       ),
                       GestureDetector(
                         onTap: (){

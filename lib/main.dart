@@ -6,8 +6,10 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'Provider/AreaSaleProvider/AreaSaleProvider.dart';
 import 'Provider/CustomerProvider/CustomerProvider.dart';
 import 'Provider/OrderTakingProvider/OrderTakingProvider.dart';
+import 'Provider/ProductProvider/ItemListsProvider.dart';
 import 'Provider/SaleManProvider/SaleManProvider.dart';
 import 'Provider/SalessProvider/SalessProvider.dart';
 
@@ -39,6 +41,8 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => ProductProvider()),
         ChangeNotifierProvider(create: (_) => LoginProvider()),
         ChangeNotifierProvider(create: (_) => SalesProvider()),
+        ChangeNotifierProvider(create: (_) => ItemDetailsProvider()),
+        ChangeNotifierProvider(create: (_) => SalesAreaProvider()),
 
       ],
       child: MaterialApp(

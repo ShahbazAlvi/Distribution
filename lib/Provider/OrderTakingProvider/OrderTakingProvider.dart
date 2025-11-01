@@ -89,6 +89,9 @@ class OrderTakingProvider with ChangeNotifier{
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         debugPrint("✅ Order created successfully: ${response.body}");
+        _isFetched = false;
+        await FetchOrderTaking();
+
       } else {
         _error = "❌ Failed: ${response.statusCode} - ${response.body}";
       }

@@ -8,6 +8,7 @@ import '../../compoents/AppColors.dart';
 import '../CustomerScreen/CustomersDefineScreen.dart';
 import '../DashBoardScreen.dart';
 import 'AnimationCard.dart';
+import 'RecoveryScreen/Recovery.dart';
 import 'Sales/SalesScreen.dart';
 import 'SetUp/EmployeeDefine/EmployeeDefine.dart';
 import 'SetUp/SalesAreaScreen/SalesAreaScreen.dart';
@@ -73,9 +74,14 @@ class _SalesScreenState extends State<SalesScreen> {
                             title: "Order Taking ",
                           ),
                         ),
-                        AnimationCard(
-                          icon: Icons.newspaper,
-                          title: "Load Sheet",
+                        GestureDetector(
+                          onTap: (){
+                            Navigator.push(context, MaterialPageRoute(builder: (context)=>RecoveryScreen()));
+                          },
+                          child: AnimationCard(
+                            icon: Icons.newspaper,
+                            title: "Recovery",
+                          ),
                         ),
                         GestureDetector(
                           onTap: (){

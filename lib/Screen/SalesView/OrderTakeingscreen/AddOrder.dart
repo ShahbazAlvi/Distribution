@@ -449,7 +449,7 @@ class _AddOrderScreenState extends State<AddOrderScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text("Price: ${selectedProduct!.price}"),
-                  Text("Unit: ${selectedProduct!.itemUnit.unitName}"),
+                  Text("Unit: ${selectedProduct!.itemUnit?.unitName}"),
                   const SizedBox(height: 8),
 
                   TextField(
@@ -495,7 +495,7 @@ class _AddOrderScreenState extends State<AddOrderScreen> {
                       child: ListTile(
                         title: Text(product.itemName),
                         subtitle: Text(
-                          "Qty: ${item['qty']} ${product.itemUnit.unitName}\n"
+                          "Qty: ${item['qty']} ${product.itemUnit?.unitName}\n"
                               "Price: ${product.price}\n"
                               "Total: ${item['total']}",
                         ),
@@ -535,7 +535,7 @@ class _AddOrderScreenState extends State<AddOrderScreen> {
                   return {
                     "itemName": product.itemName,
                     "qty": item['qty'],
-                    "itemUnit": product.itemUnit.unitName,
+                    "itemUnit": product.itemUnit?.unitName,
                     "rate": product.price,
                     "totalAmount": item['total'],
                   };

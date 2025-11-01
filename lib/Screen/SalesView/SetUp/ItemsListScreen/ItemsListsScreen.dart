@@ -89,7 +89,7 @@ class _ItemListScreenState extends State<ItemListScreen> {
                 margin: const EdgeInsets.all(8),
                 child: ListTile(
                   leading: Image.network(
-                    item.itemImage.url,
+                    item.itemImage!.url,
                     height: 50,
                     width: 50,
                     fit: BoxFit.cover,
@@ -101,7 +101,7 @@ class _ItemListScreenState extends State<ItemListScreen> {
                   subtitle: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text("Type: ${item.itemType.itemTypeName}"),
+                      Text("Type: ${item.itemType?.itemTypeName}"),
                       Text("Category: ${item.itemCategory?.categoryName ?? 'N/A'}"),
                       Text("Purchase: ${item.purchase}"),
                       Text("Price (Sales): ${item.price}"),

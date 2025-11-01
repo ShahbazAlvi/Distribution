@@ -6,14 +6,14 @@ import 'package:intl/intl.dart';
 import '../../../Provider/OrderTakingProvider/OrderTakingProvider.dart';
 import '../../../compoents/AppColors.dart';
 
-class SaleInvoiseScreen extends StatefulWidget {
-  const SaleInvoiseScreen({super.key});
+class RecoveryScreen extends StatefulWidget {
+  const RecoveryScreen({super.key});
 
   @override
-  State<SaleInvoiseScreen> createState() => _SaleInvoiseScreenState();
+  State<RecoveryScreen> createState() => _SaleInvoiseScreenState();
 }
 
-class _SaleInvoiseScreenState extends State<SaleInvoiseScreen> {
+class _SaleInvoiseScreenState extends State<RecoveryScreen> {
 
   @override
   @override
@@ -49,7 +49,7 @@ class _SaleInvoiseScreenState extends State<SaleInvoiseScreen> {
         iconTheme: const IconThemeData(color: Colors.white),
         title: const Center(
           child: Text(
-            "Sales Invoice",
+            "Recovery",
             style: TextStyle(
               color: Colors.white,
               fontWeight: FontWeight.bold,
@@ -78,18 +78,18 @@ class _SaleInvoiseScreenState extends State<SaleInvoiseScreen> {
             margin: const EdgeInsets.all(8),
             child: ListTile(
               title: Text("INV: ${order.orderId}"),
-                subtitle:Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                   Text(order.customerId.customerName),
-                    Text(order.customerId.phoneNumber),
-                    Text("Balance: ${order.customerId.salesBalance}"),
+              subtitle:Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(order.customerId.customerName),
+                  Text(order.customerId.phoneNumber),
+                  Text("Balance: ${order.customerId.salesBalance}"),
 
 
-                    Text(order.salesmanId!.employeeName),
+                  Text(order.salesmanId!.employeeName),
 
-                  ],
-                ),
+                ],
+              ),
 
               trailing: const Icon(Icons.receipt_long,color: AppColors.secondary,),
               onTap: () {
@@ -173,14 +173,29 @@ class _SaleInvoiseScreenState extends State<SaleInvoiseScreen> {
                     ),
 
                     // ✅ Order Details Header
-                    Text("INV: ${order.orderId}",
-                        style: const TextStyle(
-                            fontWeight: FontWeight.bold, fontSize: 18)),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text("RID: ${order.orderId}",
+                            style: const TextStyle(
+                                fontWeight: FontWeight.bold, fontSize: 18)),
+                        Text("Recovery Date: ${order.date.toLocal().toString().split(' ')[0]}"),
+                      ],
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text("INV: ${order.orderId}",
+                            style: const TextStyle(
+                                )),
+                        Text("SalesMan: ${salesman!.employeeName}"),
+                      ],
+                    ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text("Date: ${order.date.toLocal().toString().split(' ')[0]}"),
-                        Text("SalesMan: ${salesman!.employeeName}"),
+
                       ],
                     ),
                     Text("Customer: ${customer.customerName}"),
@@ -190,7 +205,7 @@ class _SaleInvoiseScreenState extends State<SaleInvoiseScreen> {
                     const Divider(),
 
                     // ✅ Editable Product List
-                    const Text("items(Editable):",
+                    const Text("items:",
                         style: TextStyle(
                             fontWeight: FontWeight.bold, fontSize: 16)),
                     const SizedBox(height: 10),
@@ -216,6 +231,7 @@ class _SaleInvoiseScreenState extends State<SaleInvoiseScreen> {
                                   // ✅ Qty Editable
                                   Expanded(
                                     child: TextField(
+                                      enabled: false,
                                       keyboardType: TextInputType.number,
                                       decoration: const InputDecoration(labelText: "Qty"),
                                       onChanged: (val) {
@@ -233,6 +249,7 @@ class _SaleInvoiseScreenState extends State<SaleInvoiseScreen> {
                                   // ✅ Rate Editable
                                   Expanded(
                                     child: TextField(
+                                      enabled: false,
                                       keyboardType: TextInputType.number,
                                       decoration: const InputDecoration(labelText: "Rate"),
                                       onChanged: (val) {
@@ -275,50 +292,87 @@ class _SaleInvoiseScreenState extends State<SaleInvoiseScreen> {
                     const Divider(),
 
                     // ✅ Billing Summary
+                    // const Text("Billing Summary",
+                    //     style: TextStyle(
+                    //         fontWeight: FontWeight.bold, fontSize: 16)),
+                    // const SizedBox(height: 8),
+                    //
+                    // Text("Sub Total: Rs ${calculateSubTotal()}"),
+                    //
+                    // const SizedBox(height: 5),
+                    //
+                    // // TextField(
+                    // //   controller: discountController,
+                    // //   keyboardType: TextInputType.number,
+                    // //   decoration: const InputDecoration(
+                    // //       labelText: "Discount Amount",
+                    // //       border: OutlineInputBorder()),
+                    // //   onChanged: (_) => setState(() {}),
+                    // // ),
+                    // Text("Discount: ${discountController.text}",
+                    //     style: const TextStyle(fontSize: 16)),
+                    //
+                    //
+                    // const SizedBox(height: 8),
+                    //
+                    // Text("Receivable: Rs ${calculateReceivable()}",
+                    //     style: const TextStyle(fontWeight: FontWeight.bold)),
+                    //
+                    // const SizedBox(height: 8),
+                    //
+                    // // TextField(
+                    // //   controller: receivedController,
+                    // //   keyboardType: TextInputType.number,
+                    // //   decoration: const InputDecoration(
+                    // //       labelText: "Received Amount",
+                    // //       border: OutlineInputBorder()),
+                    // //   onChanged: (_) => setState(() {}),
+                    // // ),
+                    // Text("Received: ${receivedController.text}",
+                    //     style: const TextStyle(fontSize: 16)),
+                    //
+                    //
+                    // const SizedBox(height: 8),
+                    //
+                    // Text("Balance: Rs ${calculateBalance()}",
+                    //     style: const TextStyle(
+                    //         fontWeight: FontWeight.bold, color: Colors.red)),
+                    //
+                    // const SizedBox(height: 12),
+                    //
+                    // Text(
+                    //     "Delivery Date: ${DateFormat('yyyy-MM-dd').format(DateTime.now())}"),
+                    // ✅ Billing Summary
                     const Text("Billing Summary",
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold, fontSize: 16)),
+                        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
                     const SizedBox(height: 8),
 
                     Text("Sub Total: Rs ${calculateSubTotal()}"),
-
                     const SizedBox(height: 5),
 
-                    TextField(
-                      controller: discountController,
-                      keyboardType: TextInputType.number,
-                      decoration: const InputDecoration(
-                          labelText: "Discount Amount",
-                          border: OutlineInputBorder()),
-                      onChanged: (_) => setState(() {}),
-                    ),
-
+// ✅ Discount simple text
+                    Text("Discount: Rs ${discountController.text}",
+                        style: TextStyle(fontSize: 16)),
                     const SizedBox(height: 8),
 
                     Text("Receivable: Rs ${calculateReceivable()}",
-                        style: const TextStyle(fontWeight: FontWeight.bold)),
-
+                        style: const TextStyle()),
                     const SizedBox(height: 8),
 
-                    TextField(
-                      controller: receivedController,
-                      keyboardType: TextInputType.number,
-                      decoration: const InputDecoration(
-                          labelText: "Received Amount",
-                          border: OutlineInputBorder()),
-                      onChanged: (_) => setState(() {}),
-                    ),
-
+// ✅ Received simple text
+                    Text("Received: Rs ${receivedController.text}",
+                        style: TextStyle(fontSize: 16)),
                     const SizedBox(height: 8),
 
                     Text("Balance: Rs ${calculateBalance()}",
                         style: const TextStyle(
                             fontWeight: FontWeight.bold, color: Colors.red)),
-
+                    const SizedBox(height: 12),
                     const SizedBox(height: 12),
 
                     Text(
-                        "Delivery Date: ${DateFormat('yyyy-MM-dd').format(DateTime.now())}"),
+                        "Recovery Date: ${DateFormat('yyyy-MM-dd').format(DateTime.now())}"),
+
 
                     const SizedBox(height: 20),
 

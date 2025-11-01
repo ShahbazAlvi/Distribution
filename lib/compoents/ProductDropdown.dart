@@ -121,21 +121,28 @@ class _ItemDetailsDropdownState extends State<ItemDetailsDropdown> {
                   ClipRRect(
                     borderRadius: BorderRadius.circular(6),
                     child: Image.network(
-                      item.itemImage.url,
+                      item.itemImage?.url ?? "",   // ✅ Safe null check
                       height: 35,
                       width: 35,
                       fit: BoxFit.cover,
+                      errorBuilder: (context, error, _) => Container(
+                        height: 35,
+                        width: 35,
+                        color: Colors.grey.shade300,
+                        child: const Icon(Icons.image_not_supported, size: 18),
+                      ),
                     ),
                   ),
+
                   const SizedBox(width: 10),
 
-                  // ✅ Name + Unit
                   Expanded(
                     child: Text(
-                      "${item.itemName} (${item.itemUnit.unitName})",
+                      "${item.itemName} (${item.itemUnit?.unitName ?? 'N/A'})",  // ✅ Safe
                       overflow: TextOverflow.ellipsis,
                     ),
                   ),
+
                 ],
               ),
             );

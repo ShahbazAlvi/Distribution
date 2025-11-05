@@ -9,6 +9,9 @@ import '../../model/SaleAreaModel/SalesAreaModel.dart';
 class SalesAreaProvider with ChangeNotifier {
   List<SalesAreaModel> areas = [];
   bool isLoading = false;
+  bool _isCreatingOrder = false;
+  bool get isCreatingOrder => _isCreatingOrder;
+
 
   final String baseUrl = "${ApiEndpoints.baseUrl}/sales-area";
   String token = ""; // ✅ Add your token if required
@@ -18,6 +21,8 @@ class SalesAreaProvider with ChangeNotifier {
     try {
       isLoading = true;
       notifyListeners();
+
+
 
       final response = await http.get(
         Uri.parse(baseUrl),
@@ -61,4 +66,5 @@ class SalesAreaProvider with ChangeNotifier {
       print("Delete Exception: $e");
     }
   }
+
 }

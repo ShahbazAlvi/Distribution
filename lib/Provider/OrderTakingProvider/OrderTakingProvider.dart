@@ -12,6 +12,9 @@ class OrderTakingProvider with ChangeNotifier{
   bool _isLoading = false;
   OrderTakingModel? _orderData;
   String? _error;
+  bool _isCreatingOrder = false;
+  bool get isCreatingOrder => _isCreatingOrder;
+
 
   // gets
 
@@ -54,6 +57,7 @@ class OrderTakingProvider with ChangeNotifier{
     try {
       _isLoading = true;
       notifyListeners();
+      _isCreatingOrder = true;
 
       // 🔹 Get token from SharedPreferences
       final prefs = await SharedPreferences.getInstance();
@@ -61,6 +65,7 @@ class OrderTakingProvider with ChangeNotifier{
 
       if (token == null) {
         _error = "Token not found!";
+        _isCreatingOrder = false;
         _isLoading = false;
         notifyListeners();
         return;
@@ -99,7 +104,9 @@ class OrderTakingProvider with ChangeNotifier{
       _error = "Error: $e";
     } finally {
       _isLoading = false;
+      _isCreatingOrder = false;
       notifyListeners();
+
     }
   }
 }

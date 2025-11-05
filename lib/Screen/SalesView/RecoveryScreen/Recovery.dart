@@ -214,77 +214,74 @@ class _SaleInvoiseScreenState extends State<RecoveryScreen> {
                       int index = entry.key;
                       var p = entry.value;
 
-                      return Card(
-                        margin: const EdgeInsets.symmetric(vertical: 6),
-                        child: Padding(
-                          padding: const EdgeInsets.all(10),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(p["itemName"],
-                                  style: const TextStyle(
-                                      fontWeight: FontWeight.bold)),
+                      return Padding(
+                        padding: const EdgeInsets.all(6),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(p["itemName"],
+                                style: const TextStyle(
+                                    fontWeight: FontWeight.bold)),
 
-                              const SizedBox(height: 6),
-                              Row(
-                                children: [
-                                  // ✅ Qty Editable
-                                  Expanded(
-                                    child: TextField(
-                                      enabled: false,
-                                      keyboardType: TextInputType.number,
-                                      decoration: const InputDecoration(labelText: "Qty"),
-                                      onChanged: (val) {
-                                        setState(() {
-                                          p["qty"] = double.tryParse(val) ?? 0;
-                                          p["total"] = p["qty"] * p["rate"];
-                                        });
-                                      },
-                                      controller: TextEditingController(text: p["qty"].toString()),
-                                    ),
+                            const SizedBox(height: 6),
+                            Row(
+                              children: [
+                                // ✅ Qty Editable
+                                Expanded(
+                                  child: TextField(
+                                    enabled: false,
+                                    keyboardType: TextInputType.number,
+                                    decoration: const InputDecoration(labelText: "Qty"),
+                                    onChanged: (val) {
+                                      setState(() {
+                                        p["qty"] = double.tryParse(val) ?? 0;
+                                        p["total"] = p["qty"] * p["rate"];
+                                      });
+                                    },
+                                    controller: TextEditingController(text: p["qty"].toString()),
                                   ),
+                                ),
 
-                                  const SizedBox(width: 10),
+                                const SizedBox(width: 10),
 
-                                  // ✅ Rate Editable
-                                  Expanded(
-                                    child: TextField(
-                                      enabled: false,
-                                      keyboardType: TextInputType.number,
-                                      decoration: const InputDecoration(labelText: "Rate"),
-                                      onChanged: (val) {
-                                        setState(() {
-                                          p["rate"] = double.tryParse(val) ?? 0;
-                                          p["total"] = p["qty"] * p["rate"];
-                                        });
-                                      },
-                                      controller: TextEditingController(text: p["rate"].toString()),
-                                    ),
+                                // ✅ Rate Editable
+                                Expanded(
+                                  child: TextField(
+                                    enabled: false,
+                                    keyboardType: TextInputType.number,
+                                    decoration: const InputDecoration(labelText: "Rate"),
+                                    onChanged: (val) {
+                                      setState(() {
+                                        p["rate"] = double.tryParse(val) ?? 0;
+                                        p["total"] = p["qty"] * p["rate"];
+                                      });
+                                    },
+                                    controller: TextEditingController(text: p["rate"].toString()),
                                   ),
+                                ),
 
-                                  const SizedBox(width: 10),
+                                const SizedBox(width: 10),
 
-                                  // ✅ Total (Read Only)
-                                  Expanded(
-                                    child: TextField(
+                                // ✅ Total (Read Only)
+                                Expanded(
+                                  child: TextField(
 
-                                      enabled: false,
-                                      decoration: const InputDecoration(
+                                    enabled: false,
+                                    decoration: const InputDecoration(
 
-                                        labelText: "Total",
-                                        labelStyle: const TextStyle(
-                                          color: Colors.red,          // ✅ Change label color here
-                                          fontWeight: FontWeight.bold,
-                                        ),
+                                      labelText: "Total",
+                                      labelStyle: const TextStyle(
+                                        color: Colors.red,          // ✅ Change label color here
+                                        fontWeight: FontWeight.bold,
                                       ),
-                                      controller: TextEditingController(text: p["total"].toString()),
                                     ),
+                                    controller: TextEditingController(text: p["total"].toString()),
                                   ),
-                                ],
-                              ),
+                                ),
+                              ],
+                            ),
 
-                            ],
-                          ),
+                          ],
                         ),
                       );
                     }),

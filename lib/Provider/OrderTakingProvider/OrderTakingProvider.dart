@@ -109,4 +109,77 @@ class OrderTakingProvider with ChangeNotifier{
 
     }
   }
+
+  Future<void> deleteOrder(String orderId) async {
+    try {
+      _isLoading = true;
+      notifyListeners();
+
+      final prefs = await SharedPreferences.getInstance();
+      final token = prefs.getString("token");
+
+      final url = Uri.parse("${ApiEndpoints.baseUrl}/order-taker/$orderId");
+
+      final response = await http.delete(
+        url,
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer $token",
+        },
+      );
+
+      if (response.statusCode == 200) {
+        debugPrint("✅ Order deleted successfully");
+
+        _isFetched = false; // re-fetch
+        await FetchOrderTaking();
+      } else {
+        _error = "Failed to delete: ${response.statusCode} - ${response.body}";
+      }
+    } catch (e) {
+      _error = "Error deleting: $e";
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<void> updateOrder(String orderId, Map<String, dynamic> body) async {
+    try {
+      _isLoading = true;
+      notifyListeners();
+
+      final prefs = await SharedPreferences.getInstance();
+      final token = prefs.getString("token");
+
+      final url = Uri.parse("${ApiEndpoints.baseUrl}/order-taker/$orderId");
+
+      final response = await http.put(
+        url,
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer $token",
+        },
+        body: jsonEncode(body),
+      );
+
+      if (response.statusCode == 200) {
+        debugPrint("✅ Order updated successfully");
+
+        _isFetched = false;
+        await FetchOrderTaking();
+      } else {
+        _error = "Failed to update: ${response.statusCode}";
+      }
+    } catch (e) {
+      _error = "Error updating: $e";
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+
+
+
 }

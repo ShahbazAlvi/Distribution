@@ -1,395 +1,323 @@
-
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 
-import '../../../Provider/OrderTakingProvider/OrderTakingProvider.dart';
-import '../../../compoents/AppColors.dart';
+import '../../../Provider/RecoveryProvider/RecoveryProvider.dart';
+import '../../../compoents/SaleManDropdown.dart';
+import '../../../model/SaleRecoveryModel/SaleRecoveryModel.dart';
 
-class RecoveryScreen extends StatefulWidget {
-  const RecoveryScreen({super.key});
+
+class RecoveryListScreen extends StatefulWidget {
+  const RecoveryListScreen({super.key});
 
   @override
-  State<RecoveryScreen> createState() => _SaleInvoiseScreenState();
+  State<RecoveryListScreen> createState() => _RecoveryListScreenState();
 }
 
-class _SaleInvoiseScreenState extends State<RecoveryScreen> {
-
-  @override
-  @override
-  void initState() {
-    super.initState();
-
-    Future.delayed(Duration.zero, () {
-      Provider.of<OrderTakingProvider>(context, listen: false).FetchOrderTaking();
-    });
-  }
-
+class _RecoveryListScreenState extends State<RecoveryListScreen> {
+  String? selectedDate;
+  String? selectedSalesmanId;
 
   @override
   Widget build(BuildContext context) {
-    final provider = Provider.of<OrderTakingProvider>(context);
+    final provider = Provider.of<RecoveryProvider>(context);
 
-    if (provider.isLoading) {
-      return const Scaffold(
-        body: Center(child: CircularProgressIndicator()),
-      );
-    }
-
-    if (provider.error != null) {
-      return Scaffold(
-        body: Center(child: Text(provider.error!)),
-      );
-    }
-
-    final orders = provider.orderData?.data ?? [];
+    final records = provider.recoveryData?.data ?? [];
 
     return Scaffold(
       appBar: AppBar(
-        iconTheme: const IconThemeData(color: Colors.white),
-        title: const Center(
-          child: Text(
-            "Recovery",
-            style: TextStyle(
-              color: Colors.white,
-              fontWeight: FontWeight.bold,
-              fontSize: 22,
-            ),
-          ),
-        ),
+        title: const Text("Recovery Report",
+            style: TextStyle(color: Colors.white, fontSize: 20)),
         centerTitle: true,
-        elevation: 6,
-        flexibleSpace: Container(
-          decoration: const BoxDecoration(
-            gradient: LinearGradient(
-              colors: [AppColors.secondary, AppColors.primary],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
+      ),
+
+      body: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(12),
+            child: Column(
+              children: [
+                // ✅ Date Picker
+                GestureDetector(
+                  onTap: () async {
+                    DateTime? picked = await showDatePicker(
+                      context: context,
+                      initialDate: DateTime.now(),
+                      firstDate: DateTime(2020),
+                      lastDate: DateTime(2030),
+                    );
+
+                    if (picked != null) {
+                      selectedDate = DateFormat('yyyy-MM-dd').format(picked);
+                      setState(() {});
+
+                      provider.fetchRecoveryReport(
+                        selectedSalesmanId ?? "",
+                        selectedDate ?? "",
+                      );
+                    }
+                  },
+                  child: Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(12),
+                      color: Colors.grey.shade200,
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(selectedDate ?? "Select Date"),
+                        const Icon(Icons.calendar_today),
+                      ],
+                    ),
+                  ),
+                ),
+
+                const SizedBox(height: 10),
+
+                // ✅ Salesman Dropdown
+                SalesmanDropdown(
+                  selectedId: selectedSalesmanId,
+                  onChanged: (value) {
+                    selectedSalesmanId = value;
+                    setState(() {});
+
+                    provider.fetchRecoveryReport(
+                      selectedSalesmanId ?? "",
+                      selectedDate ?? "",
+                    );
+                  },
+                ),
+              ],
             ),
           ),
-        ),
-      ),
-      body: ListView.builder(
-        itemCount: orders.length,
-        itemBuilder: (context, index) {
-          final order = orders[index];
 
-          return Card(
-            margin: const EdgeInsets.all(8),
-            child: ListTile(
-              title: Text("INV: ${order.orderId}"),
-              subtitle:Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(order.customerId.customerName),
-                  Text(order.customerId.phoneNumber),
-                  Text("Balance: ${order.customerId.salesBalance}"),
+          // ✅ Loading
+          if (provider.isLoading)
+            const Expanded(
+              child: Center(child: CircularProgressIndicator()),
+            )
+          else
+            Expanded(
+              child: records.isEmpty
+                  ? const Center(child: Text("No Recovery Records Found"))
+                  : ListView.builder(
+                itemCount: records.length,
+                itemBuilder: (context, index) {
+                  final item = records[index];
 
-
-                  Text(order.salesmanId!.employeeName),
-
-                ],
+                  return Card(
+                    margin: const EdgeInsets.all(8),
+                    child: ListTile(
+                      title: Text("Invoice: ${item.id}"),
+                      subtitle: Text("Customer: ${item.customer}\n"
+                          "Balance: ${item.balance}"),
+                      trailing: const Icon(Icons.edit, color: Colors.blue),
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => EditRecoveryScreen(data: item),
+                          ),
+                        );
+                      },
+                    ),
+                  );
+                },
               ),
-
-              trailing: const Icon(Icons.receipt_long,color: AppColors.secondary,),
-              onTap: () {
-                showOrderDetailsSheet(context, order.orderId);
-              },
             ),
-          );
-        },
+        ],
       ),
-    );
-  }
-
-  // ✅ ✅ FULL UPDATED & WORKING BOTTOM SHEET FUNCTION
-  void showOrderDetailsSheet(BuildContext context, String orderId) {
-    final provider = Provider.of<OrderTakingProvider>(context, listen: false);
-    final order =
-    provider.orderData!.data.firstWhere((o) => o.orderId == orderId);
-    final customer = order.customerId;
-    final salesman = order.salesmanId;
-
-
-
-    // ✅ Editable Products List
-    List<Map<String, dynamic>> editableProducts = order.products.map((p) {
-      return {
-        "itemName": p.itemName,
-        "qty": p.qty.toDouble(),
-        "rate": p.rate.toDouble(),
-        "total": (p.qty * p.rate).toDouble(),
-        "itemUnit": p.itemUnit,
-      };
-    }).toList();
-
-    final TextEditingController discountController =
-    TextEditingController(text: "0");
-    final TextEditingController receivedController =
-    TextEditingController(text: "0");
-
-    double calculateSubTotal() {
-      return editableProducts.fold(
-          0.0, (sum, item) => sum + item["total"]);
-    }
-
-    double calculateReceivable() {
-      double discount = double.tryParse(discountController.text) ?? 0;
-      return calculateSubTotal() - discount;
-    }
-
-    double calculateBalance() {
-      double received = double.tryParse(receivedController.text) ?? 0;
-      return calculateReceivable() - received;
-    }
-
-    showModalBottomSheet(
-      isScrollControlled: true,
-      shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
-      context: context,
-      builder: (context) {
-        return StatefulBuilder(
-          builder: (context, setState) {
-            return Container(
-              padding: const EdgeInsets.all(16),
-              height: MediaQuery.of(context).size.height * 0.85,
-              child: SingleChildScrollView(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-
-                    // ✅ Sheet Header Handle
-                    Center(
-                      child: Container(
-                        width: 40,
-                        height: 4,
-                        margin: const EdgeInsets.only(bottom: 12),
-                        decoration: BoxDecoration(
-                          color: Colors.grey.shade400,
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                      ),
-                    ),
-
-                    // ✅ Order Details Header
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text("RID: ${order.orderId}",
-                            style: const TextStyle(
-                                fontWeight: FontWeight.bold, fontSize: 18)),
-                        Text("Recovery Date: ${order.date.toLocal().toString().split(' ')[0]}"),
-                      ],
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text("INV: ${order.orderId}",
-                            style: const TextStyle(
-                                )),
-                        Text("SalesMan: ${salesman!.employeeName}"),
-                      ],
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text("Date: ${order.date.toLocal().toString().split(' ')[0]}"),
-
-                      ],
-                    ),
-                    Text("Customer: ${customer.customerName}"),
-                    Text("Phone: ${customer.phoneNumber}"),
-                    Text("Address: ${customer.address}"),
-
-                    const Divider(),
-
-                    // ✅ Editable Product List
-                    const Text("items:",
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold, fontSize: 16)),
-                    const SizedBox(height: 10),
-
-                    ...editableProducts.asMap().entries.map((entry) {
-                      int index = entry.key;
-                      var p = entry.value;
-
-                      return Padding(
-                        padding: const EdgeInsets.all(6),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(p["itemName"],
-                                style: const TextStyle(
-                                    fontWeight: FontWeight.bold)),
-
-                            const SizedBox(height: 6),
-                            Row(
-                              children: [
-                                // ✅ Qty Editable
-                                Expanded(
-                                  child: TextField(
-                                    enabled: false,
-                                    keyboardType: TextInputType.number,
-                                    decoration: const InputDecoration(labelText: "Qty"),
-                                    onChanged: (val) {
-                                      setState(() {
-                                        p["qty"] = double.tryParse(val) ?? 0;
-                                        p["total"] = p["qty"] * p["rate"];
-                                      });
-                                    },
-                                    controller: TextEditingController(text: p["qty"].toString()),
-                                  ),
-                                ),
-
-                                const SizedBox(width: 10),
-
-                                // ✅ Rate Editable
-                                Expanded(
-                                  child: TextField(
-                                    enabled: false,
-                                    keyboardType: TextInputType.number,
-                                    decoration: const InputDecoration(labelText: "Rate"),
-                                    onChanged: (val) {
-                                      setState(() {
-                                        p["rate"] = double.tryParse(val) ?? 0;
-                                        p["total"] = p["qty"] * p["rate"];
-                                      });
-                                    },
-                                    controller: TextEditingController(text: p["rate"].toString()),
-                                  ),
-                                ),
-
-                                const SizedBox(width: 10),
-
-                                // ✅ Total (Read Only)
-                                Expanded(
-                                  child: TextField(
-
-                                    enabled: false,
-                                    decoration: const InputDecoration(
-
-                                      labelText: "Total",
-                                      labelStyle: const TextStyle(
-                                        color: Colors.red,          // ✅ Change label color here
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                    controller: TextEditingController(text: p["total"].toString()),
-                                  ),
-                                ),
-                              ],
-                            ),
-
-                          ],
-                        ),
-                      );
-                    }),
-
-                    const Divider(),
-
-                    // ✅ Billing Summary
-                    // const Text("Billing Summary",
-                    //     style: TextStyle(
-                    //         fontWeight: FontWeight.bold, fontSize: 16)),
-                    // const SizedBox(height: 8),
-                    //
-                    // Text("Sub Total: Rs ${calculateSubTotal()}"),
-                    //
-                    // const SizedBox(height: 5),
-                    //
-                    // // TextField(
-                    // //   controller: discountController,
-                    // //   keyboardType: TextInputType.number,
-                    // //   decoration: const InputDecoration(
-                    // //       labelText: "Discount Amount",
-                    // //       border: OutlineInputBorder()),
-                    // //   onChanged: (_) => setState(() {}),
-                    // // ),
-                    // Text("Discount: ${discountController.text}",
-                    //     style: const TextStyle(fontSize: 16)),
-                    //
-                    //
-                    // const SizedBox(height: 8),
-                    //
-                    // Text("Receivable: Rs ${calculateReceivable()}",
-                    //     style: const TextStyle(fontWeight: FontWeight.bold)),
-                    //
-                    // const SizedBox(height: 8),
-                    //
-                    // // TextField(
-                    // //   controller: receivedController,
-                    // //   keyboardType: TextInputType.number,
-                    // //   decoration: const InputDecoration(
-                    // //       labelText: "Received Amount",
-                    // //       border: OutlineInputBorder()),
-                    // //   onChanged: (_) => setState(() {}),
-                    // // ),
-                    // Text("Received: ${receivedController.text}",
-                    //     style: const TextStyle(fontSize: 16)),
-                    //
-                    //
-                    // const SizedBox(height: 8),
-                    //
-                    // Text("Balance: Rs ${calculateBalance()}",
-                    //     style: const TextStyle(
-                    //         fontWeight: FontWeight.bold, color: Colors.red)),
-                    //
-                    // const SizedBox(height: 12),
-                    //
-                    // Text(
-                    //     "Delivery Date: ${DateFormat('yyyy-MM-dd').format(DateTime.now())}"),
-                    // ✅ Billing Summary
-                    const Text("Billing Summary",
-                        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
-                    const SizedBox(height: 8),
-
-                    Text("Sub Total: Rs ${calculateSubTotal()}"),
-                    const SizedBox(height: 5),
-
-// ✅ Discount simple text
-                    Text("Discount: Rs ${discountController.text}",
-                        style: TextStyle(fontSize: 16)),
-                    const SizedBox(height: 8),
-
-                    Text("Receivable: Rs ${calculateReceivable()}",
-                        style: const TextStyle()),
-                    const SizedBox(height: 8),
-
-// ✅ Received simple text
-                    Text("Received: Rs ${receivedController.text}",
-                        style: TextStyle(fontSize: 16)),
-                    const SizedBox(height: 8),
-
-                    Text("Balance: Rs ${calculateBalance()}",
-                        style: const TextStyle(
-                            fontWeight: FontWeight.bold, color: Colors.red)),
-                    const SizedBox(height: 12),
-                    const SizedBox(height: 12),
-
-                    Text(
-                        "Recovery Date: ${DateFormat('yyyy-MM-dd').format(DateTime.now())}"),
-
-
-                    const SizedBox(height: 20),
-
-                    // ✅ Save Button
-                    SizedBox(
-                      width: double.infinity,
-                      child: ElevatedButton(
-                        onPressed: () {
-                          Navigator.pop(context);
-                        },
-                        child: const Text("SAVE"),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            );
-          },
-        );
-      },
     );
   }
 }
+
+
+class EditRecoveryScreen extends StatefulWidget {
+  final RecoverySaleData data;
+
+  const EditRecoveryScreen({
+    super.key,
+    required this.data,
+  });
+
+  @override
+  State<EditRecoveryScreen> createState() => _EditRecoveryScreenState();
+}
+
+class _EditRecoveryScreenState extends State<EditRecoveryScreen> {
+  final TextEditingController receivedController = TextEditingController();
+
+  num balance = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    balance = widget.data.balance ?? 0;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final provider = Provider.of<RecoveryProvider>(context);
+
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text("Edit Recovery"),
+      ),
+
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+
+            // ✅ Recover Info Section
+            _infoRow("Recovery Id", "null"),
+            _infoRow("Recovery Date", widget.data.recoveryDate ?? ""),
+
+            const SizedBox(height: 10),
+
+            _infoRow("Invoice No.", widget.data.id ?? ""),
+            _infoRow("Invoice Date", widget.data.date ?? ""),
+            _infoRow("Customer", widget.data.customer ?? ""),
+            _infoRow("Salesman", widget.data.salesman ?? ""),
+
+            const SizedBox(height: 20),
+            const Text(
+              "Items",
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 10),
+
+            _itemsTable(),
+
+            const SizedBox(height: 20),
+
+            _infoRow("Total Price", widget.data.total.toString()),
+            _infoRow("Receivable", widget.data.total.toString()),
+
+            const SizedBox(height: 8),
+
+            // ✅ Enter Received Amount
+            TextField(
+              controller: receivedController,
+              keyboardType: TextInputType.number,
+              decoration: const InputDecoration(
+                labelText: "Received Amount",
+                border: OutlineInputBorder(),
+              ),
+              onChanged: (v) {
+                final rec = double.tryParse(v) ?? 0;
+                setState(() {
+                  balance = (widget.data.total ?? 0) - rec;
+                });
+              },
+            ),
+
+            const SizedBox(height: 10),
+
+            _infoRow("Balance", balance.toString()),
+
+            const SizedBox(height: 25),
+
+            provider.isUpdating
+                ? const Center(child: CircularProgressIndicator())
+                : ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.teal,
+                minimumSize: const Size(double.infinity, 50),
+              ),
+              onPressed: () async {
+                if (receivedController.text.isEmpty) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text("Enter received amount")),
+                  );
+                  return;
+                }
+
+                bool ok = await provider.updateReceivedAmount(
+                  widget.data.id!,                // invoice id
+                  receivedController.text.trim(), // amount
+                );
+
+                if (ok) {
+                  Navigator.pop(context);
+                }
+              },
+              child: const Text(
+                "Update Recovery",
+                style: TextStyle(color: Colors.white, fontSize: 18),
+              ),
+            ),
+
+            const SizedBox(height: 20),
+          ],
+        ),
+      ),
+    );
+  }
+
+  // ✅ Simple Row Widget
+  Widget _infoRow(String title, String value) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text("$title: ",
+              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15)),
+          Text(value, style: const TextStyle(fontSize: 15)),
+        ],
+      ),
+    );
+  }
+
+  // ✅ Item Table Widget
+  Widget _itemsTable() {
+    return Table(
+      border: TableBorder.all(color: Colors.grey.shade400),
+      children: [
+         TableRow(children: [
+          _tableHeader("SR#"),
+          _tableHeader("ITEM"),
+          _tableHeader("RATE"),
+          _tableHeader("QTY"),
+          _tableHeader("TOTAL"),
+        ]),
+
+        // ✅ Because Recovery API DOES NOT return product list,
+        // we show a single-row invoice summary
+        TableRow(children: [
+          _tableCell(widget.data.sr.toString()),
+          _tableCell(widget.data.customer ?? ""),
+          _tableCell(widget.data.total.toString()),
+          _tableCell("1"),
+          _tableCell(widget.data.total.toString()),
+        ]),
+      ],
+    );
+  }
+
+  // ✅ Helpers for Table
+  static Widget _tableHeader(String text) {
+    return Padding(
+      padding: EdgeInsets.all(8),
+      child: Text(
+        text,
+        textAlign: TextAlign.center,
+        style: TextStyle(fontWeight: FontWeight.bold),
+      ),
+    );
+  }
+
+  static Widget _tableCell(String text) {
+    return Padding(
+      padding: EdgeInsets.all(8),
+      child: Text(
+        text,
+        textAlign: TextAlign.center,
+      ),
+    );
+  }
+}
+

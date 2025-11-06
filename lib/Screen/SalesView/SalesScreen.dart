@@ -76,7 +76,7 @@ class _SalesScreenState extends State<SalesScreen> {
                         ),
                         GestureDetector(
                           onTap: (){
-                            Navigator.push(context, MaterialPageRoute(builder: (context)=>RecoveryScreen()));
+                            Navigator.push(context, MaterialPageRoute(builder: (context)=>RecoveryListScreen()));
                           },
                           child: AnimationCard(
                             icon: Icons.newspaper,

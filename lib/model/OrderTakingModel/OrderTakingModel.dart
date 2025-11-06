@@ -115,7 +115,7 @@ class Customer {
   final String phoneNumber;
   final int creditTime;
   final double salesBalance;
-  final DateTime timeLimit;
+  final DateTime? timeLimit;
 
   Customer({
     required this.id,
@@ -124,7 +124,7 @@ class Customer {
     required this.phoneNumber,
     required this.creditTime,
     required this.salesBalance,
-    required this.timeLimit,
+    this.timeLimit,
   });
 
   factory Customer.fromJson(Map<String, dynamic> json) {
@@ -135,7 +135,10 @@ class Customer {
       phoneNumber: json['phoneNumber'] ?? '',
       creditTime: json['creditTime'] ?? 0,
       salesBalance: (json['salesBalance'] ?? 0).toDouble(),
-      timeLimit: DateTime.parse(json['timeLimit']),
+     // timeLimit: DateTime.parse(json['timeLimit']),
+      timeLimit: json['timeLimit'] != null   // ✅ FIXED
+          ? DateTime.parse(json['timeLimit'])
+          : null,
     );
   }
 
@@ -146,7 +149,8 @@ class Customer {
     'phoneNumber': phoneNumber,
     'creditTime': creditTime,
     'salesBalance': salesBalance,
-    'timeLimit': timeLimit.toIso8601String(),
+    'timeLimit': timeLimit?.toIso8601String(),
+
   };
 }
 

@@ -10,6 +10,8 @@ import 'Provider/AreaSaleProvider/AreaSaleProvider.dart';
 import 'Provider/CustomerProvider/CustomerProvider.dart';
 import 'Provider/OrderTakingProvider/OrderTakingProvider.dart';
 import 'Provider/ProductProvider/ItemListsProvider.dart';
+import 'Provider/RecoveryProvider/RecoveryProvider.dart';
+import 'Provider/SaleInvoiceProvider/SaleInvoicesProvider.dart';
 import 'Provider/SaleManProvider/SaleManProvider.dart';
 import 'Provider/SalessProvider/SalessProvider.dart';
 
@@ -43,6 +45,9 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => SalesProvider()),
         ChangeNotifierProvider(create: (_) => ItemDetailsProvider()),
         ChangeNotifierProvider(create: (_) => SalesAreaProvider()),
+        ChangeNotifierProvider(create: (_) => SaleInvoicesProvider()),
+        ChangeNotifierProvider(create: (_) => RecoveryProvider()),
+
 
       ],
       child: MaterialApp(

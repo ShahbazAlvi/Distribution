@@ -9,6 +9,7 @@ import '../CustomerScreen/CustomersDefineScreen.dart';
 import '../DashBoardScreen.dart';
 import 'AnimationCard.dart';
 import 'RecoveryScreen/Recovery.dart';
+import 'ReportsScreen/AmountReceivableDetails/AmountReceivableDetailsScreen.dart';
 import 'Sales/SalesScreen.dart';
 import 'SetUp/EmployeeDefine/EmployeeDefine.dart';
 import 'SetUp/SalesAreaScreen/SalesAreaScreen.dart';
@@ -132,9 +133,14 @@ class _SalesScreenState extends State<SalesScreen> {
                     spacing: 10,
                     runSpacing: 10,
                     children: [
-                      AnimationCard(
-                        icon:Icons.add_card,
-                        title: "Amount Receivable",
+                      GestureDetector(
+                        onTap: (){
+                          Navigator.push(context, MaterialPageRoute(builder: (context)=>ReceivableScreen()));
+                        },
+                        child: AnimationCard(
+                          icon:Icons.add_card,
+                          title: "Amount Receivable",
+                        ),
                       ),
                       AnimationCard(
                         icon: Icons.newspaper,
@@ -144,22 +150,7 @@ class _SalesScreenState extends State<SalesScreen> {
                         icon: Icons.add_chart_rounded,
                         title: "Credit Aging",
                       ),
-                      AnimationCard(
-                        icon: Icons.sim_card_alert_rounded,
-                        title: "Datewise Orders",
-                      ),
-                      AnimationCard(
-                        icon: Icons.wallet,
-                        title: "Productwise Order",
-                      ),
-                      AnimationCard(
-                        icon: Icons.cloud_upload_rounded,
-                        title: "Salesmanwise Order",
-                      ),
-                      AnimationCard(
-                        icon: Icons.cloud_upload_rounded,
-                        title: "Customerwise Orders",
-                      ),
+
                       AnimationCard(
                         icon: Icons.cloud_upload_rounded,
                         title: "Daily Sales Report",

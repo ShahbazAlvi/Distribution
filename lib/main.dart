@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'Provider/AmountReceivableDetailsProvider/AmountReceivableDetailsProvider.dart';
 import 'Provider/AreaSaleProvider/AreaSaleProvider.dart';
 import 'Provider/CustomerProvider/CustomerProvider.dart';
 import 'Provider/OrderTakingProvider/OrderTakingProvider.dart';
@@ -47,6 +48,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => SalesAreaProvider()),
         ChangeNotifierProvider(create: (_) => SaleInvoicesProvider()),
         ChangeNotifierProvider(create: (_) => RecoveryProvider()),
+        ChangeNotifierProvider(create: (_) => ReceivableProvider()),
 
 
       ],

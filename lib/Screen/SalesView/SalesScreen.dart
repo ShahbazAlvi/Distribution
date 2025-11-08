@@ -9,7 +9,9 @@ import '../CustomerScreen/CustomersDefineScreen.dart';
 import '../DashBoardScreen.dart';
 import 'AnimationCard.dart';
 import 'RecoveryScreen/Recovery.dart';
+import 'ReportsScreen/AgingScreen/AgingScreen.dart';
 import 'ReportsScreen/AmountReceivableDetails/AmountReceivableDetailsScreen.dart';
+import 'ReportsScreen/CustomerLedgerScreen/LedgerScreen.dart';
 import 'Sales/SalesScreen.dart';
 import 'SetUp/EmployeeDefine/EmployeeDefine.dart';
 import 'SetUp/SalesAreaScreen/SalesAreaScreen.dart';
@@ -142,13 +144,23 @@ class _SalesScreenState extends State<SalesScreen> {
                           title: "Amount Receivable",
                         ),
                       ),
-                      AnimationCard(
-                        icon: Icons.newspaper,
-                        title: "Customer Ledger",
+                      GestureDetector(
+                        onTap: (){
+                          Navigator.push(context,MaterialPageRoute(builder: (context)=>CustomerLedgerScreen()));
+                        },
+                        child: AnimationCard(
+                          icon: Icons.newspaper,
+                          title: "Customer Ledger",
+                        ),
                       ),
-                      AnimationCard(
-                        icon: Icons.add_chart_rounded,
-                        title: "Credit Aging",
+                      GestureDetector(
+                        onTap: (){
+                          Navigator.push(context,MaterialPageRoute(builder: (context)=>CreditAgingScreen()));
+                        },
+                        child: AnimationCard(
+                          icon: Icons.add_chart_rounded,
+                          title: "Credit Aging",
+                        ),
                       ),
 
                       AnimationCard(

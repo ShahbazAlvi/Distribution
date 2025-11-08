@@ -3,6 +3,7 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 import '../../../Provider/RecoveryProvider/RecoveryProvider.dart';
+import '../../../compoents/AppColors.dart';
 import '../../../compoents/SaleManDropdown.dart';
 import '../../../model/SaleRecoveryModel/SaleRecoveryModel.dart';
 
@@ -27,8 +28,18 @@ class _RecoveryListScreenState extends State<RecoveryListScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Recovery Report",
-            style: TextStyle(color: Colors.white, fontSize: 20)),
+            style: TextStyle(color: Colors.white, fontSize: 22)),
         centerTitle: true,
+        iconTheme: const IconThemeData(color: Colors.white),
+        flexibleSpace: Container(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              colors: [AppColors.secondary, AppColors.primary],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+          ),
+        ),
       ),
 
       body: Column(

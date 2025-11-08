@@ -209,29 +209,7 @@ class _OrderTakingScreenState extends State<OrderTakingScreen> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
-                        // ElevatedButton.icon(
-                        //   onPressed: () async {
-                        //     final provider = Provider.of<OrderTakingProvider>(context, listen: false);
-                        //
-                        //     await provider.updateOrder(
-                        //       order.id,
-                        //       {
-                        //         "salesmanId": order.salesmanId?.id,
-                        //         "customerId": order.customerId.id,
-                        //         "products": order.products.map((p) => p.toJson()).toList(),
-                        //       },
-                        //     );
-                        //
-                        //     ScaffoldMessenger.of(context).showSnackBar(
-                        //       SnackBar(content: Text("Order Updated")),
-                        //     );
-                        //   },
-                        //   style: ElevatedButton.styleFrom(
-                        //     backgroundColor: AppColors.background,
-                        //   ),
-                        //   icon: Icon(Icons.edit, size: 18, color: AppColors.text),
-                        //   label: Text("Update", style: TextStyle(color: AppColors.text)),
-                        // ),
+
                         ElevatedButton.icon(
                           onPressed: () {
                             Navigator.push(

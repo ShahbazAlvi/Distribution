@@ -4,6 +4,8 @@ import 'package:distribution/Screen/dashBoardView/chartdashboard.dart';
 import 'package:distribution/Screen/dashBoardView/recoverienChart.dart';
 import 'package:flutter/material.dart';
 
+import 'Auth/LoginScreen.dart';
+
 class Dashboardscreen extends StatefulWidget {
   const Dashboardscreen({super.key});
 
@@ -142,7 +144,7 @@ class _DashboardscreenState extends State<Dashboardscreen> {
               },
             ),
             ListTile(
-              leading: const Icon(Icons.shop, color: Color(0xFF5B86E5)),
+              leading: const Icon(Icons.sell, color: Color(0xFF5B86E5)),
               title: const Text('Sales'),
               onTap: () {
                 Navigator.push(context, MaterialPageRoute(builder: (context)=>SalesScreen()));
@@ -150,55 +152,11 @@ class _DashboardscreenState extends State<Dashboardscreen> {
               },
             ),
             ListTile(
-              leading: const Icon(Icons.follow_the_signs, color: Color(0xFF5B86E5)),
-              title: const Text('Follow Up'),
+              leading: const Icon(Icons.shop, color: Color(0xFF5B86E5)),
+              title: const Text('Purchase'),
               onTap: () {
-                
-              },
-            ),
-            
-              ListTile(
-                leading: const Icon(Icons.assignment_ind, color: Color(0xFF5B86E5)),
-                title: const Text('Assign To'),
-                onTap: () {
-                  
-                },
-              ),
-            
-              ListTile(
-                leading: const Icon(Icons.phone, color: Color(0xFF5B86E5)),
-                title: const Text('Call Track'),
-                onTap: () {
-                  
-                },
-              ),
-            ListTile(
-              leading: const Icon(Icons.done, color: Color(0xFF5B86E5)),
-              title: const Text('Success Client'),
-              onTap: () {
-                
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.calendar_month, color: Color(0xFF5B86E5)),
-              title: const Text('Calendar'),
-              onTap: () {
-                
-              },
-            ),
-            
-              ListTile(
-                leading: const Icon(Icons.history_outlined, color: Color(0xFF5B86E5)),
-                title: const Text('Activity Track '),
-                onTap: () {
-                  
-                },
-              ),
-            ListTile(
-              leading: const Icon(Icons.settings, color: Color(0xFF5B86E5)),
-              title: const Text('Settings'),
-              onTap: () {
-                Navigator.pop(context);
+                //Navigator.push(context, MaterialPageRoute(builder: (context)=>SalesScreen()));
+
               },
             ),
             const Divider(),
@@ -206,7 +164,7 @@ class _DashboardscreenState extends State<Dashboardscreen> {
               leading: const Icon(Icons.logout, color: Colors.red),
               title: const Text('Logout'),
               onTap: () async {
-                Navigator.pop(context);
+                Navigator.pop(context); // close drawer first
                 final shouldLogout = await showDialog<bool>(
                   context: context,
                   builder: (context) => AlertDialog(
@@ -222,14 +180,22 @@ class _DashboardscreenState extends State<Dashboardscreen> {
                           backgroundColor: Colors.red,
                         ),
                         onPressed: () => Navigator.pop(context, true),
-                        child: const Text('Logout',),
+                        child: const Text('Logout'),
                       ),
                     ],
                   ),
                 );
-                
+
+                if (shouldLogout ?? false) {
+                  // ✅ Navigate to LoginScreen after logout
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(builder: (context) => LoginScreen()), // replace with your login screen
+                  );
+                }
               },
             ),
+
           ],
         ),
       ),

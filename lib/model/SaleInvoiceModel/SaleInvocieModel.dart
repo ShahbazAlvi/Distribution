@@ -93,7 +93,8 @@ class Customer {
   final String phoneNumber;
   final int creditTime;
   final int salesBalance;
-  final int? timeLimit;
+ // final int? timeLimit;
+  final DateTime? timeLimit;
 
   Customer({
     required this.id,
@@ -113,7 +114,8 @@ class Customer {
       phoneNumber: json["phoneNumber"],
       creditTime: json["creditTime"],
       salesBalance: json["salesBalance"],
-      timeLimit: json["timeLimit"],
+     // timeLimit: json["timeLimit"],
+      timeLimit: json["timeLimit"] != null ? DateTime.parse(json["timeLimit"]) : null,
     );
   }
 }

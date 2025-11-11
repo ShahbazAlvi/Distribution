@@ -15,6 +15,7 @@ import 'ReportsScreen/CustomerLedgerScreen/LedgerScreen.dart';
 import 'Sales/SalesScreen.dart';
 import 'SetUp/EmployeeDefine/EmployeeDefine.dart';
 import 'SetUp/SalesAreaScreen/SalesAreaScreen.dart';
+import 'SetUp/supplier/SupplierScreen.dart';
 
 class SalesScreen extends StatefulWidget {
   const SalesScreen({super.key});
@@ -229,6 +230,15 @@ class _SalesScreenState extends State<SalesScreen> {
                       AnimationCard(
                         icon: Icons.car_crash,
                         title: "Vehicle Information",
+                      ),
+                      GestureDetector(
+                        onTap: (){
+                          Navigator.push(context,MaterialPageRoute(builder: (context)=>SupplierListScreen()));
+                        },
+                        child: AnimationCard(
+                          icon: Icons.car_rental_sharp,
+                          title: "Supplier",
+                        ),
                       ),
 
 

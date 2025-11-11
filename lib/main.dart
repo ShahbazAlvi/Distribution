@@ -13,10 +13,14 @@ import 'Provider/CustomerLedgerProvider/LedgerProvider.dart';
 import 'Provider/CustomerProvider/CustomerProvider.dart';
 import 'Provider/OrderTakingProvider/OrderTakingProvider.dart';
 import 'Provider/ProductProvider/ItemListsProvider.dart';
+import 'Provider/Purchase_Provider/GRNProvider/GRN_Provider.dart';
+import 'Provider/Purchase_Provider/Payment_TO_Supplier_Provider/PaymentSupplierProvider.dart';
+import 'Provider/Purchase_Provider/SupplierLedgerProvider/SupplierLedgerProvider.dart';
 import 'Provider/RecoveryProvider/RecoveryProvider.dart';
 import 'Provider/SaleInvoiceProvider/SaleInvoicesProvider.dart';
 import 'Provider/SaleManProvider/SaleManProvider.dart';
 import 'Provider/SalessProvider/SalessProvider.dart';
+import 'Provider/SupplierProvider/supplierProvider.dart';
 
 void main()async {
 
@@ -53,6 +57,10 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => ReceivableProvider()),
         ChangeNotifierProvider(create: (_) => CustomerLedgerProvider()),
         ChangeNotifierProvider(create: (_) => CreditAgingProvider()),
+        ChangeNotifierProvider(create: (_) => GRNProvider()),
+        ChangeNotifierProvider(create: (_) => PaymentToSupplierProvider()),
+        ChangeNotifierProvider(create: (_) => SupplierProvider()),
+        ChangeNotifierProvider(create: (_)=>SuppliersLedgerProvider()),
 
 
       ],

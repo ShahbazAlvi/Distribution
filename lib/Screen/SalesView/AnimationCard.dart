@@ -13,6 +13,7 @@ class _AnimatedDashboardCardState extends State<AnimationCard> {
   @override
   Widget build(BuildContext context) {
     return Column(
+      
       children: [
         Icon(widget.icon,size: 32,color: Colors.black,),
         const SizedBox(height: 10),

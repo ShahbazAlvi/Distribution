@@ -1,3 +1,4 @@
+import 'package:distribution/Screen/PurchaseScreen/PurchaseScreen.dart';
 import 'package:distribution/Screen/SalesView/SalesScreen.dart';
 import 'package:distribution/Screen/dashBoardView/calender.dart';
 import 'package:distribution/Screen/dashBoardView/chartdashboard.dart';
@@ -155,7 +156,7 @@ class _DashboardscreenState extends State<Dashboardscreen> {
               leading: const Icon(Icons.shop, color: Color(0xFF5B86E5)),
               title: const Text('Purchase'),
               onTap: () {
-                //Navigator.push(context, MaterialPageRoute(builder: (context)=>SalesScreen()));
+                Navigator.push(context, MaterialPageRoute(builder: (context)=>PurchaseScreen()));
 
               },
             ),

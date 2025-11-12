@@ -1,11 +1,11 @@
-import 'package:distribution/model/SupplierModel/SupplierModel.dart';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+
 import '../../../Provider/Purchase_Provider/SupplierLedgerProvider/SupplierLedgerProvider.dart';
-import '../../../Provider/SupplierProvider/supplierProvider.dart';
-import '../../../compoents/AppColors.dart';
 import '../../../compoents/SupplierDropdown.dart';
+import '../../../compoents/AppColors.dart';
 
 class SupplierLedgerScreen extends StatefulWidget {
   const SupplierLedgerScreen({super.key});
@@ -16,128 +16,180 @@ class SupplierLedgerScreen extends StatefulWidget {
 
 class _SupplierLedgerScreenState extends State<SupplierLedgerScreen> {
   String? selectedSupplierId;
-  DateTime fromDate = DateTime.now().subtract(const Duration(days: 30));
-  DateTime toDate = DateTime.now();
+  DateTime? fromDate;
+  DateTime? toDate;
 
-
-
-  @override
-  void initState() {
-    super.initState();
-    Future.microtask(() {
-      Provider.of<SupplierProvider>(context, listen: false).loadSuppliers();
-    });
-  }
-
-  // ✅ Pick date method
-  Future<void> pickDate({required bool isFrom}) async {
-    final newDate = await showDatePicker(
-      context: context,
-      initialDate: isFrom ? fromDate : toDate,
-      firstDate: DateTime(2020),
-      lastDate: DateTime.now().add(const Duration(days: 365)),
-    );
-
-    if (newDate != null) {
-      setState(() {
-        if (isFrom) {
-          fromDate = newDate;
-        } else {
-          toDate = newDate;
-        }
-      });
-
-      if (selectedSupplierId != null) {
-        Provider.of<SuppliersLedgerProvider>(context, listen: false)
-            .fetchSupplierLedger(
-          selectedSupplierId!,
-          fromDate.toIso8601String().substring(0, 10),
-          toDate.toIso8601String().substring(0, 10),
-        );
-      }
-    }
-  }
+  final String token = "YOUR_AUTH_TOKEN_HERE"; // Replace with actual token
 
   @override
   Widget build(BuildContext context) {
-    final supplierProvider = Provider.of<SupplierProvider>(context);
-    final ledgerProvider = Provider.of<SuppliersLedgerProvider>(context);
+    final provider = Provider.of<SupplierLedgerProvider>(context);
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Supplier Ledger"),
-
+        iconTheme: const IconThemeData(color: Colors.white),
+        title: Center(child: const Text("Supplier Ledger ",
+            style: TextStyle(
+              color: Colors.white,
+              fontWeight: FontWeight.bold,
+              fontSize: 22,
+              letterSpacing: 1.2,
+            )),
+        ),
+        centerTitle: true,
+        elevation: 6,
+        flexibleSpace: Container(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              colors: [AppColors.secondary, AppColors.primary],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+          ),
+        ),
       ),
+      body: Padding(
+        padding: const EdgeInsets.all(12),
+        child: Column(
+          children: [
+            /// ✅ Supplier Dropdown
+            SupplierDropdown(
+              selectedSupplierId: selectedSupplierId,
+              onSelected: (id) {
+                setState(() => selectedSupplierId = id);
+                _fetchLedger(context);
+              },
+            ),
 
-      body: Column(
-        children: [
+            const SizedBox(height: 10),
 
-
-          // ✅ Date Filters Row
-          Padding(
-            padding: const EdgeInsets.all(10),
-            child: Row(
+            /// ✅ Date Filters (auto-refresh on change)
+            Row(
               children: [
                 Expanded(
-                  child: InkWell(
-                    onTap: () => pickDate(isFrom: true),
-                    child: Container(
-                      padding: const EdgeInsets.all(12),
-                      decoration: BoxDecoration(
-                          border: Border.all(color: Colors.grey),
-                          borderRadius: BorderRadius.circular(8)),
-                      child: Text("From: ${fromDate.toString().substring(0, 10)}"),
-                    ),
+                  child: _buildDateField(
+                    label: "From Date",
+                    selectedDate: fromDate,
+                    onTap: () async {
+                      DateTime? picked = await _pickDate();
+                      if (picked != null) {
+                        setState(() => fromDate = picked);
+                        _fetchLedger(context);
+                      }
+                    },
                   ),
                 ),
                 const SizedBox(width: 10),
                 Expanded(
-                  child: InkWell(
-                    onTap: () => pickDate(isFrom: false),
-                    child: Container(
-                      padding: const EdgeInsets.all(12),
-                      decoration: BoxDecoration(
-                          border: Border.all(color: Colors.grey),
-                          borderRadius: BorderRadius.circular(8)),
-                      child: Text("To: ${toDate.toString().substring(0, 10)}"),
-                    ),
+                  child: _buildDateField(
+                    label: "To Date",
+                    selectedDate: toDate,
+                    onTap: () async {
+                      DateTime? picked = await _pickDate();
+                      if (picked != null) {
+                        setState(() => toDate = picked);
+                        _fetchLedger(context);
+                      }
+                    },
                   ),
                 ),
               ],
             ),
-          ),
 
-          // ✅ Ledger List
-          Expanded(
-            child: ledgerProvider.loading
-                ? const Center(child: CircularProgressIndicator())
-                : ledgerProvider.ledgerData.isEmpty
-                ? const Center(child: Text("No Records Found"))
-                : ListView.builder(
-              itemCount: ledgerProvider.ledgerData.length,
-              itemBuilder: (context, index) {
-                final item = ledgerProvider.ledgerData[index];
-                return Card(
-                  margin: const EdgeInsets.symmetric(
-                      horizontal: 12, vertical: 6),
-                  child: ListTile(
-                    title: Text(item.description),
-                    subtitle: Text("Date: ${item.date}"),
-                    trailing: Column(
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: [
-                        Text("Paid: ${item.paid}"),
-                        Text("Received: ${item.received}"),
-                        Text("Balance: ${item.balance}"),
-                      ],
+            const SizedBox(height: 10),
+
+            /// ✅ Ledger Data
+            Expanded(
+              child: provider.loading
+                  ? const Center(child: CircularProgressIndicator())
+                  : provider.ledgerList.isEmpty
+                  ? const Center(child: Text("No Ledger Data Found"))
+                  : ListView.builder(
+                itemCount: provider.ledgerList.length,
+                itemBuilder: (context, index) {
+                  final data = provider.ledgerList[index];
+                  return Card(
+                    margin: const EdgeInsets.symmetric(
+                        horizontal: 6, vertical: 4),
+                    elevation: 3,
+                    child: ListTile(
+                      title: Text(
+                        "${data.date} - ${data.supplierName}",
+                        style: const TextStyle(
+                            fontWeight: FontWeight.bold),
+                      ),
+                      subtitle: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text("Description: ${data.description}"),
+                          Text("Paid: ${data.paid}"),
+                          Text("Received: ${data.received}"),
+                          Text("Balance: ${data.balance}"),
+                        ],
+                      ),
                     ),
-                  ),
-                );
-              },
+                  );
+                },
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
+    );
+  }
+
+  /// ✅ Trigger API when supplier/date changes
+  void _fetchLedger(BuildContext context) {
+    if (selectedSupplierId == null) return;
+
+    final provider = Provider.of<SupplierLedgerProvider>(context, listen: false);
+
+    final from = fromDate != null
+        ? fromDate!.toIso8601String().split("T").first
+        : "2025-10-01";
+    final to =
+    toDate != null ? toDate!.toIso8601String().split("T").first : "2025-11-29";
+
+    provider.fetchSupplierLedger(
+      supplierId: selectedSupplierId!,
+      fromDate: from,
+      toDate: to,
+      token: token,
+    );
+  }
+
+  /// ✅ Date Field Widget
+  Widget _buildDateField({
+    required String label,
+    required DateTime? selectedDate,
+    required VoidCallback onTap,
+  }) {
+    return GestureDetector(
+      onTap: onTap,
+      child: AbsorbPointer(
+        child: TextFormField(
+          decoration: InputDecoration(
+            labelText: label,
+            border: const OutlineInputBorder(),
+            suffixIcon: const Icon(Icons.calendar_today),
+          ),
+          controller: TextEditingController(
+            text: selectedDate == null
+                ? ''
+                : "${selectedDate.year}-${selectedDate.month.toString().padLeft(2, '0')}-${selectedDate.day.toString().padLeft(2, '0')}",
+          ),
+        ),
+      ),
+    );
+  }
+
+  /// ✅ Date Picker Helper
+  Future<DateTime?> _pickDate() async {
+    return await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(2024, 1, 1),
+      lastDate: DateTime(2030, 12, 31),
     );
   }
 }

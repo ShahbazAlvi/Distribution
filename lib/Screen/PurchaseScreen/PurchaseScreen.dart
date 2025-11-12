@@ -2,179 +2,466 @@ import 'package:flutter/material.dart';
 
 import '../../compoents/AppColors.dart';
 import '../SalesView/AnimationCard.dart';
+import 'DateWisePurchaseScreen/DateWisePurchaseScreen.dart';
 import 'GRNScreen/GRN_Screen.dart';
+import 'ItemWisePurchase/ItemWisePurchaseScreen.dart';
+import 'ItemWisePurchaseScreen/ItemWisePurchaseScreen.dart';
+import 'PayableAmountScreen/PayableAmountScreen.dart';
 import 'Payment_Supplier_Screen/PaymentSupplierScreen.dart';
+import 'StockPositionScreen/StockPositionScreen.dart';
 import 'SupplierLedgerScreen/SupplierLedgerScreen.dart';
+import 'SupplierWisePurchaseScreen/SupplierWisePurchaseScreen.dart';
 
-class PurchaseScreen extends StatefulWidget {
-  const PurchaseScreen({super.key});
+// class PurchaseScreen extends StatefulWidget {
+//   const PurchaseScreen({super.key});
+//
+//   @override
+//   State<PurchaseScreen> createState() => _PurchaseScreenState();
+// }
+//
+// class _PurchaseScreenState extends State<PurchaseScreen> {
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       appBar: AppBar(
+//         iconTheme: const IconThemeData(color: Colors.white),
+//         title: Center(child: const Text("Purchase",
+//             style: TextStyle(
+//               color: Colors.white,
+//               fontWeight: FontWeight.bold,
+//               fontSize: 22,
+//               letterSpacing: 1.2,
+//             )),
+//         ),
+//         centerTitle: true,
+//         elevation: 6,
+//         flexibleSpace: Container(
+//           decoration: const BoxDecoration(
+//             gradient: LinearGradient(
+//               colors: [AppColors.secondary, AppColors.primary],
+//               begin: Alignment.topLeft,
+//               end: Alignment.bottomRight,
+//             ),
+//           ),
+//         ),
+//       ),
+//       body: SingleChildScrollView(
+//         child: Padding(
+//           padding: const EdgeInsets.all(16.0),
+//           child: Column(
+//             crossAxisAlignment: CrossAxisAlignment.start,
+//             children: [
+//               Text("Functionalities",style: TextStyle(fontWeight: FontWeight.bold,fontSize: 16),),
+//               Container(
+//                 width: double.infinity,
+//                 decoration: BoxDecoration(
+//                     color: AppColors.text,
+//                     borderRadius: BorderRadius.circular(20)
+//                 ),
+//                 child: Padding(
+//                   padding: const EdgeInsets.all(16.0),
+//                   child: Wrap(
+//                     spacing: 10,
+//                     runSpacing: 10,
+//                     children: [
+//                       GestureDetector(
+//                         onTap: (){
+//                           Navigator.push(context, MaterialPageRoute(builder: (context)=>GRNScreen()));
+//                         },
+//                         child: AnimationCard(
+//                           icon:Icons.add_card,
+//                           title: "GRN",
+//                         ),
+//                       ),
+//                       GestureDetector(
+//                         onTap: (){
+//                           Navigator.push(context, MaterialPageRoute(builder: (context)=>PaymentToSupplierScreen()));
+//                         },
+//                         child: AnimationCard(
+//                           icon: Icons.attach_money_rounded,
+//                           title: "Payment to Supplier",
+//                         ),
+//                       ),
+//
+//
+//
+//
+//
+//
+//                     ],
+//                   ),
+//                 ),
+//               ),
+//               SizedBox(height: 10,),
+//               Text("Reports",style: TextStyle(fontWeight: FontWeight.bold,fontSize: 16),),
+//               Container(
+//                 width: double.infinity,
+//                 decoration: BoxDecoration(
+//                     color: AppColors.text,
+//                     borderRadius: BorderRadius.circular(20)
+//                 ),
+//                 child: Padding(
+//                   padding: const EdgeInsets.all(16.0),
+//                   child:
+//                   Wrap(
+//                     spacing: 10,
+//                     runSpacing: 10,
+//                     children: [
+//                       GestureDetector(
+//                         onTap: (){
+//                           Navigator.push(context,MaterialPageRoute(builder: (context)=>PayableAmountScreen()));
+//                         },
+//                         child: AnimationCard(
+//                           icon:Icons.money_outlined,
+//                           title: "Amount Payable",
+//                         ),
+//                       ),
+//                       GestureDetector(
+//                         onTap: (){
+//                           Navigator.push(context, MaterialPageRoute(builder: (context)=>DatewisePurchaseScreen()));
+//                         },
+//                         child: AnimationCard(
+//                           icon: Icons.date_range_outlined,
+//                           title: "DateWise Purchase",
+//                         ),
+//                       ),
+//                       GestureDetector(
+//                         onTap: (){
+//                           Navigator.push(context,MaterialPageRoute(builder: (context)=>ItemWisePurchaseScreen()));
+//                         },
+//                         child: AnimationCard(
+//                           icon: Icons.indeterminate_check_box_rounded,
+//                           title: "ItemsWise Purchase",
+//                         ),
+//                       ),
+//                       GestureDetector(
+//                         onTap: (){
+//                           Navigator.push(context,MaterialPageRoute(builder: (context)=>SupplierLedgerScreen()));
+//                         },
+//                         child: AnimationCard(
+//                           icon: Icons.indeterminate_check_box_rounded,
+//                           title: "Supplier ledger",
+//                         ),
+//                       ),
+//
+//                       GestureDetector(
+//                         onTap: (){
+//                           Navigator.push(context, MaterialPageRoute(builder: (context)=>SupplierwisePurchaseScreen()));
+//                         },
+//                         child: AnimationCard(
+//                           icon: Icons.person,
+//                           title: "SupplierWise Purchase",
+//                         ),
+//                       ),
+//                       GestureDetector(
+//                         onTap: (){
+//                           Navigator.push(context,MaterialPageRoute(builder: (context)=>StockPositionScreen()));
+//                         },
+//                         child: AnimationCard(
+//                           icon: Icons.equalizer,
+//                           title: "Stock Position",
+//                         ),
+//                       ),
+//
+//
+//
+//
+//
+//
+//                     ],
+//                   ),
+//                 ),
+//               ),
+//               SizedBox(height: 10,),
+//               Text("Setup",style: TextStyle(fontWeight: FontWeight.bold,fontSize: 16),),
+//               Container(
+//                 width: double.infinity,
+//                 decoration: BoxDecoration(
+//                     color: AppColors.text,
+//                     borderRadius: BorderRadius.circular(20)
+//                 ),
+//                 child: Padding(
+//                   padding: const EdgeInsets.all(16.0),
+//                   child: Wrap(
+//                     spacing: 10,
+//                     runSpacing: 10,
+//                     children: [
+//                       AnimationCard(
+//                         icon: Icons.car_crash,
+//                         title: "Define Supplier",
+//                       ),
+//
+//
+//
+//
+//
+//
+//                     ],
+//                   ),
+//                 ),
+//               )
+//             ],
+//           ),
+//         ),
+//
+//       ),
+//
+//     );
+//   }
+// }
+import 'dart:ui';
+import 'package:flutter/material.dart';
 
-  @override
-  State<PurchaseScreen> createState() => _PurchaseScreenState();
-}
+class PurchaseDashboard extends StatelessWidget {
+  const PurchaseDashboard({super.key});
 
-class _PurchaseScreenState extends State<PurchaseScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        iconTheme: const IconThemeData(color: Colors.white),
-        title: Center(child: const Text("Purchase",
-            style: TextStyle(
-              color: Colors.white,
-              fontWeight: FontWeight.bold,
-              fontSize: 22,
-              letterSpacing: 1.2,
-            )),
-        ),
-        centerTitle: true,
-        elevation: 6,
-        flexibleSpace: Container(
-          decoration: const BoxDecoration(
-            gradient: LinearGradient(
-              colors: [AppColors.secondary, AppColors.primary],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-            ),
-          ),
-        ),
-      ),
-      body: SingleChildScrollView(
-        child: Padding(
+      backgroundColor: const Color(0xFFF6F7FB),
+      body: SafeArea(
+        child: SingleChildScrollView(
           padding: const EdgeInsets.all(16.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text("Functionalities",style: TextStyle(fontWeight: FontWeight.bold,fontSize: 16),),
+              // 🔹 Header with gradient and title
               Container(
                 width: double.infinity,
+                padding: const EdgeInsets.symmetric(vertical: 30, horizontal: 20),
                 decoration: BoxDecoration(
-                    color: AppColors.text,
-                    borderRadius: BorderRadius.circular(20)
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Wrap(
-                    spacing: 10,
-                    runSpacing: 10,
-                    children: [
-                      GestureDetector(
-                        onTap: (){
-                          Navigator.push(context, MaterialPageRoute(builder: (context)=>GRNScreen()));
-                        },
-                        child: AnimationCard(
-                          icon:Icons.add_card,
-                          title: "GRN",
-                        ),
-                      ),
-                      GestureDetector(
-                        onTap: (){
-                          Navigator.push(context, MaterialPageRoute(builder: (context)=>PaymentToSupplierScreen()));
-                        },
-                        child: AnimationCard(
-                          icon: Icons.attach_money_rounded,
-                          title: "Payment to Supplier",
-                        ),
-                      ),
-
-
-
-
-
-
-                    ],
+                  gradient: const LinearGradient(
+                    colors: [Color(0xFF667EEA), Color(0xFF764BA2)],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
                   ),
+                  borderRadius: BorderRadius.circular(25),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black26,
+                      blurRadius: 10,
+                      offset: const Offset(0, 4),
+                    )
+                  ],
+                ),
+                child: const Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "Purchase Dashboard",
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 26,
+                        fontWeight: FontWeight.bold,
+                        letterSpacing: 0.8,
+                      ),
+                    ),
+                    SizedBox(height: 8),
+                    Text(
+                      "Manage purchases, ledgers, and suppliers in one place",
+                      style: TextStyle(color: Colors.white70, fontSize: 14),
+                    ),
+                  ],
                 ),
               ),
-              SizedBox(height: 10,),
-              Text("Reports",style: TextStyle(fontWeight: FontWeight.bold,fontSize: 16),),
-              Container(
-                width: double.infinity,
-                decoration: BoxDecoration(
-                    color: AppColors.text,
-                    borderRadius: BorderRadius.circular(20)
+
+              const SizedBox(height: 28),
+
+              // 🔸 Functionalities Section
+              _buildSectionTitle("⚙️ Functionalities"),
+              const SizedBox(height: 14),
+              _buildCardGrid([
+                DashboardCard(
+                  icon: Icons.receipt_long_rounded,
+                  title: "GRN",
+                  color: Colors.tealAccent,
+                  onTap: () {
+                    Navigator.push(context, MaterialPageRoute(builder: (context)=>GRNScreen()));
+                  },
                 ),
-                child: Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child:
-                  Wrap(
-                    spacing: 10,
-                    runSpacing: 10,
-                    children: [
-                      AnimationCard(
-                        icon:Icons.money_outlined,
-                        title: "Amount Payable",
-                      ),
-                      AnimationCard(
-                        icon: Icons.date_range_outlined,
-                        title: "DateWise Purchase",
-                      ),
-                      AnimationCard(
-                        icon: Icons.indeterminate_check_box_rounded,
-                        title: "ItemsWise Purchase",
-                      ),
-                      GestureDetector(
-                        onTap: (){
-                          Navigator.push(context,MaterialPageRoute(builder: (context)=>SupplierLedgerScreen()));
-                        },
-                        child: AnimationCard(
-                          icon: Icons.indeterminate_check_box_rounded,
-                          title: "Supplier ledger",
-                        ),
-                      ),
-
-                      AnimationCard(
-                        icon: Icons.person,
-                        title: "SupplierWise Purchase",
-                      ),
-                      AnimationCard(
-                        icon: Icons.equalizer,
-                        title: "Stock Position",
-                      ),
-
-
-
-
-
-
-                    ],
-                  ),
+                DashboardCard(
+                  icon: Icons.attach_money_rounded,
+                  title: "Payment to Supplier",
+                  color: Colors.amberAccent,
+                  onTap: () {
+                    Navigator.push(context, MaterialPageRoute(builder: (context)=>PaymentToSupplierScreen()));
+                  },
                 ),
-              ),
-              SizedBox(height: 10,),
-              Text("Setup",style: TextStyle(fontWeight: FontWeight.bold,fontSize: 16),),
-              Container(
-                width: double.infinity,
-                decoration: BoxDecoration(
-                    color: AppColors.text,
-                    borderRadius: BorderRadius.circular(20)
+              ]),
+
+              const SizedBox(height: 30),
+
+              // 🔸 Reports Section
+              _buildSectionTitle("📊 Reports"),
+              const SizedBox(height: 14),
+              _buildCardGrid([
+                DashboardCard(
+                  icon: Icons.account_balance_wallet_rounded,
+                  title: "Amount Payable",
+                  color: Colors.pinkAccent,
+                  onTap: () {
+                    Navigator.push(context,MaterialPageRoute(builder: (context)=>PayableAmountScreen()));
+                  },
                 ),
-                child: Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Wrap(
-                    spacing: 10,
-                    runSpacing: 10,
-                    children: [
-                      AnimationCard(
-                        icon: Icons.car_crash,
-                        title: "Define Supplier",
-                      ),
-
-
-
-
-
-
-                    ],
-                  ),
+                DashboardCard(
+                  icon: Icons.date_range_rounded,
+                  title: "DateWise Purchase",
+                  color: Colors.lightBlueAccent,
+                  onTap: () {
+                    Navigator.push(context, MaterialPageRoute(builder: (context)=>DatewisePurchaseScreen()));
+                  },
                 ),
-              )
+                DashboardCard(
+                  icon: Icons.shopping_bag_rounded,
+                  title: "ItemsWise Purchase",
+                  color: Colors.orangeAccent,
+                  onTap: () {
+                    Navigator.push(context,MaterialPageRoute(builder: (context)=>ItemWisePurchaseScreen()));
+                  },
+                ),
+                DashboardCard(
+                  icon: Icons.people_alt_rounded,
+                  title: "Supplier Ledger",
+                  color: Colors.greenAccent,
+                  onTap: () {
+                    Navigator.push(context,MaterialPageRoute(builder: (context)=>SupplierLedgerScreen()));
+                  },
+                ),
+                DashboardCard(
+                  icon: Icons.person_pin_rounded,
+                  title: "SupplierWise Purchase",
+                  color: Colors.cyanAccent,
+                  onTap: () {
+                    Navigator.push(context, MaterialPageRoute(builder: (context)=>SupplierwisePurchaseScreen()));
+                  },
+                ),
+                DashboardCard(
+                  icon: Icons.equalizer_rounded,
+                  title: "Stock Position",
+                  color: Colors.purpleAccent,
+                  onTap: () {
+                    Navigator.push(context,MaterialPageRoute(builder: (context)=>StockPositionScreen()));
+                  },
+                ),
+              ]),
+
+              const SizedBox(height: 30),
+
+              // 🔸 Setup Section
+              _buildSectionTitle("🧩 Setup"),
+              const SizedBox(height: 14),
+              _buildCardGrid([
+                DashboardCard(
+                  icon: Icons.add_business_rounded,
+                  title: "Define Supplier",
+                  color: Colors.limeAccent,
+                  onTap: () {},
+                ),
+              ]),
+
+              const SizedBox(height: 40),
             ],
           ),
         ),
-
       ),
+    );
+  }
 
+  Widget _buildSectionTitle(String title) {
+    return Text(
+      title,
+      style: const TextStyle(
+        fontSize: 20,
+        fontWeight: FontWeight.bold,
+        color: Color(0xFF333333),
+      ),
+    );
+  }
+
+  Widget _buildCardGrid(List<DashboardCard> cards) {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        int crossAxisCount = constraints.maxWidth > 600 ? 3 : 2;
+        return GridView.count(
+          crossAxisCount: crossAxisCount,
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          crossAxisSpacing: 16,
+          mainAxisSpacing: 16,
+          childAspectRatio: 1.2,
+          children: cards,
+        );
+      },
+    );
+  }
+}
+
+// 🔹 Individual Glass Card Component
+class DashboardCard extends StatelessWidget {
+  final IconData icon;
+  final String title;
+  final Color color;
+  final VoidCallback onTap;
+
+  const DashboardCard({
+    super.key,
+    required this.icon,
+    required this.title,
+    required this.color,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: TweenAnimationBuilder<double>(
+        duration: const Duration(milliseconds: 200),
+        tween: Tween(begin: 1.0, end: 1.0),
+        builder: (context, scale, _) {
+          return AnimatedScale(
+            scale: scale,
+            duration: const Duration(milliseconds: 150),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(25),
+              child: BackdropFilter(
+                filter: ImageFilter.blur(sigmaX: 15, sigmaY: 15),
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.4),
+                    border: Border.all(color: Colors.white.withOpacity(0.2)),
+                    borderRadius: BorderRadius.circular(25),
+                    // boxShadow: [
+                    //   BoxShadow(
+                    //     color: color.withOpacity(0.4),
+                    //     blurRadius: 12,
+                    //     spreadRadius: 2,
+                    //     offset: const Offset(0, 3),
+                    //   ),
+                    // ],
+                  ),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(icon, size: 40, color: color),
+                      const SizedBox(height: 10),
+                      Text(
+                        title,
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(
+                          fontWeight: FontWeight.w600,
+                          color: Colors.black87,
+                          fontSize: 15,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          );
+        },
+      ),
     );
   }
 }

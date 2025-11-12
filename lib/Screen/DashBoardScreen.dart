@@ -156,7 +156,7 @@ class _DashboardscreenState extends State<Dashboardscreen> {
               leading: const Icon(Icons.shop, color: Color(0xFF5B86E5)),
               title: const Text('Purchase'),
               onTap: () {
-                Navigator.push(context, MaterialPageRoute(builder: (context)=>PurchaseScreen()));
+                Navigator.push(context, MaterialPageRoute(builder: (context)=>PurchaseDashboard()));
 
               },
             ),

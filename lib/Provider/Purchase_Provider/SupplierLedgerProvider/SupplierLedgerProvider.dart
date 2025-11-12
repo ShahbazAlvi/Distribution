@@ -1,30 +1,43 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'dart:convert';
 
+
+import '../../../ApiLink/ApiEndpoint.dart';
 import '../../../model/Purchase_Model/SupplierLedgerModel/SupplierLedgerModel.dart';
 
-class SuppliersLedgerProvider extends ChangeNotifier {
-  List<SupplierLedgerData> ledgerData = [];
+class SupplierLedgerProvider extends ChangeNotifier {
   bool loading = false;
+  List<SupplierLedgerData> ledgerList = [];
 
-  Future<void> fetchSupplierLedger(
-      String supplierId, String from, String to) async {
+  Future<void> fetchSupplierLedger({
+    required String supplierId,
+    required String fromDate,
+    required String toDate,
+    required String token, // Authorization header
+  }) async {
     loading = true;
-    ledgerData = [];
+    ledgerList.clear();
     notifyListeners();
 
-    final url =
-        "https://distribution-backend.vercel.app/api/supplier-ledger?supplier=$supplierId&from=$from&to=$to";
+    try {
+      final url = Uri.parse(
+          "${ApiEndpoints.baseUrl}/supplier-ledger?supplier=$supplierId&from=$fromDate&to=$toDate");
 
-    final response = await http.get(Uri.parse(url), headers: {
-      "Authorization": "Bearer YOUR_TOKEN_HERE",
-    });
+      final response = await http.get(
+        url,
+        headers: {"Authorization": "Bearer $token"},
+      );
 
-    if (response.statusCode == 200) {
-      final jsonData = json.decode(response.body);
-      final model = SupplierLedgerDetailModel.fromJson(jsonData);
-      ledgerData = model.data;
+      if (response.statusCode == 200) {
+        final jsonData = jsonDecode(response.body);
+        final data = SupplierLedgerDetailModel.fromJson(jsonData);
+        ledgerList = data.data;
+      } else {
+        print("❌ Failed: ${response.statusCode}");
+      }
+    } catch (e) {
+      print("❌ Error fetching ledger: $e");
     }
 
     loading = false;

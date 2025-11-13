@@ -231,7 +231,7 @@ class PurchaseDashboard extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(vertical: 30, horizontal: 20),
                 decoration: BoxDecoration(
                   gradient: const LinearGradient(
-                    colors: [Color(0xFF667EEA), Color(0xFF764BA2)],
+                    colors: [AppColors.secondary, AppColors.primary],
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
                   ),

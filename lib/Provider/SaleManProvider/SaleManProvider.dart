@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:distribution/ApiLink/ApiEndpoint.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
 
 import '../../model/SaleManModel/EmployeesModel.dart';
 import '../../model/SaleManModel/SaleManModel.dart';
@@ -16,6 +17,27 @@ class SaleManProvider with ChangeNotifier {
   List<EmployeeData>get employees=>_employees;
   bool get isLoading => _isLoading;
   String? get error => _error;
+
+  final TextEditingController nameController=TextEditingController();
+  final TextEditingController departmentController=TextEditingController();
+  final TextEditingController addressController=TextEditingController();
+  final TextEditingController cityController=TextEditingController();
+  final TextEditingController phoneController=TextEditingController();
+  final TextEditingController nicController=TextEditingController();
+  final TextEditingController qualificationController=TextEditingController();
+  final TextEditingController bloodController=TextEditingController();
+  String gender = "";
+  DateTime? dateOfBirth;
+
+  void setGender(String value) {
+    gender = value;
+    notifyListeners();
+  }
+
+  void setDateOfBirth(DateTime date) {
+    dateOfBirth = date;
+    notifyListeners();
+  }
 
   Future<void> fetchSalesmen() async {
     _isLoading = true;
@@ -71,4 +93,79 @@ class SaleManProvider with ChangeNotifier {
     _employees.removeWhere((e) => e.id == id);
     notifyListeners();
   }
+
+  Future<void> createEmployee(BuildContext context) async {
+    final url = Uri.parse("${ApiEndpoints.baseUrl}/employees");
+
+    try {
+      final body = {
+        "departmentName": departmentController.text.trim(),
+        "employeeName": nameController.text.trim(),
+        "address": addressController.text.trim(),
+        "city": cityController.text.trim(),
+        "gender": gender,
+        "mobile": phoneController.text.trim(),
+        "nicNo": nicController.text.trim(),
+        "dob": dateOfBirth != null
+            ? DateFormat('dd-MM-yyyy').format(dateOfBirth!)
+            : "",
+        "qualification": qualificationController.text.trim(),
+        "bloodGroup": bloodController.text.trim(),
+        "isEnable": true
+      };
+
+      final headers = {
+        "Content-Type": "application/json",
+        "Authorization":
+        "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4ZjYyZmViNGM4MTQ0MTY0YjJkYTk1OCIsImlzQWRtaW4iOnRydWUsInJvbGUiOiJhZG1pbiIsImlhdCI6MTc2MzAxNDQxNiwiZXhwIjoxNzYzMTg3MjE2fQ.Vtt4CpUAk34Gj-Yxz5uGy8UFuXGiiFstMHPpfZu6kmo",
+      };
+
+      _isLoading = true;
+      notifyListeners();
+
+      final response = await http.post(
+        url,
+        headers: headers,
+        body: jsonEncode(body),
+      );
+
+      _isLoading = false;
+      notifyListeners();
+
+      if (response.statusCode == 201 || response.statusCode == 200) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("✅ Employee added successfully!")),
+        );
+
+        // Clear fields
+        clearFields();
+        fetchEmployees(); // refresh list
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("❌ Failed: ${response.body}")),
+        );
+      }
+    } catch (e) {
+      _isLoading = false;
+      notifyListeners();
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("⚠️ Error: $e")),
+      );
+    }
+  }
+
+  void clearFields() {
+    nameController.clear();
+    departmentController.clear();
+    addressController.clear();
+    cityController.clear();
+    phoneController.clear();
+    nicController.clear();
+    qualificationController.clear();
+    bloodController.clear();
+    gender = "";
+    dateOfBirth = null;
+    notifyListeners();
+  }
+
 }

@@ -1,0 +1,67 @@
+import 'dart:convert';
+import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+
+import '../../model/ProductModel/ItemTypeModel.dart';
+
+
+class ItemTypeProvider extends ChangeNotifier {
+  List<ItemTypeModel> _itemTypes = [];
+  bool loading = false;
+
+  List<ItemTypeModel> get itemTypes => _itemTypes;
+
+  Future<void> fetchItemTypes() async {
+    loading = true;
+    notifyListeners();
+
+    final url = Uri.parse('https://distribution-backend.vercel.app/api/item-type');
+
+    try {
+      final response = await http.get(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          // 'Authorization': 'Bearer YOUR_TOKEN_HERE' // if required later
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+
+        if (data is List) {
+          _itemTypes = data.map((e) => ItemTypeModel.fromJson(e)).toList();
+        } else if (data['data'] != null) {
+          _itemTypes = (data['data'] as List)
+              .map((e) => ItemTypeModel.fromJson(e))
+              .toList();
+        }
+      } else {
+        debugPrint("Failed to load item types: ${response.statusCode}");
+      }
+    } catch (e) {
+      debugPrint("Error fetching item types: $e");
+    }
+
+    loading = false;
+    notifyListeners();
+  }
+
+  Future<void> deleteItemType(String id) async {
+    final url =
+    Uri.parse('https://distribution-backend.vercel.app/api/item-type/$id');
+
+    try {
+      final response = await http.delete(url);
+
+      if (response.statusCode == 200) {
+        _itemTypes.removeWhere((item) => item.id == id);
+        notifyListeners();
+      } else {
+        debugPrint("Failed to delete item: ${response.statusCode}");
+      }
+    } catch (e) {
+      debugPrint("Delete error: $e");
+    }
+  }
+}

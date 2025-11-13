@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 
 import '../../../Provider/Purchase_Provider/GRNProvider/GRN_Provider.dart';
 import '../../../compoents/AppColors.dart';
+import 'AddGRNScreen.dart';
 
 class GRNScreen extends StatefulWidget {
   const GRNScreen({super.key});
@@ -41,6 +42,50 @@ class _GRNScreenState extends State<GRNScreen> {
               letterSpacing: 1.2,
             )),
         ),
+        actions: [
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+            child: ElevatedButton.icon(
+              // Inside your ElevatedButton.icon onPressed:
+              onPressed: () {
+                final provider = Provider.of<GRNProvider>(context, listen: false);
+
+                String nextGrnId = "GRN-001"; // Default
+
+                if (provider.grnList.isNotEmpty) {
+                  final allNumbers = provider.grnList.map((grn) {
+                    final regex = RegExp(r'GRN-(\d+)$');
+                    final match = regex.firstMatch(grn.grnId);
+                    return match != null ? int.parse(match.group(1)!) : 0;
+                  }).toList();
+
+                  final maxNum = allNumbers.reduce((a, b) => a > b ? a : b);
+                  nextGrnId = "GRN-${(maxNum + 1).toString().padLeft(3, '0')}";
+                }
+
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => AddGRNScreen(nextGrnId: nextGrnId),
+                  ),
+                );
+              },
+
+              icon: const Icon(Icons.add_circle_outline, color: Colors.white),
+              label: const Text(
+                "Add GRN",
+                style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+              ),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.transparent,
+                shadowColor: Colors.transparent,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20),
+                ),
+              ),
+            ),
+          ),
+        ],
         centerTitle: true,
         elevation: 6,
         flexibleSpace: Container(

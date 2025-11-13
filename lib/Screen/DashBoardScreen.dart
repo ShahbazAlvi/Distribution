@@ -148,7 +148,7 @@ class _DashboardscreenState extends State<Dashboardscreen> {
               leading: const Icon(Icons.sell, color: Color(0xFF5B86E5)),
               title: const Text('Sales'),
               onTap: () {
-                Navigator.push(context, MaterialPageRoute(builder: (context)=>SalesScreen()));
+                Navigator.push(context, MaterialPageRoute(builder: (context)=>SalesDashboard()));
                 
               },
             ),

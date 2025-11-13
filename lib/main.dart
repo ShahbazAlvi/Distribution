@@ -12,7 +12,10 @@ import 'Provider/CreditAgingReportProvider/AgingProvider.dart';
 import 'Provider/CustomerLedgerProvider/LedgerProvider.dart';
 import 'Provider/CustomerProvider/CustomerProvider.dart';
 import 'Provider/OrderTakingProvider/OrderTakingProvider.dart';
+import 'Provider/ProductProvider/ItemCategoriesProvider.dart';
 import 'Provider/ProductProvider/ItemListsProvider.dart';
+import 'Provider/ProductProvider/ItemTypeProvider.dart';
+import 'Provider/ProductProvider/ItemUnitProvider.dart';
 import 'Provider/Purchase_Provider/DateWisePurchaseProvider/DateWisePurchaseProvider.dart';
 import 'Provider/Purchase_Provider/GRNProvider/GRN_Provider.dart';
 import 'Provider/Purchase_Provider/PayaAmountProvider/PayaAmountProvider.dart';
@@ -71,6 +74,9 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => ItemWisePurchaseProvider()),
         ChangeNotifierProvider(create: (_)=>StockPositionProvider()),
         ChangeNotifierProvider(create: (_)=>PayableAmountProvider()),
+        ChangeNotifierProvider(create: (_) => CategoriesProvider()),
+        ChangeNotifierProvider(create: (_) => ItemTypeProvider()),
+        ChangeNotifierProvider(create: (_) => ItemUnitProvider()),
 
 
       ],

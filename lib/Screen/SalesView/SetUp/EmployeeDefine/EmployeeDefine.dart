@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import '../../../../Provider/SaleManProvider/SaleManProvider.dart';
 import '../../../../compoents/AppColors.dart';
 import '../../../../model/SaleManModel/EmployeesModel.dart';
+import 'EmployeeAddScreen.dart';
 
 
 class EmployeesScreen extends StatefulWidget {
@@ -52,7 +53,7 @@ class _EmployeesScreenState extends State<EmployeesScreen> {
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
             child: ElevatedButton.icon(
               onPressed: () {
-                // Navigator.push(context,MaterialPageRoute(builder:(context)=>AddCustomerScreen()));
+                 Navigator.push(context,MaterialPageRoute(builder:(context)=>EmployeeAddScreen()));
               },
               icon: const Icon(Icons.add_circle_outline, color: Colors.white),
               label: const Text(

@@ -51,4 +51,33 @@ class ItemUnitProvider extends ChangeNotifier {
       debugPrint("Error deleting unit: $e");
     }
   }
+  Future<void> addItemUnit({
+    required String unitName,
+    required String description,
+    required String token,
+  }) async {
+    try {
+      final response = await http.post(
+        Uri.parse('https://distribution-backend.vercel.app/api/item-unit'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+        body: json.encode({
+          "unitName": unitName,
+          "description": description,
+        }),
+      );
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        // Refresh the list after adding
+        await fetchItemUnits();
+      } else {
+        debugPrint('Failed to add unit: ${response.body}');
+      }
+    } catch (e) {
+      debugPrint('Error adding unit: $e');
+    }
+  }
+
 }

@@ -6,6 +6,7 @@ import 'package:distribution/Screen/dashBoardView/recoverienChart.dart';
 import 'package:flutter/material.dart';
 
 import 'Auth/LoginScreen.dart';
+import 'Bank/BankDefine/BanksDefineScreen.dart';
 
 class Dashboardscreen extends StatefulWidget {
   const Dashboardscreen({super.key});
@@ -157,6 +158,14 @@ class _DashboardscreenState extends State<Dashboardscreen> {
               title: const Text('Purchase'),
               onTap: () {
                 Navigator.push(context, MaterialPageRoute(builder: (context)=>PurchaseDashboard()));
+
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.account_balance, color: Color(0xFF5B86E5)),
+              title: const Text('Bank'),
+              onTap: () {
+                Navigator.push(context, MaterialPageRoute(builder: (context)=>BanksDefineScreen()));
 
               },
             ),

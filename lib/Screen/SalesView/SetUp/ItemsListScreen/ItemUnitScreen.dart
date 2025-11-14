@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../../Provider/ProductProvider/ItemUnitProvider.dart';
 import '../../../../compoents/AppColors.dart';
@@ -15,10 +16,79 @@ class ItemUnitScreen extends StatefulWidget {
 
 class _ItemUnitScreenState extends State<ItemUnitScreen> {
   @override
+  @override
   void initState() {
     super.initState();
-    Provider.of<ItemUnitProvider>(context, listen: false).fetchItemUnits();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Provider.of<ItemUnitProvider>(context, listen: false).fetchItemUnits();
+    });
   }
+
+  void _showAddItemUnitDialog() {
+    final TextEditingController unitNameCtrl = TextEditingController();
+    final TextEditingController descCtrl = TextEditingController();
+
+    showDialog(
+      context: context,
+      builder: (context) => StatefulBuilder(
+        builder: (context, setState) => AlertDialog(
+          title: const Text('Add Item Unit'),
+          content: SizedBox(
+            height: 150,
+            child: Column(
+              children: [
+                TextField(
+                  controller: unitNameCtrl,
+                  decoration: const InputDecoration(
+                    hintText: 'Enter Unit Name',
+                  ),
+                ),
+                const SizedBox(height: 16),
+                TextField(
+                  controller: descCtrl,
+                  decoration: const InputDecoration(
+                    hintText: 'Enter Description',
+                  ),
+                ),
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('Cancel'),
+            ),
+            ElevatedButton(
+              onPressed: () async {
+                if (unitNameCtrl.text.trim().isEmpty) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Unit Name is required')),
+                  );
+                  return;
+                }
+
+                final prefs = await SharedPreferences.getInstance();
+                final token = prefs.getString('token');
+                if (token == null) return;
+
+                await Provider.of<ItemUnitProvider>(context, listen: false)
+                    .addItemUnit(
+                  unitName: unitNameCtrl.text.trim(),
+                  description: descCtrl.text.trim(),
+                  token: token,
+                );
+
+                Navigator.pop(context); // Close dialog
+              },
+              child: const Text('Save'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -41,6 +111,7 @@ class _ItemUnitScreenState extends State<ItemUnitScreen> {
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
             child: ElevatedButton.icon(
               onPressed: () {
+                _showAddItemUnitDialog();
                 // Navigator.push(context,MaterialPageRoute(builder:(context)=>AddCustomerScreen()));
               },
               icon: const Icon(Icons.add_circle_outline, color: Colors.white),

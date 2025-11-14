@@ -1,22 +1,11 @@
-import 'package:flutter/material.dart';
-
-import '../../compoents/AppColors.dart';
-import '../SalesView/AnimationCard.dart';
-import 'DateWisePurchaseScreen/DateWisePurchaseScreen.dart';
-import 'GRNScreen/GRN_Screen.dart';
-import 'ItemWisePurchase/ItemWisePurchaseScreen.dart';
-import 'ItemWisePurchaseScreen/ItemWisePurchaseScreen.dart';
-import 'PayableAmountScreen/PayableAmountScreen.dart';
-import 'Payment_Supplier_Screen/PaymentSupplierScreen.dart';
-import 'StockPositionScreen/StockPositionScreen.dart';
-import 'SupplierLedgerScreen/SupplierLedgerScreen.dart';
-import 'SupplierWisePurchaseScreen/SupplierWisePurchaseScreen.dart';
-
 import 'dart:ui';
+import 'package:distribution/Screen/Bank/BankDefine/BankList/BankListScreen.dart';
 import 'package:flutter/material.dart';
 
-class PurchaseDashboard extends StatelessWidget {
-  const PurchaseDashboard({super.key});
+import '../../../compoents/AppColors.dart';
+
+class BanksDefineScreen extends StatelessWidget {
+  const BanksDefineScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -51,7 +40,7 @@ class PurchaseDashboard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      "Purchase Dashboard",
+                      "Bank Dashboard",
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: 26,
@@ -61,7 +50,7 @@ class PurchaseDashboard extends StatelessWidget {
                     ),
                     SizedBox(height: 8),
                     Text(
-                      "Manage purchases, ledgers, and suppliers in one place",
+                      "Manage balance, ledgers, and suppliers in one place",
                       style: TextStyle(color: Colors.white70, fontSize: 14),
                     ),
                   ],
@@ -71,82 +60,82 @@ class PurchaseDashboard extends StatelessWidget {
               const SizedBox(height: 28),
 
               // 🔸 Functionalities Section
-              _buildSectionTitle("⚙️ Functionalities"),
-              const SizedBox(height: 14),
-              _buildCardGrid([
-                DashboardCard(
-                  icon: Icons.receipt_long_rounded,
-                  title: "GRN",
-                  color: Colors.tealAccent,
-                  onTap: () {
-                    Navigator.push(context, MaterialPageRoute(builder: (context)=>GRNScreen()));
-                  },
-                ),
-                DashboardCard(
-                  icon: Icons.attach_money_rounded,
-                  title: "Payment to Supplier",
-                  color: Colors.amberAccent,
-                  onTap: () {
-                    Navigator.push(context, MaterialPageRoute(builder: (context)=>PaymentToSupplierScreen()));
-                  },
-                ),
-              ]),
+              // _buildSectionTitle("⚙️ Functionalities"),
+              // const SizedBox(height: 14),
+              // _buildCardGrid([
+              //   DashboardCard(
+              //     icon: Icons.receipt_long_rounded,
+              //     title: "GRN",
+              //     color: Colors.tealAccent,
+              //     onTap: () {
+              //
+              //     },
+              //   ),
+              //   DashboardCard(
+              //     icon: Icons.attach_money_rounded,
+              //     title: "Payment to Supplier",
+              //     color: Colors.amberAccent,
+              //     onTap: () {
+              //
+              //     },
+              //   ),
+              // ]),
 
-              const SizedBox(height: 30),
-
-              // 🔸 Reports Section
-              _buildSectionTitle("📊 Reports"),
-              const SizedBox(height: 14),
-              _buildCardGrid([
-                DashboardCard(
-                  icon: Icons.account_balance_wallet_rounded,
-                  title: "Amount Payable",
-                  color: Colors.pinkAccent,
-                  onTap: () {
-                    Navigator.push(context,MaterialPageRoute(builder: (context)=>PayableAmountScreen()));
-                  },
-                ),
-                DashboardCard(
-                  icon: Icons.date_range_rounded,
-                  title: "DateWise Purchase",
-                  color: Colors.lightBlueAccent,
-                  onTap: () {
-                    Navigator.push(context, MaterialPageRoute(builder: (context)=>DatewisePurchaseScreen()));
-                  },
-                ),
-                DashboardCard(
-                  icon: Icons.shopping_bag_rounded,
-                  title: "ItemsWise Purchase",
-                  color: Colors.orangeAccent,
-                  onTap: () {
-                    Navigator.push(context,MaterialPageRoute(builder: (context)=>ItemWisePurchaseScreen()));
-                  },
-                ),
-                DashboardCard(
-                  icon: Icons.people_alt_rounded,
-                  title: "Supplier Ledger",
-                  color: Colors.greenAccent,
-                  onTap: () {
-                    Navigator.push(context,MaterialPageRoute(builder: (context)=>SupplierLedgerScreen()));
-                  },
-                ),
-                DashboardCard(
-                  icon: Icons.person_pin_rounded,
-                  title: "SupplierWise Purchase",
-                  color: Colors.cyanAccent,
-                  onTap: () {
-                    Navigator.push(context, MaterialPageRoute(builder: (context)=>SupplierwisePurchaseScreen()));
-                  },
-                ),
-                DashboardCard(
-                  icon: Icons.equalizer_rounded,
-                  title: "Stock Position",
-                  color: Colors.purpleAccent,
-                  onTap: () {
-                    Navigator.push(context,MaterialPageRoute(builder: (context)=>StockPositionScreen()));
-                  },
-                ),
-              ]),
+              // const SizedBox(height: 30),
+              //
+              // // 🔸 Reports Section
+              // _buildSectionTitle("📊 Reports"),
+              // const SizedBox(height: 14),
+              // _buildCardGrid([
+              //   DashboardCard(
+              //     icon: Icons.account_balance_wallet_rounded,
+              //     title: "Amount Payable",
+              //     color: Colors.pinkAccent,
+              //     onTap: () {
+              //
+              //     },
+              //   ),
+              //   DashboardCard(
+              //     icon: Icons.date_range_rounded,
+              //     title: "DateWise Purchase",
+              //     color: Colors.lightBlueAccent,
+              //     onTap: () {
+              //
+              //     },
+              //   ),
+              //   DashboardCard(
+              //     icon: Icons.shopping_bag_rounded,
+              //     title: "ItemsWise Purchase",
+              //     color: Colors.orangeAccent,
+              //     onTap: () {
+              //
+              //     },
+              //   ),
+              //   DashboardCard(
+              //     icon: Icons.people_alt_rounded,
+              //     title: "Supplier Ledger",
+              //     color: Colors.greenAccent,
+              //     onTap: () {
+              //
+              //     },
+              //   ),
+              //   DashboardCard(
+              //     icon: Icons.person_pin_rounded,
+              //     title: "SupplierWise Purchase",
+              //     color: Colors.cyanAccent,
+              //     onTap: () {
+              //
+              //     },
+              //   ),
+              //   DashboardCard(
+              //     icon: Icons.equalizer_rounded,
+              //     title: "Stock Position",
+              //     color: Colors.purpleAccent,
+              //     onTap: () {
+              //
+              //     },
+              //   ),
+              // ]),
 
               const SizedBox(height: 30),
 
@@ -155,10 +144,12 @@ class PurchaseDashboard extends StatelessWidget {
               const SizedBox(height: 14),
               _buildCardGrid([
                 DashboardCard(
-                  icon: Icons.add_business_rounded,
-                  title: "Define Supplier",
-                  color: Colors.limeAccent,
-                  onTap: () {},
+                  icon: Icons.account_balance,
+                  title: "Bank Define",
+                  color: Colors.black,
+                  onTap: () {
+                    Navigator.push(context,MaterialPageRoute(builder: (context)=>BankListScreen()));
+                  },
                 ),
               ]),
 

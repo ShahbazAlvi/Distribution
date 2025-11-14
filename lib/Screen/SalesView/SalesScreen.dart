@@ -370,18 +370,18 @@ class SalesDashboard extends StatelessWidget {
                     Navigator.push(context, MaterialPageRoute(builder: (_) => const SalessScreen()));
                   },
                 ),
-                DashboardCard(
-                  icon: Icons.wallet,
-                  title: "Cash Deposit",
-                  color: Colors.greenAccent,
-                  onTap: () {},
-                ),
-                DashboardCard(
-                  icon: Icons.cloud_upload_rounded,
-                  title: "Load Return",
-                  color: Colors.orangeAccent,
-                  onTap: () {},
-                ),
+                // DashboardCard(
+                //   icon: Icons.wallet,
+                //   title: "Cash Deposit",
+                //   color: Colors.greenAccent,
+                //   onTap: () {},
+                // ),
+                // DashboardCard(
+                //   icon: Icons.cloud_upload_rounded,
+                //   title: "Load Return",
+                //   color: Colors.orangeAccent,
+                //   onTap: () {},
+                // ),
               ]),
 
               const SizedBox(height: 30),
@@ -484,12 +484,12 @@ class SalesDashboard extends StatelessWidget {
                     Navigator.push(context, MaterialPageRoute(builder: (_) => const EmployeesScreen()));
                   },
                 ),
-                DashboardCard(
-                  icon: Icons.local_shipping,
-                  title: "Vehicle Information",
-                  color: Colors.blueAccent,
-                  onTap: () {},
-                ),
+                // DashboardCard(
+                //   icon: Icons.local_shipping,
+                //   title: "Vehicle Information",
+                //   color: Colors.blueAccent,
+                //   onTap: () {},
+                // ),
                 DashboardCard(
                   icon: Icons.store_rounded,
                   title: "Supplier",

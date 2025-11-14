@@ -1,6 +1,8 @@
 import 'dart:convert';
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../model/ProductModel/itemsdetailsModel.dart';
 
@@ -8,6 +10,7 @@ import '../../model/ProductModel/itemsdetailsModel.dart';
 class ItemDetailsProvider with ChangeNotifier {
   List<ItemDetails> items = [];
   bool isLoading = false;
+  String? errorMessage;
 
   String baseUrl = "https://distribution-backend.vercel.app/api/item-details";
   String token = "";   // ✅ Put your token here
@@ -60,4 +63,87 @@ class ItemDetailsProvider with ChangeNotifier {
       print("Delete error: $e");
     }
   }
+  String getNextItemId() {
+    if (items.isEmpty) {
+      return "001"; // first item
+    }
+
+    // get last itemId (convert to int)
+    List<int> ids = items
+        .map((e) => int.tryParse(e.itemId) ?? 0)
+        .toList()
+      ..sort();
+
+    int nextId = ids.last + 1;
+
+    // format 3 digits (001, 002, 010...)
+    return nextId.toString().padLeft(3, "0");
+  }
+
+  Future<String?> getToken() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getString("token");
+  }
+
+  Future<bool> addItem({
+    required String itemId,
+    required String itemName,
+    required String itemCategory,
+    required String itemType,
+    required String itemUnit,
+    required String perUnit,
+    required String reorder,
+    required String itemKind,
+    required File itemImage,
+  }) async {
+    isLoading = true;
+    errorMessage = null;
+    notifyListeners();
+
+    final token = await getToken();
+    if (token == null) {
+      errorMessage = "Token not found";
+      isLoading = false;
+      notifyListeners();
+      return false;
+    }
+
+    final uri = Uri.parse("https://distribution-backend.vercel.app/api/item-details");
+    final request = http.MultipartRequest("POST", uri);
+
+    request.headers['Authorization'] = 'Bearer $token';
+    request.fields['itemId'] = itemId;
+    request.fields['itemName'] = itemName;
+    request.fields['itemCategory'] = itemCategory;
+    request.fields['itemType'] = itemType;
+    request.fields['itemUnit'] = itemUnit;
+    request.fields['perUnit'] = perUnit;
+    request.fields['reorder'] = reorder;
+    request.fields['itemKind'] = 'Finished Goods';
+    request.fields['isEnable'] = "true";
+
+    request.files.add(await http.MultipartFile.fromPath('itemImage', itemImage.path));
+
+    try {
+      final response = await request.send();
+      final resBody = await response.stream.bytesToString();
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        isLoading = false;
+        notifyListeners();
+        return true;
+      } else {
+        errorMessage = "Failed: $resBody";
+        print(resBody);
+      }
+    } catch (e) {
+      errorMessage = "Error: $e";
+      print(e);
+    }
+
+    isLoading = false;
+    notifyListeners();
+    return false;
+  }
+
 }

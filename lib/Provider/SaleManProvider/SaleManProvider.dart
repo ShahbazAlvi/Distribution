@@ -3,6 +3,7 @@ import 'package:distribution/ApiLink/ApiEndpoint.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../model/SaleManModel/EmployeesModel.dart';
 import '../../model/SaleManModel/SaleManModel.dart';
@@ -95,6 +96,14 @@ class SaleManProvider with ChangeNotifier {
   }
 
   Future<void> createEmployee(BuildContext context) async {
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString('token'); // Get the token
+    if (token == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("⚠️ Token not found! Please login again.")),
+      );
+      return;
+    }
     final url = Uri.parse("${ApiEndpoints.baseUrl}/employees");
 
     try {
@@ -116,8 +125,7 @@ class SaleManProvider with ChangeNotifier {
 
       final headers = {
         "Content-Type": "application/json",
-        "Authorization":
-        "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4ZjYyZmViNGM4MTQ0MTY0YjJkYTk1OCIsImlzQWRtaW4iOnRydWUsInJvbGUiOiJhZG1pbiIsImlhdCI6MTc2MzAxNDQxNiwiZXhwIjoxNzYzMTg3MjE2fQ.Vtt4CpUAk34Gj-Yxz5uGy8UFuXGiiFstMHPpfZu6kmo",
+        "Authorization": "Bearer $token",
       };
 
       _isLoading = true;
@@ -141,6 +149,7 @@ class SaleManProvider with ChangeNotifier {
         clearFields();
         fetchEmployees(); // refresh list
       } else {
+        print("${response.body}");
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text("❌ Failed: ${response.body}")),
         );

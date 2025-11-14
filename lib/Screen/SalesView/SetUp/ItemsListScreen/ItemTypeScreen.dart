@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../../Provider/ProductProvider/ItemTypeProvider.dart';
 import '../../../../compoents/AppColors.dart';
+import '../../../../compoents/ItemCategoriesDropDown.dart';
 
 
 class ItemTypeScreen extends StatefulWidget {
@@ -16,8 +18,81 @@ class _ItemTypeScreenState extends State<ItemTypeScreen> {
   @override
   void initState() {
     super.initState();
-    Provider.of<ItemTypeProvider>(context, listen: false).fetchItemTypes();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Provider.of<ItemTypeProvider>(context, listen: false).fetchItemTypes();
+    });
   }
+
+  void _showAddItemTypeDialog() async {
+    final TextEditingController itemTypeCtrl = TextEditingController();
+    String? selectedCategoryId;
+
+    showDialog(
+      context: context,
+      builder: (context) => StatefulBuilder(
+        builder: (context, setState) => AlertDialog(
+          title: const Text('Add Item Type'),
+          content: SizedBox(
+            height: 150,
+            child: Column(
+              children: [
+                // Category dropdown
+                CategoriesDropdown(
+                  selectedId: selectedCategoryId,
+                  onChanged: (id) {
+                    setState(() {
+                      selectedCategoryId = id; // Update selected value
+                    });
+                  },
+                ),
+                const SizedBox(height: 16),
+
+                // Item type name
+                TextField(
+                  controller: itemTypeCtrl,
+                  decoration: const InputDecoration(
+                    hintText: 'Enter Item Type Name',
+                  ),
+                ),
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('Cancel'),
+            ),
+            ElevatedButton(
+              onPressed: () async {
+                if (selectedCategoryId == null || itemTypeCtrl.text.trim().isEmpty) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Please fill all fields')),
+                  );
+                  return;
+                }
+
+                final prefs = await SharedPreferences.getInstance();
+                final token = prefs.getString('token');
+                if (token == null) return;
+
+                await Provider.of<ItemTypeProvider>(context, listen: false).addItemType(
+                  categoryId: selectedCategoryId!,
+                  itemTypeName: itemTypeCtrl.text.trim(),
+                  token: token,
+                );
+
+                Navigator.pop(context); // Close dialog
+              },
+              child: const Text('Save'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -39,9 +114,7 @@ class _ItemTypeScreenState extends State<ItemTypeScreen> {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
             child: ElevatedButton.icon(
-              onPressed: () {
-                // Navigator.push(context,MaterialPageRoute(builder:(context)=>AddCustomerScreen()));
-              },
+              onPressed: _showAddItemTypeDialog,
               icon: const Icon(Icons.add_circle_outline, color: Colors.white),
               label: const Text(
                 " Add item type ",

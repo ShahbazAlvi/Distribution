@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../Provider/ProductProvider/ItemListsProvider.dart';
 import '../../../../compoents/AppColors.dart';
+import 'AddItem.dart';
 
 
 class ItemListScreen extends StatefulWidget {
@@ -39,15 +40,20 @@ class _ItemListScreenState extends State<ItemListScreen> {
         actions: [
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-            child: ElevatedButton.icon(
+            child:ElevatedButton.icon(
               onPressed: () {
-                // Navigator.push(context,MaterialPageRoute(builder:(context)=>AddCustomerScreen()));
+                final provider = Provider.of<ItemDetailsProvider>(context, listen: false);
+                final nextItemId = provider.getNextItemId();
+
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => AddItemScreen(nextItemId: nextItemId),
+                  ),
+                );
               },
-              icon: const Icon(Icons.add_circle_outline, color: Colors.white),
-              label: const Text(
-                "Add Items",
-                style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-              ),
+              icon: Icon(Icons.add_circle_outline, color: Colors.white),
+              label: Text("Add Items", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),),
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.transparent,
                 shadowColor: Colors.transparent,
@@ -55,7 +61,8 @@ class _ItemListScreenState extends State<ItemListScreen> {
                   borderRadius: BorderRadius.circular(20),
                 ),
               ),
-            ),
+            )
+
           ),
         ],
         centerTitle: true,

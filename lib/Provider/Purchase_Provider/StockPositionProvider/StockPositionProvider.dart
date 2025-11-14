@@ -32,6 +32,11 @@ class StockPositionProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  int get totalStockValue =>
-      stockItems.fold(0, (sum, item) => sum + item.totalAmount);
+  // int get totalStockValue =>
+  //     stockItems.fold(0, (sum, item) => sum + item.totalAmount);
+  double get totalStockValue => stockItems.fold(
+    0,
+        (sum, item) => sum + ((item.stock ?? 0) * (item.purchase ?? 0)),
+  );
+
 }

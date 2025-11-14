@@ -66,4 +66,31 @@ class CategoriesProvider extends ChangeNotifier {
       debugPrint("Delete Error: $e");
     }
   }
+  Future<void> addCategory(String name, String token) async {
+    final url = Uri.parse('https://distribution-backend.vercel.app/api/categories');
+
+    try {
+      final response = await http.post(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+        body: json.encode({
+          'categoryName': name,
+          'isEnable': true,
+        }),
+      );
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        // Refresh categories after adding
+        await fetchCategories();
+      } else {
+        debugPrint("Add category failed: ${response.body}");
+      }
+    } catch (e) {
+      debugPrint("Error adding category: $e");
+    }
+  }
+
 }

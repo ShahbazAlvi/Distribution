@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../../../Provider/ProductProvider/ItemCategoriesProvider.dart';
 import '../../../../compoents/AppColors.dart';
 
@@ -11,10 +12,63 @@ class CategoriesScreen extends StatefulWidget {
 }
 
 class _CategoriesScreenState extends State<CategoriesScreen> {
+  final TextEditingController _categoryCtrl = TextEditingController();
+  @override
+  // void initState() {
+  //   super.initState();
+  //   Provider.of<CategoriesProvider>(context, listen: false).fetchCategories();
+  // }
   @override
   void initState() {
     super.initState();
-    Provider.of<CategoriesProvider>(context, listen: false).fetchCategories();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Provider.of<CategoriesProvider>(context, listen: false).fetchCategories();
+    });
+  }
+
+  Future<String?> getToken() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString('token');
+  }
+
+  void _showAddCategoryDialog() async {
+    _categoryCtrl.clear();
+
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Add Category'),
+        content: TextField(
+          controller: _categoryCtrl,
+          decoration: const InputDecoration(
+            hintText: 'Enter category name',
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancel'),
+          ),
+          ElevatedButton(
+            onPressed: () async {
+              final name = _categoryCtrl.text.trim();
+              if (name.isEmpty) return;
+
+              final token = await getToken();
+              if (token == null) return;
+
+              // Call provider to add category
+              await Provider.of<CategoriesProvider>(context, listen: false)
+                  .addCategory(name, token);
+
+              Navigator.pop(context); // Close dialog
+            },
+            child: const Text('Save'),
+          ),
+        ],
+      ),
+    );
   }
 
   @override
@@ -37,9 +91,7 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
             child: ElevatedButton.icon(
-              onPressed: () {
-                // Navigator.push(context,MaterialPageRoute(builder:(context)=>AddCustomerScreen()));
-              },
+              onPressed: _showAddCategoryDialog,
               icon: const Icon(Icons.add_circle_outline, color: Colors.white),
               label: const Text(
                 " Add Category",

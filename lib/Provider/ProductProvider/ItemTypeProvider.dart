@@ -64,4 +64,35 @@ class ItemTypeProvider extends ChangeNotifier {
       debugPrint("Delete error: $e");
     }
   }
+  Future<void> addItemType({
+    required String categoryId,
+    required String itemTypeName,
+    required String token,
+  }) async {
+    final url = Uri.parse('https://distribution-backend.vercel.app/api/item-type');
+
+    try {
+      final response = await http.post(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+        body: json.encode({
+          'categoryId': categoryId,
+          'itemTypeName': itemTypeName,
+        }),
+      );
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        await fetchItemTypes(); // Refresh list
+        debugPrint('Item type added successfully');
+      } else {
+        debugPrint('Failed to add item type: ${response.body}');
+      }
+    } catch (e) {
+      debugPrint('Error adding item type: $e');
+    }
+  }
+
 }

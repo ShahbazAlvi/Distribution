@@ -1,3 +1,4 @@
+import 'package:distribution/compoents/Customerdropdown.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -5,6 +6,7 @@ import 'package:provider/provider.dart';
 import '../../../Provider/RecoveryProvider/RecoveryProvider.dart';
 import '../../../compoents/AppColors.dart';
 import '../../../compoents/SaleManDropdown.dart';
+import '../../../model/CustomerModel/CustomerModel.dart';
 import '../../../model/SaleRecoveryModel/SaleRecoveryModel.dart';
 
 
@@ -17,7 +19,9 @@ class RecoveryListScreen extends StatefulWidget {
 
 class _RecoveryListScreenState extends State<RecoveryListScreen> {
   String? selectedDate;
-  String? selectedSalesmanId;
+  //String? selectedSalesmanId;
+  //String? selectedCustomerId;
+  CustomerModel? selectedCustomer;
 
   @override
   Widget build(BuildContext context) {
@@ -63,7 +67,7 @@ class _RecoveryListScreenState extends State<RecoveryListScreen> {
                       setState(() {});
 
                       provider.fetchRecoveryReport(
-                        selectedSalesmanId ?? "",
+                        selectedCustomer?.id ?? "",
                         selectedDate ?? "",
                       );
                     }
@@ -85,20 +89,30 @@ class _RecoveryListScreenState extends State<RecoveryListScreen> {
                 ),
 
                 const SizedBox(height: 10),
-
-                // ✅ Salesman Dropdown
-                SalesmanDropdown(
-                  selectedId: selectedSalesmanId,
-                  onChanged: (value) {
-                    selectedSalesmanId = value;
-                    setState(() {});
-
+                CustomerDropdown(
+                  selectedCustomerId: selectedCustomer?.id,
+                  onChanged: (customer) {
+                    setState(() => selectedCustomer = customer);
                     provider.fetchRecoveryReport(
-                      selectedSalesmanId ?? "",
-                      selectedDate ?? "",
-                    );
+                      selectedCustomer?.id ?? "",
+                            selectedDate ?? "",
+                          );
                   },
                 ),
+
+                // ✅ Salesman Dropdown
+                // SalesmanDropdown(
+                //   selectedId: selectedSalesmanId,
+                //   onChanged: (value) {
+                //     selectedSalesmanId = value;
+                //     setState(() {});
+                //
+                //     provider.fetchRecoveryReport(
+                //       selectedSalesmanId ?? "",
+                //       selectedDate ?? "",
+                //     );
+                //   },
+                // ),
               ],
             ),
           ),

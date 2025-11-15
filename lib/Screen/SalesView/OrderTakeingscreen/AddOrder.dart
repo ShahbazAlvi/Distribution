@@ -33,6 +33,8 @@ class AddOrderScreen extends StatefulWidget {
 
 class _AddOrderScreenState extends State<AddOrderScreen> {
   late String currentDate;
+  bool isLoading = false;
+
 
   String? selectedSalesmanId;
   CustomerModel? selectedCustomer;
@@ -183,7 +185,8 @@ class _AddOrderScreenState extends State<AddOrderScreen> {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text("Price: ${selectedProduct!.price}"),
+                  Text("Purchase: ${selectedProduct!.purchase}"),
+                  //Text("Price: ${selectedProduct!.price}"),
                   Text("Unit: ${selectedProduct!.itemUnit?.unitName}"),
                   const SizedBox(height: 8),
 
@@ -216,187 +219,6 @@ class _AddOrderScreenState extends State<AddOrderScreen> {
                       style:
                       TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
                   const SizedBox(height: 10),
-
-                  // ...orderItems.map((item) {
-                  //   final isNew = item.containsKey("product"); // ✅ NEW order added product
-                  //   String itemName;
-                  //   String unit;
-                  //   double price;
-                  //   double qty;
-                  //   double total;
-                  //
-                  //   if (isNew) {
-                  //     // ✅ New order (ItemDetails object)
-                  //     final product = item["product"] as ItemDetails;
-                  //     itemName = product.itemName;
-                  //     unit = product.itemUnit?.unitName ?? "";
-                  //     price = product.price.toDouble();
-                  //     qty = item["qty"];
-                  //     total = item["total"];
-                  //   } else {
-                  //     // ✅ Update mode (simple map)
-                  //     itemName = item["itemName"];
-                  //     unit = item["itemUnit"];
-                  //     price = item["rate"].toDouble();
-                  //     qty = item["qty"];
-                  //     total = item["totalAmount"];
-                  //   }
-                  //
-                  //   return Card(
-                  //     child: ListTile(
-                  //       title: Text(itemName),
-                  //       subtitle: Column(
-                  //         crossAxisAlignment: CrossAxisAlignment.start,
-                  //         children: [
-                  //           Text("Unit: $unit"),
-                  //           Text("Price: $price"),
-                  //           // ✅ SHOW TOTAL PRICE
-                  //
-                  //           Row(
-                  //             children: [
-                  //               const Text("Qty: "),
-                  //               SizedBox(
-                  //                 width: 60,
-                  //                 child: TextFormField(
-                  //                   initialValue: qty.toString(),
-                  //                   keyboardType: TextInputType.number,
-                  //                   onChanged: (v) {
-                  //                     setState(() {
-                  //                       final newQty = double.tryParse(v) ?? 0;
-                  //                       item["qty"] = newQty;
-                  //
-                  //                       final newTotal = newQty * price;
-                  //
-                  //                       // ✅ Update correct keys
-                  //                       item["totalAmount"] = newTotal;
-                  //                       item["total"] = newTotal;
-                  //
-                  //                       // ✅ Update local variable so UI refreshes
-                  //                       total = newTotal;
-                  //                     });
-                  //                   },
-                  //                 ),
-                  //               ),
-                  //             ],
-                  //           ),
-                  //           Text("Total: $total"),
-                  //         ],
-                  //       ),
-                  //
-                  //       trailing: IconButton(
-                  //         icon: const Icon(Icons.delete, color: Colors.red),
-                  //         onPressed: () {
-                  //           setState(() => orderItems.remove(item));
-                  //         },
-                  //       ),
-                  //     ),
-                  //   );
-                  // })
-                  // ...orderItems.map((item) {
-                  //   final isNew = item.containsKey("product");
-                  //   String itemName;
-                  //   String unit;
-                  //   double price;
-                  //   double qty;
-                  //   double total;
-                  //
-                  //   if (isNew) {
-                  //     final product = item["product"] as ItemDetails;
-                  //     itemName = product.itemName;
-                  //     unit = product.itemUnit?.unitName ?? "";
-                  //     price = product.price.toDouble();
-                  //     qty = item["qty"];
-                  //     total = item["total"];
-                  //   } else {
-                  //     itemName = item["itemName"];
-                  //     unit = item["itemUnit"];
-                  //     price = item["rate"].toDouble();
-                  //     qty = item["qty"];
-                  //     total = item["totalAmount"];
-                  //   }
-                  //
-                  //   return Card(
-                  //     elevation: 4,
-                  //     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                  //     margin: const EdgeInsets.symmetric(vertical: 6),
-                  //     color: Colors.grey[50],
-                  //     child: Padding(
-                  //       padding: const EdgeInsets.all(12.0),
-                  //       child: Column(
-                  //         crossAxisAlignment: CrossAxisAlignment.start,
-                  //         children: [
-                  //           // Product name and delete icon
-                  //           Row(
-                  //             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  //             children: [
-                  //               Text(
-                  //                 itemName,
-                  //                 style: const TextStyle(
-                  //                     fontSize: 18, fontWeight: FontWeight.bold),
-                  //               ),
-                  //               IconButton(
-                  //                 icon: const Icon(Icons.delete, color: Colors.red),
-                  //                 onPressed: () => setState(() => orderItems.remove(item)),
-                  //               ),
-                  //             ],
-                  //           ),
-                  //           const SizedBox(height: 6),
-                  //
-                  //           // Price & Unit
-                  //           Row(
-                  //             children: [
-                  //               Chip(
-                  //                 label: Text("Unit: $unit"),
-                  //                 backgroundColor: Colors.blue[100],
-                  //               ),
-                  //               const SizedBox(width: 10),
-                  //               Chip(
-                  //                 label: Text("Price: $price"),
-                  //                 backgroundColor: Colors.green[100],
-                  //               ),
-                  //             ],
-                  //           ),
-                  //           const SizedBox(height: 10),
-                  //
-                  //           // Quantity Input
-                  //           Row(
-                  //             children: [
-                  //               const Text("Qty: "),
-                  //               SizedBox(
-                  //                 width: 60,
-                  //                 child: TextFormField(
-                  //                   initialValue: qty.toString(),
-                  //                   keyboardType: TextInputType.number,
-                  //                   decoration: const InputDecoration(
-                  //                     contentPadding:
-                  //                     EdgeInsets.symmetric(vertical: 4, horizontal: 8),
-                  //                     border: OutlineInputBorder(),
-                  //                   ),
-                  //                   onChanged: (v) {
-                  //                     setState(() {
-                  //                       final newQty = double.tryParse(v) ?? 0;
-                  //                       item["qty"] = newQty;
-                  //                       final newTotal = newQty * price;
-                  //                       item["totalAmount"] = newTotal;
-                  //                       item["total"] = newTotal;
-                  //                       total = newTotal;
-                  //                     });
-                  //                   },
-                  //                 ),
-                  //               ),
-                  //               const SizedBox(width: 20),
-                  //               Text(
-                  //                 "Total: $total",
-                  //                 style: const TextStyle(
-                  //                     fontWeight: FontWeight.bold, fontSize: 16),
-                  //               ),
-                  //             ],
-                  //           ),
-                  //         ],
-                  //       ),
-                  //     ),
-                  //   );
-                  // })
                   ...orderItems.map((item) {
                     final isNew = item.containsKey("product");
                     String itemName;
@@ -404,6 +226,7 @@ class _AddOrderScreenState extends State<AddOrderScreen> {
                     double price;
                     double qty;
                     double total;
+                    double purchase;
 
                     if (isNew) {
                       final product = item["product"] as ItemDetails;
@@ -412,12 +235,14 @@ class _AddOrderScreenState extends State<AddOrderScreen> {
                       price = item["price"] ?? product.price.toDouble(); // use local price if exists
                       qty = item["qty"];
                       total = item["total"];
+                      purchase = product.purchase.toDouble();
                     } else {
                       itemName = item["itemName"];
                       unit = item["itemUnit"];
                       price = item["rate"].toDouble();
                       qty = item["qty"];
                       total = item["totalAmount"];
+                      purchase = item["purchase"].toDouble();
                     }
 
                     return Card(
@@ -445,6 +270,7 @@ class _AddOrderScreenState extends State<AddOrderScreen> {
                                 ),
                               ],
                             ),
+                            Text("Purchase: $purchase"),
                             const SizedBox(height: 6),
 
                             // Unit & Editable Price
@@ -541,43 +367,162 @@ class _AddOrderScreenState extends State<AddOrderScreen> {
             const SizedBox(height: 20),
 
             /// ✅ Final Button (Create/Update)
-            ElevatedButton(
-              onPressed: () async {
-                final productList = orderItems.map((item) {
-                  final product = item["product"] as ItemDetails;
-                  return {
-                    "itemName": product.itemName,
-                    "qty": item["qty"],
-                    "itemUnit": product.itemUnit?.unitName,
-                    "rate": product.price,
-                    "totalAmount": item["total"],
-                  };
-                }).toList();
 
-                if (widget.isUpdate) {
-                  await orderProvider.updateOrder(
-                    widget.existingOrder!.id,
-                    {
-                      "salesmanId": selectedSalesmanId,
-                      "customerId": selectedCustomer!.id,
-                      "products": productList,
-                    },
+            // ElevatedButton(
+            //   onPressed: () async {
+            //
+            //     // 🔥 Build final product list (works for new + update)
+            //     final productList = orderItems.map((item) {
+            //       bool isNew = item.containsKey("product");
+            //
+            //       String itemName;
+            //       String unit;
+            //       double qty;
+            //       double rate;
+            //       double total;
+            //
+            //       if (isNew) {
+            //         // New items
+            //         final p = item["product"] as ItemDetails;
+            //
+            //         itemName = p.itemName;
+            //         unit = p.itemUnit?.unitName ?? "";
+            //         qty = item["qty"];
+            //         rate = item["price"] ?? p.price.toDouble();   // ← user-edited price
+            //         total = item["total"];
+            //       } else {
+            //         // Updated OLD items
+            //         itemName = item["itemName"];
+            //         unit = item["itemUnit"];
+            //         qty = item["qty"];
+            //         rate = (item["rate"] as num).toDouble();
+            //         total = item["totalAmount"];
+            //       }
+            //
+            //       return {
+            //         "itemName": itemName,
+            //         "qty": qty,
+            //         "itemUnit": unit,
+            //         "rate": rate,
+            //         "totalAmount": total,
+            //       };
+            //     }).toList();
+            //
+            //     // 🔥 Submit
+            //     if (widget.isUpdate) {
+            //       await orderProvider.updateOrder(
+            //         widget.existingOrder!.id,
+            //         {
+            //           "salesmanId": selectedSalesmanId,
+            //           "customerId": selectedCustomer!.id,
+            //           "products": productList,
+            //         },
+            //       );
+            //     } else {
+            //       await orderProvider.createOrder(
+            //         orderId: widget.nextOrderId,
+            //         salesmanId: selectedSalesmanId!,
+            //         customerId: selectedCustomer!.id,
+            //         products: productList,
+            //       );
+            //     }
+            //
+            //     Navigator.pop(context);
+            //   },
+            //   child: Text(widget.isUpdate ? "Update Order" : "Create Order"),
+            // ),
+            ElevatedButton(
+              onPressed: isLoading ? null : () async {
+                if (selectedSalesmanId == null || selectedCustomer == null || orderItems.isEmpty) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text("Please fill all fields and add products")),
                   );
-                } else {
-                  await orderProvider.createOrder(
-                    orderId: widget.nextOrderId,
-                    salesmanId: selectedSalesmanId!,
-                    customerId: selectedCustomer!.id,
-                    products: productList,
-                  );
+                  return;
                 }
 
-                Navigator.pop(context);
+                setState(() => isLoading = true); // 🔥 start loading
+
+                try {
+                  final productList = orderItems.map((item) {
+                    bool isNew = item.containsKey("product");
+
+                    String itemName;
+                    String unit;
+                    double qty;
+                    double rate;
+                    double total;
+                    int purchase;
+
+                    if (isNew) {
+                      final p = item["product"] as ItemDetails;
+                      itemName = p.itemName;
+                      unit = p.itemUnit?.unitName ?? "";
+                      qty = item["qty"];
+                      rate = item["price"] ?? p.price.toDouble();
+                      total = item["total"];
+                      purchase = item["purchase"] ?? 0;
+                    } else {
+                      itemName = item["itemName"];
+                      unit = item["itemUnit"];
+                      qty = item["qty"];
+                      rate = (item["rate"] as num).toDouble();
+                      total = item["totalAmount"];
+                      purchase = item["purchase"] ?? 0;
+                    }
+
+                    return {
+                      "itemName": itemName,
+                      "qty": qty,
+                      "itemUnit": unit,
+                      "rate": rate,
+                      "totalAmount": total,
+                      "purchase": purchase,
+                    };
+                  }).toList();
+
+                  if (widget.isUpdate) {
+                    await orderProvider.updateOrder(
+                      widget.existingOrder!.id,
+                      {
+                        "salesmanId": selectedSalesmanId,
+                        "customerId": selectedCustomer!.id,
+                        "products": productList,
+                      },
+                    );
+                  } else {
+                    await orderProvider.createOrder(
+                      orderId: widget.nextOrderId,
+                      salesmanId: selectedSalesmanId!,
+                      customerId: selectedCustomer!.id,
+                      products: productList,
+                    );
+                  }
+
+                  Navigator.pop(context);
+                } catch (e) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text("Error: $e")),
+                  );
+                } finally {
+                  setState(() => isLoading = false); // 🔥 stop loading
+                }
               },
-              child: Text(
-                widget.isUpdate ? "Update Order" : "Create Order",
+              style: ElevatedButton.styleFrom(
+                minimumSize: const Size(double.infinity, 50),
               ),
+              child: isLoading
+                  ? const SizedBox(
+                height: 24,
+                width: 24,
+                child: CircularProgressIndicator(
+                  color: Colors.white,
+                  strokeWidth: 2,
+                ),
+              )
+                  : Text(widget.isUpdate ? "Update Order" : "Create Order"),
             ),
+
+
           ],
         ),
       ),

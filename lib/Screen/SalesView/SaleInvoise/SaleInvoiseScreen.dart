@@ -451,71 +451,7 @@ class _SaleInvoiseScreenState extends State<SaleInvoiseScreen> {
 
                     const SizedBox(height: 20),
 
-                    // ✅ Submit Button
-                    // ElevatedButton(
-                    //   // onPressed: () async {
-                    //   //   List<Map<String, dynamic>> updatedProducts = [];
-                    //   //
-                    //   //   for (int i = 0; i < order.products.length; i++) {
-                    //   //     updatedProducts.add({
-                    //   //       "itemName": order.products[i].itemName,
-                    //   //       "qty": int.parse(qtyControllers[i].text),
-                    //   //       "itemUnit": order.products[i].itemUnit,
-                    //   //       "rate": int.parse(rateControllers[i].text),
-                    //   //       "totalAmount": int.parse(rateControllers[i].text) *
-                    //   //           int.parse(qtyControllers[i].text),
-                    //   //     });
-                    //   //   }
-                    //   //
-                    //   //   await provider.createOrUpdateInvoice(
-                    //   //     order: order,
-                    //   //     products: updatedProducts,
-                    //   //     discount: int.parse(discountCtrl.text),
-                    //   //     received: int.parse(receivedCtrl.text),
-                    //   //     deliveryDate: deliveryDate,
-                    //   //     agingDate: agingDate,
-                    //   //   );
-                    //   //
-                    //   //   Navigator.pop(context);
-                    //   //   provider.fetchOrders();
-                    //   // },
-                    //   onPressed: () async {
-                    //     setState(() => isUpdating = true);
-                    //
-                    //     List<Map<String, dynamic>> updatedProducts = [];
-                    //
-                    //     for (int i = 0; i < order.products.length; i++) {
-                    //       updatedProducts.add({
-                    //         "itemName": order.products[i].itemName,
-                    //         "qty": int.parse(qtyControllers[i].text),
-                    //         "itemUnit": order.products[i].itemUnit,
-                    //         "rate": int.parse(rateControllers[i].text),
-                    //         "totalAmount": int.parse(rateControllers[i].text) *
-                    //             int.parse(qtyControllers[i].text),
-                    //       });
-                    //     }
-                    //
-                    //     await provider.createOrUpdateInvoice(
-                    //       order: order,
-                    //       products: updatedProducts,
-                    //       discount: int.parse(discountCtrl.text),
-                    //       received: int.parse(receivedCtrl.text),
-                    //       deliveryDate: deliveryDate,
-                    //       agingDate: agingDate,
-                    //     );
-                    //
-                    //     setState(() => isUpdating = false);
-                    //
-                    //     Navigator.pop(context);
-                    //     provider.fetchOrders();
-                    //   },
-                    //
-                    //   style: ElevatedButton.styleFrom(
-                    //     minimumSize: const Size(double.infinity, 50),
-                    //     backgroundColor: Colors.blue,
-                    //   ),
-                    //   child: const Text("Update Invoice", style: TextStyle(fontSize: 18)),
-                    // ),
+
                     isUpdating
                         ? const Center(
                       child: Padding(

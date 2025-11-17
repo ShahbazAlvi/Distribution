@@ -326,7 +326,7 @@ class _SaleInvoiseScreenState extends State<SaleInvoiseScreen> {
                                   ),
                                   child: Row(
                                     children: [
-                                      Text(DateFormat('dd/MM/yyyy').format(agingDate)),
+                                      Text(DateFormat('dd/MM/yyyy').format(order.customerId.timeLimit!)),
                                       const SizedBox(width: 6),
                                       const Icon(Icons.calendar_today, size: 18),
                                     ],

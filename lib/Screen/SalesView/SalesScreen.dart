@@ -263,6 +263,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import '../../../compoents/AppColors.dart';
 import '../CustomerScreen/CustomersDefineScreen.dart';
+import 'DailysaleScreen/DailySaleScreen.dart';
 import 'OrderTakeingscreen/OrderTakingScreen.dart';
 import 'RecoveryScreen/Recovery.dart';
 import 'ReportsScreen/AgingScreen/AgingScreen.dart';
@@ -364,10 +365,10 @@ class SalesDashboard extends StatelessWidget {
                 ),
                 DashboardCard(
                   icon: Icons.sim_card_alert_rounded,
-                  title: "Sales",
+                  title: "Daily Sales",
                   color: Colors.lightBlueAccent,
                   onTap: () {
-                    Navigator.push(context, MaterialPageRoute(builder: (_) => const SalessScreen()));
+                    Navigator.push(context, MaterialPageRoute(builder: (_) => const DailySaleReportScreen()));
                   },
                 ),
                 // DashboardCard(

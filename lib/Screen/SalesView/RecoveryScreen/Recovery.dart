@@ -9,7 +9,6 @@ import '../../../compoents/SaleManDropdown.dart';
 import '../../../model/CustomerModel/CustomerModel.dart';
 import '../../../model/SaleRecoveryModel/SaleRecoveryModel.dart';
 
-
 class RecoveryListScreen extends StatefulWidget {
   const RecoveryListScreen({super.key});
 
@@ -19,8 +18,6 @@ class RecoveryListScreen extends StatefulWidget {
 
 class _RecoveryListScreenState extends State<RecoveryListScreen> {
   String? selectedDate;
-  //String? selectedSalesmanId;
-  //String? selectedCustomerId;
   CustomerModel? selectedCustomer;
 
   @override
@@ -45,14 +42,12 @@ class _RecoveryListScreenState extends State<RecoveryListScreen> {
           ),
         ),
       ),
-
       body: Column(
         children: [
           Padding(
             padding: const EdgeInsets.all(12),
             child: Column(
               children: [
-                // ✅ Date Picker
                 GestureDetector(
                   onTap: () async {
                     DateTime? picked = await showDatePicker(
@@ -65,7 +60,6 @@ class _RecoveryListScreenState extends State<RecoveryListScreen> {
                     if (picked != null) {
                       selectedDate = DateFormat('yyyy-MM-dd').format(picked);
                       setState(() {});
-
                       provider.fetchRecoveryReport(
                         selectedCustomer?.id ?? "",
                         selectedDate ?? "",
@@ -87,37 +81,22 @@ class _RecoveryListScreenState extends State<RecoveryListScreen> {
                     ),
                   ),
                 ),
-
                 const SizedBox(height: 10),
                 CustomerDropdown(
+                  showDetails: false,
                   selectedCustomerId: selectedCustomer?.id,
                   onChanged: (customer) {
                     setState(() => selectedCustomer = customer);
                     provider.fetchRecoveryReport(
                       selectedCustomer?.id ?? "",
-                            selectedDate ?? "",
-                          );
+                      selectedDate ?? "",
+                    );
                   },
                 ),
-
-                // ✅ Salesman Dropdown
-                // SalesmanDropdown(
-                //   selectedId: selectedSalesmanId,
-                //   onChanged: (value) {
-                //     selectedSalesmanId = value;
-                //     setState(() {});
-                //
-                //     provider.fetchRecoveryReport(
-                //       selectedSalesmanId ?? "",
-                //       selectedDate ?? "",
-                //     );
-                //   },
-                // ),
               ],
             ),
           ),
 
-          // ✅ Loading
           if (provider.isLoading)
             const Expanded(
               child: Center(child: CircularProgressIndicator()),
@@ -132,38 +111,154 @@ class _RecoveryListScreenState extends State<RecoveryListScreen> {
                   final item = records[index];
 
                   return Card(
-                    margin: const EdgeInsets.all(8),
-                    child: ListTile(
-                      title: Text("Invoice: ${item.id}"),
-                      subtitle: Text("Customer: ${item.customer}\n"
-                          "Balance: ${item.balance}"),
-                      trailing: const Icon(Icons.edit, color: Colors.blue),
-                      onTap: () {
-                        Navigator.push(
+                    margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                    elevation: 4,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    shadowColor: Colors.grey.withOpacity(0.3),
+                    child: InkWell(
+                      borderRadius: BorderRadius.circular(12),
+                      // onTap: () {
+                      //   Navigator.push(
+                      //     context,
+                      //     MaterialPageRoute(
+                      //       builder: (_) => EditRecoveryScreen(invoice: item),
+                      //     ),
+                      //   );
+                    //  },
+                      onTap: () async {
+                        // Wait until the Edit screen is closed
+                        bool? updated = await Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (_) => EditRecoveryScreen(data: item),
+                            builder: (_) => EditRecoveryScreen(invoice: item),
                           ),
                         );
+
+                        // If update was successful, refresh the list
+                        if (updated == true) {
+                          provider.fetchRecoveryReport(
+                            selectedCustomer?.id ?? "",
+                            selectedDate ?? "",
+                          );
+                        }
                       },
+
+                      child: Padding(
+                        padding: const EdgeInsets.all(16),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            // Invoice Header
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  "Invoice: ${item.invoiceNo}",
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 16,
+                                  ),
+                                ),
+                                Container(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 8, vertical: 4),
+                                  decoration: BoxDecoration(
+                                    color: item.status == "Pending"
+                                        ? Colors.orange
+                                        : Colors.green,
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                  child: Text(
+                                    item.status ?? "N/A",
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 12,
+                                    ),
+                                  ),
+                                )
+                              ],
+                            ),
+                            const SizedBox(height: 8),
+
+                            // Customer & Salesman
+                            Row(
+                              children: [
+                                const Icon(Icons.person, size: 16, color: Colors.grey),
+                                const SizedBox(width: 4),
+                                Expanded(
+                                  child: Text(
+                                    item.customer ?? "",
+                                    style: const TextStyle(fontSize: 14),
+                                  ),
+                                ),
+                                const Icon(Icons.work, size: 16, color: Colors.grey),
+                                const SizedBox(width: 4),
+                                Expanded(
+                                  child: Text(
+                                    item.salesman ?? "",
+                                    style: const TextStyle(fontSize: 14),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 8),
+
+                            // Financial Info Row
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                _infoChip("Total", item.totalPrice),
+                                _infoChip("Received", item.received),
+                                _infoChip("Balance", item.balance),
+                              ],
+                            ),
+                            const SizedBox(height: 8),
+
+                            // Days Info Row
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                _infoChip("Bill Days", item.billDays),
+                                _infoChip("Over Days", item.overDays),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
                     ),
                   );
                 },
               ),
             ),
+
         ],
       ),
     );
   }
+  Widget _infoChip(String title, dynamic value) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      decoration: BoxDecoration(
+        color: Colors.grey.shade200,
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Text(
+        "$title: $value",
+        style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w500),
+      ),
+    );
+  }
+
 }
-
-
 class EditRecoveryScreen extends StatefulWidget {
-  final RecoverySaleData data;
+  final RecoveryInvoice invoice;
 
   const EditRecoveryScreen({
     super.key,
-    required this.data,
+    required this.invoice,
   });
 
   @override
@@ -172,13 +267,12 @@ class EditRecoveryScreen extends StatefulWidget {
 
 class _EditRecoveryScreenState extends State<EditRecoveryScreen> {
   final TextEditingController receivedController = TextEditingController();
-
   num balance = 0;
 
   @override
   void initState() {
     super.initState();
-    balance = widget.data.balance ?? 0;
+    balance = widget.invoice.balance ?? 0;
   }
 
   @override
@@ -186,44 +280,28 @@ class _EditRecoveryScreenState extends State<EditRecoveryScreen> {
     final provider = Provider.of<RecoveryProvider>(context);
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("Edit Recovery"),
-      ),
-
+      appBar: AppBar(title: const Text("Edit Recovery")),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-
-            // ✅ Recover Info Section
-            _infoRow("Recovery Id", "null"),
-            _infoRow("Recovery Date", widget.data.recoveryDate ?? ""),
-
+            _infoRow("Recovery Id", widget.invoice.recoveryId ?? "N/A"),
+            _infoRow("Recovery Date", widget.invoice.agingDate ?? ""),
             const SizedBox(height: 10),
-
-            _infoRow("Invoice No.", widget.data.id ?? ""),
-            _infoRow("Invoice Date", widget.data.date ?? ""),
-            _infoRow("Customer", widget.data.customer ?? ""),
-            _infoRow("Salesman", widget.data.salesman ?? ""),
-
+            _infoRow("Invoice No.", widget.invoice.invoiceNo ?? ""),
+            _infoRow("Invoice Date", widget.invoice.invoiceDate ?? ""),
+            _infoRow("Customer", widget.invoice.customer ?? ""),
+            _infoRow("Salesman", widget.invoice.salesman ?? ""),
             const SizedBox(height: 20),
-            const Text(
-              "Items",
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
+            const Text("Items",
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
             const SizedBox(height: 10),
-
             _itemsTable(),
-
             const SizedBox(height: 20),
-
-            _infoRow("Total Price", widget.data.total.toString()),
-            _infoRow("Receivable", widget.data.total.toString()),
-
+            _infoRow("Total Price", widget.invoice.totalPrice.toString()),
+            _infoRow("Receivable", widget.invoice.receivable.toString()),
             const SizedBox(height: 8),
-
-            // ✅ Enter Received Amount
             TextField(
               controller: receivedController,
               keyboardType: TextInputType.number,
@@ -234,17 +312,13 @@ class _EditRecoveryScreenState extends State<EditRecoveryScreen> {
               onChanged: (v) {
                 final rec = double.tryParse(v) ?? 0;
                 setState(() {
-                  balance = (widget.data.total ?? 0) - rec;
+                  balance = (widget.invoice.receivable ?? 0) - rec;
                 });
               },
             ),
-
             const SizedBox(height: 10),
-
             _infoRow("Balance", balance.toString()),
-
             const SizedBox(height: 25),
-
             provider.isUpdating
                 ? const Center(child: CircularProgressIndicator())
                 : ElevatedButton(
@@ -255,26 +329,35 @@ class _EditRecoveryScreenState extends State<EditRecoveryScreen> {
               onPressed: () async {
                 if (receivedController.text.isEmpty) {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text("Enter received amount")),
+                    const SnackBar(
+                        content: Text("Enter received amount")),
                   );
                   return;
                 }
 
                 bool ok = await provider.updateReceivedAmount(
-                  widget.data.id!,                // invoice id
-                  receivedController.text.trim(), // amount
+                  widget.invoice.invoiceId!,
+                  receivedController.text.trim(),
                 );
 
+                // if (ok) Navigator.pop(context);
+                // if (ok) Navigator.pop(context, true); // <-- return true
                 if (ok) {
-                  Navigator.pop(context);
+                  // Optionally update local invoice fields for immediate reflection
+                  widget.invoice.received = double.parse(receivedController.text);
+                  widget.invoice.balance = balance;
+
+                  // Pop screen and signal that update happened
+                  Navigator.pop(context, true);
                 }
+
+
               },
               child: const Text(
                 "Update Recovery",
                 style: TextStyle(color: Colors.white, fontSize: 18),
               ),
             ),
-
             const SizedBox(height: 20),
           ],
         ),
@@ -282,67 +365,59 @@ class _EditRecoveryScreenState extends State<EditRecoveryScreen> {
     );
   }
 
-  // ✅ Simple Row Widget
   Widget _infoRow(String title, String value) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 8),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text("$title: ",
-              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15)),
+          Text(title,
+              style:
+              const TextStyle(fontWeight: FontWeight.bold, fontSize: 15)),
           Text(value, style: const TextStyle(fontSize: 15)),
         ],
       ),
     );
   }
 
-  // ✅ Item Table Widget
   Widget _itemsTable() {
     return Table(
       border: TableBorder.all(color: Colors.grey.shade400),
       children: [
-         TableRow(children: [
+        TableRow(children: [
           _tableHeader("SR#"),
           _tableHeader("ITEM"),
           _tableHeader("RATE"),
           _tableHeader("QTY"),
           _tableHeader("TOTAL"),
         ]),
-
-        // ✅ Because Recovery API DOES NOT return product list,
-        // we show a single-row invoice summary
-        TableRow(children: [
-          _tableCell(widget.data.sr.toString()),
-          _tableCell(widget.data.customer ?? ""),
-          _tableCell(widget.data.total.toString()),
-          _tableCell("1"),
-          _tableCell(widget.data.total.toString()),
-        ]),
+        if (widget.invoice.items != null && widget.invoice.items!.isNotEmpty)
+          for (var item in widget.invoice.items!)
+            TableRow(children: [
+              _tableCell(item.sr.toString()),
+              _tableCell(item.item ?? ""),
+              _tableCell(item.rate.toString()),
+              _tableCell(item.qty.toString()),
+              _tableCell(item.total.toString()),
+            ]),
       ],
     );
   }
 
-  // ✅ Helpers for Table
-  static Widget _tableHeader(String text) {
-    return Padding(
-      padding: EdgeInsets.all(8),
-      child: Text(
-        text,
-        textAlign: TextAlign.center,
-        style: TextStyle(fontWeight: FontWeight.bold),
-      ),
-    );
-  }
+  static Widget _tableHeader(String text) => Padding(
+    padding: const EdgeInsets.all(8),
+    child: Text(
+      text,
+      textAlign: TextAlign.center,
+      style: const TextStyle(fontWeight: FontWeight.bold),
+    ),
+  );
 
-  static Widget _tableCell(String text) {
-    return Padding(
-      padding: EdgeInsets.all(8),
-      child: Text(
-        text,
-        textAlign: TextAlign.center,
-      ),
-    );
-  }
+  static Widget _tableCell(String text) => Padding(
+    padding: const EdgeInsets.all(8),
+    child: Text(
+      text,
+      textAlign: TextAlign.center,
+    ),
+  );
 }
-

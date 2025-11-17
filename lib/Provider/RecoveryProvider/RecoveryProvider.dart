@@ -11,7 +11,7 @@ class RecoveryProvider extends ChangeNotifier {
   bool isLoading = false;
   bool isUpdating = false;
 
-  RecoverySaleModel? recoveryData;
+  RecoveryReport? recoveryData;
   String token = "";
 
   String baseUrl = "https://distribution-backend.vercel.app/api";
@@ -31,7 +31,8 @@ class RecoveryProvider extends ChangeNotifier {
       notifyListeners();
 
       final url = Uri.parse(
-          "$baseUrl/sales-invoice/recovery-report?salesmanId=$salesmanId&recoveryDate=$date");
+          //"$baseUrl/sales-invoice/recovery-report?salesmanId=$salesmanId&recoveryDate=$date");
+        "$baseUrl/sales-invoice/recovery/$salesmanId?date=$date");
 
       final response = await http.get(
         url,
@@ -39,7 +40,7 @@ class RecoveryProvider extends ChangeNotifier {
       );
 
       if (response.statusCode == 200) {
-        recoveryData = RecoverySaleModel.fromJson(jsonDecode(response.body));
+        recoveryData = RecoveryReport.fromJson(jsonDecode(response.body));
       }
 
       isLoading = false;
@@ -51,20 +52,27 @@ class RecoveryProvider extends ChangeNotifier {
   }
 
   /// ✅ Update Received Amount (PATCH)
+
   Future<bool> updateReceivedAmount(String invoiceId, String receivedAmount) async {
-    await loadToken(); // ✅ Load token before API call
+    await loadToken();
+
+    if (token.isEmpty) {
+      print("Token missing!");
+      return false;
+    }
 
     try {
       isUpdating = true;
       notifyListeners();
 
-      var url = Uri.parse("$baseUrl/sales-invoice/$invoiceId");
+      var url = Uri.parse("$baseUrl/recovery"); // POST to /recovery
 
       var body = jsonEncode({
-        "received": double.parse(receivedAmount),
+        "invoiceId": invoiceId,
+        "amount": double.parse(receivedAmount),
       });
 
-      final response = await http.patch(
+      final response = await http.post(
         url,
         headers: {
           "Content-Type": "application/json",
@@ -73,6 +81,9 @@ class RecoveryProvider extends ChangeNotifier {
         body: body,
       );
 
+      print("Response status: ${response.statusCode}");
+      print("Response body: ${response.body}");
+
       isUpdating = false;
       notifyListeners();
 
@@ -80,7 +91,9 @@ class RecoveryProvider extends ChangeNotifier {
     } catch (e) {
       isUpdating = false;
       notifyListeners();
+      print("Error updating recovery: $e");
       return false;
     }
   }
+
 }

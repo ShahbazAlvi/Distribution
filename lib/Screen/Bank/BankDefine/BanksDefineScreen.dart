@@ -3,6 +3,7 @@ import 'package:distribution/Screen/Bank/BankDefine/BankList/BankListScreen.dart
 import 'package:flutter/material.dart';
 
 import '../../../compoents/AppColors.dart';
+import 'BankList/ReceiptVoucherScreen/ReceiptVocherListScreen.dart';
 
 class BanksDefineScreen extends StatelessWidget {
   const BanksDefineScreen({super.key});
@@ -60,28 +61,29 @@ class BanksDefineScreen extends StatelessWidget {
               const SizedBox(height: 28),
 
               // 🔸 Functionalities Section
-              // _buildSectionTitle("⚙️ Functionalities"),
-              // const SizedBox(height: 14),
-              // _buildCardGrid([
-              //   DashboardCard(
-              //     icon: Icons.receipt_long_rounded,
-              //     title: "GRN",
-              //     color: Colors.tealAccent,
-              //     onTap: () {
-              //
-              //     },
-              //   ),
-              //   DashboardCard(
-              //     icon: Icons.attach_money_rounded,
-              //     title: "Payment to Supplier",
-              //     color: Colors.amberAccent,
-              //     onTap: () {
-              //
-              //     },
-              //   ),
-              // ]),
+              _buildSectionTitle("⚙️ Functionalities"),
+              const SizedBox(height: 14),
+              _buildCardGrid([
+                DashboardCard(
+                  icon: Icons.receipt_long_rounded,
+                  title: "Bank Receipt Voucher",
+                  color: Colors.tealAccent,
+                  onTap: () {
+                    Navigator.push(context,MaterialPageRoute(builder: (context)=>ReceiptVoucherListScreen()));
 
-              // const SizedBox(height: 30),
+                  },
+                ),
+                DashboardCard(
+                  icon: Icons.attach_money_rounded,
+                  title: "Bank Payment Voucher",
+                  color: Colors.amberAccent,
+                  onTap: () {
+
+                  },
+                ),
+              ]),
+
+              const SizedBox(height: 30),
               //
               // // 🔸 Reports Section
               // _buildSectionTitle("📊 Reports"),

@@ -1,0 +1,280 @@
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:intl/intl.dart';
+
+import '../../../../../Provider/BankProvider/BankListProvider.dart';
+import '../../../../../Provider/BankProvider/ReceiptVoucherProvider.dart';
+import '../../../../../Provider/SaleManProvider/SaleManProvider.dart';
+import '../../../../../model/BankModel/BankListModel.dart';
+import '../../../../../model/BankModel/ReceiptVoucher.dart';
+import '../../../../../model/SaleManModel/SaleManModel.dart';
+
+
+
+class AddReceiptVoucherScreen extends StatefulWidget {
+  final String receiptId; // coming from previous screen
+
+  const AddReceiptVoucherScreen({super.key, required this.receiptId});
+
+  @override
+  State<AddReceiptVoucherScreen> createState() =>
+      _AddReceiptVoucherScreenState();
+}
+
+class _AddReceiptVoucherScreenState extends State<AddReceiptVoucherScreen> {
+  BankData? selectedBank;
+  //Salesman? selectedSalesman;// was Salesman? -> use SaleManModel
+  String salesmanReceivable = "0";
+  SaleManModel? selectedSalesman;
+
+
+
+  TextEditingController amountController = TextEditingController();
+  TextEditingController remarkController = TextEditingController();
+
+  String? bankBalance = "0"; // from API
+   // from API
+
+  String currentDate = DateFormat("yyyy-MM-dd").format(DateTime.now());
+
+  @override
+  void initState() {
+    super.initState();
+
+    // fetch bank and salesman lists
+    Future.microtask(() {
+      Provider.of<BankProvider>(context, listen: false).fetchBanks();
+      Provider.of<SaleManProvider>(context, listen: false).fetchSalesmen();
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final bankProvider = Provider.of<BankProvider>(context);
+    final salesmanProvider = Provider.of<SaleManProvider>(context);
+    final voucherProvider = Provider.of<ReceiptVoucherProvider>(context);
+
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text("Add Receipt Voucher"),
+        backgroundColor: Colors.blue,
+      ),
+
+      body: Padding(
+        padding: const EdgeInsets.all(16),
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+
+              /// ---------------------- DATE ----------------------
+              TextFormField(
+                readOnly: true,
+                decoration: InputDecoration(
+                  labelText: "Date",
+                  border: OutlineInputBorder(),
+                ),
+                controller: TextEditingController(text: currentDate),
+              ),
+
+              const SizedBox(height: 16),
+
+              /// ---------------------- BANK DROPDOWN ----------------------
+              bankProvider.loading
+                  ? const CircularProgressIndicator()
+                  : DropdownButtonFormField<BankData>(
+                value: selectedBank,
+                decoration: const InputDecoration(
+                  labelText: "Select Bank",
+                  border: OutlineInputBorder(),
+                ),
+                items: bankProvider.bankList.map((bank) {
+                  return DropdownMenuItem(
+                    value: bank,
+                    child: Text(bank.bankName),
+                  );
+                }).toList(),
+                onChanged: (val) {
+                  setState(() {
+                    selectedBank = val;
+                    bankBalance = val?.balance.toString() ?? "0";
+                  });
+                },
+              ),
+
+              const SizedBox(height: 6),
+
+              /// ---------------------- BANK BALANCE ----------------------
+              if (selectedBank != null)
+                Container(
+                  padding: const EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                    color: Colors.green.shade50,
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Row(
+                    children: [
+                      const Icon(Icons.account_balance_wallet,
+                          color: Colors.green),
+                      const SizedBox(width: 8),
+                      Text(
+                        "Bank Balance: $bankBalance",
+                        style: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: Colors.green),
+                      ),
+                    ],
+                  ),
+                ),
+
+              const SizedBox(height: 16),
+
+              /// ---------------------- SALESMAN DROPDOWN ----------------------
+              salesmanProvider.isLoading
+                  ? const CircularProgressIndicator()
+              //     : DropdownButtonFormField<Salesman>(
+              //   decoration: const InputDecoration(
+              //     labelText: "Select Salesman",
+              //     border: OutlineInputBorder(),
+              //   ),
+              //   value: selectedSalesman,
+              //   items: salesmanProvider.salesmen.map((s) {
+              //     return DropdownMenuItem(
+              //       value: s,
+              //       child: Text(s.employeeName),
+              //     );
+              //   }).toList(),
+              //   onChanged: (val) {
+              //     setState(() {
+              //       selectedSalesman = val;
+              //       salesmanReceivable = val?.receivable.toString() ?? "0";
+              //     });
+              //   },
+              // ),
+             : DropdownButtonFormField<SaleManModel>(
+                decoration: const InputDecoration(
+                  labelText: "Select Salesman",
+                  border: OutlineInputBorder(),
+                ),
+                value: selectedSalesman,
+                isExpanded: true,
+                items: salesmanProvider.salesmen.map((s) {
+                  return DropdownMenuItem<SaleManModel>(
+                    value: s,
+                    child: Text(s.employeeName),
+                  );
+                }).toList(),
+                onChanged: (val) {
+                  setState(() {
+                    selectedSalesman = val;
+                    salesmanReceivable = val?.preBalance.toString() ?? "0"; // use preBalance
+                  });
+                },
+              ),
+
+
+
+              const SizedBox(height: 6),
+
+              /// ---------------------- SALESMAN RECEIVABLE ----------------------
+              if (selectedSalesman != null)
+                Container(
+                  padding: const EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                    color: Colors.orange.shade50,
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Row(
+                    children: [
+                      const Icon(Icons.money, color: Colors.orange),
+                      const SizedBox(width: 8),
+                      Text(
+                        "Receivable: $salesmanReceivable",
+                        style: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: Colors.orange),
+                      ),
+                    ],
+                  ),
+                ),
+
+              const SizedBox(height: 16),
+
+              /// ---------------------- AMOUNT RECEIVED ----------------------
+              TextField(
+                controller: amountController,
+                keyboardType: TextInputType.number,
+                decoration: const InputDecoration(
+                  labelText: "Amount Received",
+                  border: OutlineInputBorder(),
+                ),
+              ),
+
+              const SizedBox(height: 16),
+
+              /// ---------------------- REMARK ----------------------
+              TextField(
+                controller: remarkController,
+                maxLines: 2,
+                decoration: const InputDecoration(
+                  labelText: "Remark",
+                  border: OutlineInputBorder(),
+                ),
+              ),
+
+              const SizedBox(height: 20),
+
+              /// ---------------------- SUBMIT BUTTON ----------------------
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: voucherProvider.isSubmitting
+                      ? null
+                      : () async {
+                    if (selectedBank == null ||
+                        selectedSalesman == null ||
+                        amountController.text.isEmpty) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                            content: Text("Please fill all fields")),
+                      );
+                      return;
+                    }
+
+                    final success = await voucherProvider.addVoucher(
+                      date: currentDate,
+                      receiptId: widget.receiptId,
+                      bankId: selectedBank!.id,
+                      salesmanId: selectedSalesman!.id,
+                      amount: int.parse(amountController.text),
+                      remarks: remarkController.text,
+                    );
+
+                    if (success) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                            content: Text("Voucher Added Successfully")),
+                      );
+                      Navigator.pop(context);
+                    }
+                  },
+                  style: ElevatedButton.styleFrom(
+                    padding: const EdgeInsets.all(14),
+                    backgroundColor: Colors.blue,
+                  ),
+                  child: voucherProvider.isSubmitting
+                      ? const CircularProgressIndicator(color: Colors.white)
+                      : const Text(
+                    "Submit Voucher",
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}

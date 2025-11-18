@@ -9,6 +9,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'Provider/AmountReceivableDetailsProvider/AmountReceivableDetailsProvider.dart';
 import 'Provider/AreaSaleProvider/AreaSaleProvider.dart';
 import 'Provider/BankProvider/BankListProvider.dart';
+import 'Provider/BankProvider/ReceiptVoucherProvider.dart';
 import 'Provider/CreditAgingReportProvider/AgingProvider.dart';
 import 'Provider/CustomerLedgerProvider/LedgerProvider.dart';
 import 'Provider/CustomerProvider/CustomerProvider.dart';
@@ -81,6 +82,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => ItemUnitProvider()),
         ChangeNotifierProvider(create: (_) => BankProvider()),
         ChangeNotifierProvider(create: (_) => DailySaleReportProvider()),
+        ChangeNotifierProvider(create: (_) => ReceiptVoucherProvider()),
 
 
       ],

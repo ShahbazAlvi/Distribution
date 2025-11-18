@@ -4,7 +4,10 @@ import 'package:distribution/Screen/dashBoardView/calender.dart';
 import 'package:distribution/Screen/dashBoardView/chartdashboard.dart';
 import 'package:distribution/Screen/dashBoardView/recoverienChart.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
+import '../Provider/DashBoardProvider.dart';
+import '../model/DashBoardModel.dart';
 import 'Auth/LoginScreen.dart';
 import 'Bank/BankDefine/BanksDefineScreen.dart';
 
@@ -136,7 +139,7 @@ class _DashboardscreenState extends State<Dashboardscreen> {
             ),
 
             // Now add username text outside const
-            
+
 
             ListTile(
               leading: const Icon(Icons.dashboard, color: Color(0xFF5B86E5)),
@@ -150,7 +153,7 @@ class _DashboardscreenState extends State<Dashboardscreen> {
               title: const Text('Sales'),
               onTap: () {
                 Navigator.push(context, MaterialPageRoute(builder: (context)=>SalesDashboard()));
-                
+
               },
             ),
             ListTile(
@@ -273,22 +276,92 @@ class _DashboardscreenState extends State<Dashboardscreen> {
 
 
               const SizedBox(height: 16),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Wrap(
-                  spacing: 16,
-                  runSpacing: 16,
-                  children: [
-                    AnimatedDashboardCard(icon: Icons.person, title:'Total Sales', count:'50'/*provider.totalCustomers.toString()*/, bcolor:Colors.green),
-                    AnimatedDashboardCard(icon: Icons.shop, title:'Total Purchases', count:'85'/*provider.totalProducts.toString()*/, bcolor:Colors.red),
-                    AnimatedDashboardCard(icon: Icons.people_alt, title:'Total Recovenes', count:"34"/*provider.totalStaffs.toString()*/, bcolor:Colors.blue),
-                    AnimatedDashboardCard(icon: Icons.account_balance_wallet, title:'Total Expenses', count:'40'/*provider.totalTransactions.toString()*/, bcolor:Colors.orange),
+              // Padding(
+              //   padding: const EdgeInsets.all(8.0),
+              //   child: Wrap(
+              //     spacing: 16,
+              //     runSpacing: 16,
+              //     children: [
+              //       AnimatedDashboardCard(icon: Icons.person, title:'Total Sales', count:'50'/*provider.totalCustomers.toString()*/, bcolor:Colors.green),
+              //       AnimatedDashboardCard(icon: Icons.shop, title:'Total Purchases', count:'85'/*provider.totalProducts.toString()*/, bcolor:Colors.red),
+              //       AnimatedDashboardCard(icon: Icons.people_alt, title:'Total Recovenes', count:"34"/*provider.totalStaffs.toString()*/, bcolor:Colors.blue),
+              //       AnimatedDashboardCard(icon: Icons.account_balance_wallet, title:'Total Expenses', count:'40'/*provider.totalTransactions.toString()*/, bcolor:Colors.orange),
+              //
+              //
+              //     ],
+              //   ),
+              //
+              // ),
+            const SizedBox(height: 16),
+            FutureBuilder<DashboardModel?>(
+                future: Provider.of<DashBoardProvider>(context,
+                    listen: false)
+                    .fetchDashboardData(),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  } else if (snapshot.hasError || !snapshot.hasData) {
+                    return const Center(
+                      child: Text("Failed to load data"),
+                    );
+                  }
 
-        
-                  ],
-                ),
+                  final dashboardData = snapshot.data!;
+                  salesData = dashboardData.charts.salesProfit
+                      .map((e) => e.value.toDouble())
+                      .toList();
+                  final recovered = dashboardData.charts.customerBalance
+                      .map((e) => e.value.toDouble())
+                      .toList();
+                  final due = recovered
+                      .map((e) => e * 0.8) // Example: due = 80% of recovered
+                      .toList();
 
-              ),
+                  return Column(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Wrap(
+                            spacing: 16,
+                            runSpacing: 16,
+                            children: [
+                              AnimatedDashboardCard(
+                                  icon: Icons.person,
+                                  title: 'Total Sales',
+                                  count: dashboardData.stats.totalSales
+                                      .toString(),
+                                  bcolor: Colors.green),
+                              AnimatedDashboardCard(
+                                  icon: Icons.shop,
+                                  title: 'Total Products',
+                                  count: dashboardData.stats.totalProducts
+                                      .toString(),
+                                  bcolor: Colors.red),
+                              AnimatedDashboardCard(
+                                  icon: Icons.people_alt,
+                                  title: 'Total Customer',
+                                  count: dashboardData.stats.totalCustomers
+                                      .toString(),
+                                  bcolor: Colors.blue),
+                              AnimatedDashboardCard(
+                                  icon: Icons.account_balance_wallet,
+                                  title: 'Total Staff',
+                                  count: dashboardData.stats.totalStaff
+                                      .toString(),
+                                  bcolor: Colors.orange),
+                            ],
+                          ),
+                        )
+
+
+                      ]
+                  );
+
+                }
+
+                      ),
               const SizedBox(height: 16),
 
               Text('Sales',style: TextStyle(fontWeight: FontWeight.bold),),
@@ -313,7 +386,7 @@ class _DashboardscreenState extends State<Dashboardscreen> {
               ),
 
 
-        
+
             ],
           ),
         ),
@@ -365,3 +438,4 @@ class _AnimatedDashboardCardState extends State<AnimatedDashboardCard> {
     );
   }
 }
+

@@ -2,38 +2,41 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../../../../../Provider/BankProvider/ReceiptVoucherProvider.dart';
+import '../../../../../Provider/BankProvider/PaymentVoucherProvider.dart';
 import '../../../../../compoents/AppColors.dart';
-import '../addBank.dart';
-import 'AddReceiptVoucher.dart';
+import '../../../../../model/BankModel/PaymentVoucher.dart';
+import 'AddPaymentVoucherScreen.dart';
 
-class ReceiptVoucherListScreen extends StatefulWidget {
-  const ReceiptVoucherListScreen({super.key});
+class PaymentVoucherListScreen extends StatefulWidget {
+  const PaymentVoucherListScreen({super.key});
 
   @override
-  State<ReceiptVoucherListScreen> createState() =>
-      _ReceiptVoucherListScreenState();
+  State<PaymentVoucherListScreen> createState() =>
+      _PaymentVoucherListScreenState();
 }
 
-class _ReceiptVoucherListScreenState extends State<ReceiptVoucherListScreen> {
+class _PaymentVoucherListScreenState extends State<PaymentVoucherListScreen> {
   @override
   void initState() {
     super.initState();
     Future.microtask(() {
-      Provider.of<ReceiptVoucherProvider>(context, listen: false)
-          .fetchVouchers();
+      Provider.of<PaymentVoucherProvider>(context, listen: false)
+          .fetchPayments();
     });
   }
+
+
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xfff5f7fa),
-        appBar: AppBar(
+
+      appBar: AppBar(
         iconTheme: const IconThemeData(color: Colors.white),
         title: const Center(
           child: Text(
-            "Receipt Vouchers",
+            "payment Vouchers",
             style: TextStyle(
               color: Colors.white,
               fontWeight: FontWeight.bold,
@@ -46,40 +49,47 @@ class _ReceiptVoucherListScreenState extends State<ReceiptVoucherListScreen> {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
             child: ElevatedButton.icon(
+              // onPressed: (){
+              //   Navigator.push(
+              //     context,
+              //     MaterialPageRoute(builder: (_) =>AddPaymentVoucherScreen(paymentId: "BR-008")),
+              //   );
+              // },
               onPressed: () {
-                final provider = Provider.of<ReceiptVoucherProvider>(context, listen: false);
+                final provider = Provider.of<PaymentVoucherProvider>(context, listen: false);
 
-                String nextReceiptId = "BR-001"; // Default if no vouchers exist
+                String nextPaymentId = "BP-001"; // Default if no payments found
 
-                if (provider.vouchers.isNotEmpty) {
-                  // Extract numeric parts from all receipt IDs
-                  final allNumbers = provider.vouchers.map((voucher) {
-                    final id = voucher.receiptId;
-                    final regex = RegExp(r'BR-(\d+)$'); // Matches "BR-001", "BR-023", etc.
+                // ✅ Check if payment data exists and is not empty
+                if (provider.paymentData != null && provider.paymentData!.data.isNotEmpty) {
+                  // ✅ Extract numeric parts from all payment IDs
+                  final allNumbers = provider.paymentData!.data.map((payment) {
+                    final id = payment.paymentId;
+                    final regex = RegExp(r'BP-(\d+)$'); // Matches "BP-001", "BP-023", etc.
                     final match = regex.firstMatch(id);
                     return match != null ? int.tryParse(match.group(1)!) ?? 0 : 0;
                   }).toList();
 
-                  // Find the maximum number
-                  final maxNumber = allNumbers.isNotEmpty
-                      ? allNumbers.reduce((a, b) => a > b ? a : b)
-                      : 0;
+                  // ✅ Find the maximum number
+                  final maxNumber = allNumbers.isNotEmpty ? allNumbers.reduce((a, b) => a > b ? a : b) : 0;
 
-                  // Increment by 1
+                  // ✅ Generate the next ID
                   final incremented = maxNumber + 1;
-                  nextReceiptId = "BR-${incremented.toString().padLeft(3, '0')}";
+                  nextPaymentId = "BP-${incremented.toString().padLeft(3, '0')}";
                 }
 
-                print("✅ Next Receipt ID: $nextReceiptId");
+                print("✅ Next Payment ID: $nextPaymentId");
 
-                // Navigate to AddReceiptVoucherScreen with the incremented ID
+                // ✅ Navigate to AddPaymentVoucherScreen with incremented ID
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (_) => AddReceiptVoucherScreen(receiptId: nextReceiptId),
+                    builder: (_) => AddPaymentVoucherScreen(paymentId: nextPaymentId),
                   ),
                 );
               },
+
+
 
               icon: const Icon(Icons.add_circle_outline, color: Colors.white),
               label: const Text(
@@ -109,16 +119,17 @@ class _ReceiptVoucherListScreenState extends State<ReceiptVoucherListScreen> {
         ),
       ),
 
-      body: Consumer<ReceiptVoucherProvider>(
-        builder: (context, provider, child) {
+      body: Consumer<PaymentVoucherProvider>(
+        builder: (context, provider, _) {
           if (provider.isLoading) {
             return const Center(child: CircularProgressIndicator());
           }
 
-          if (provider.vouchers.isEmpty) {
+          if (provider.paymentData == null ||
+              provider.paymentData!.data.isEmpty) {
             return const Center(
               child: Text(
-                "No vouchers found",
+                "No payments found",
                 style: TextStyle(color: Colors.grey, fontSize: 18),
               ),
             );
@@ -126,9 +137,9 @@ class _ReceiptVoucherListScreenState extends State<ReceiptVoucherListScreen> {
 
           return ListView.builder(
             padding: const EdgeInsets.all(12),
-            itemCount: provider.vouchers.length,
+            itemCount: provider.paymentData!.data.length,
             itemBuilder: (context, index) {
-              final item = provider.vouchers[index];
+              final pay = provider.paymentData!.data[index];
 
               return AnimatedContainer(
                 duration: const Duration(milliseconds: 300),
@@ -145,12 +156,12 @@ class _ReceiptVoucherListScreenState extends State<ReceiptVoucherListScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
 
-                        // Header Row
+                        // HEADER
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(
-                              "Receipt: ${item.receiptId}",
+                              "Payment: ${pay.paymentId}",
                               style: const TextStyle(
                                 fontSize: 18,
                                 fontWeight: FontWeight.bold,
@@ -161,34 +172,30 @@ class _ReceiptVoucherListScreenState extends State<ReceiptVoucherListScreen> {
                               padding: const EdgeInsets.symmetric(
                                   horizontal: 10, vertical: 4),
                               decoration: BoxDecoration(
-                                color: Colors.green.shade50,
+                                color: Colors.red.shade50,
                                 borderRadius: BorderRadius.circular(10),
                               ),
                               child: Text(
-                                "${item.amountReceived}",
+                                "${pay.amount}",
                                 style: const TextStyle(
-                                  color: Colors.green,
+                                  color: Colors.red,
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
-                            )
+                            ),
                           ],
                         ),
 
                         const SizedBox(height: 12),
 
-                        // Salesman
+                        // Supplier
                         Row(
                           children: [
-                            const Icon(Icons.person,
-                                size: 20, color: Colors.grey),
+                            const Icon(Icons.person, size: 20, color: Colors.grey),
                             const SizedBox(width: 8),
-                            Expanded(
-                              child: Text(
-                                "Salesman: ${item.salesman?.employeeName ?? "N/A"}",
-                                style: const TextStyle(
-                                    fontSize: 15, color: Colors.black87),
-                              ),
+                            Text(
+                              "Supplier: ${pay.supplier?.supplierName ?? "N/A"}",
+                              style: const TextStyle(fontSize: 15),
                             ),
                           ],
                         ),
@@ -202,9 +209,8 @@ class _ReceiptVoucherListScreenState extends State<ReceiptVoucherListScreen> {
                                 size: 20, color: Colors.grey),
                             const SizedBox(width: 8),
                             Text(
-                              "Bank: ${item.bank?.bankName ?? "N/A"}",
-                              style: const TextStyle(
-                                  fontSize: 15, color: Colors.black87),
+                              "Bank: ${pay.bank?.bankName ?? "N/A"}",
+                              style: const TextStyle(fontSize: 15),
                             ),
                           ],
                         ),
@@ -214,40 +220,37 @@ class _ReceiptVoucherListScreenState extends State<ReceiptVoucherListScreen> {
                         // Date
                         Row(
                           children: [
-                            const Icon(Icons.calendar_today,
+                            const Icon(Icons.calendar_month,
                                 size: 20, color: Colors.grey),
                             const SizedBox(width: 8),
                             Text(
-                              "Date: ${item.date.toString().substring(0, 10)}",
-                              style: const TextStyle(
-                                  fontSize: 15, color: Colors.black87),
+                              "Date: ${pay.date.toString().substring(0, 10)}",
+                              style: const TextStyle(fontSize: 15),
                             ),
                           ],
                         ),
 
                         const SizedBox(height: 16),
-                        const Divider(height: 1),
+                        const Divider(),
 
-                        // Action Buttons
                         Row(
                           mainAxisAlignment: MainAxisAlignment.end,
                           children: [
                             IconButton(
-                              icon: const Icon(Icons.edit,
-                                  color: Colors.blueAccent),
-                              onPressed: () {
-                                // TODO: Navigate to update screen
-                              },
+                              icon: const Icon(Icons.edit, color: Colors.blue),
+                              onPressed: () {},
                             ),
                             IconButton(
-                              icon:
-                              const Icon(Icons.delete, color: Colors.red),
+                              icon: const Icon(Icons.delete, color: Colors.red),
                               onPressed: () async {
-                                bool ok = await provider.deleteVoucher(item.id);
+                                //bool ok = await provider.deletePayment(item.id);
+                                bool ok = await provider.deletePayment(pay.id);
+
                                 if (ok) {
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     const SnackBar(
-                                        content: Text("Deleted successfully")),
+                                      content: Text("Payment Deleted"),
+                                    ),
                                   );
                                 }
                               },
@@ -264,5 +267,26 @@ class _ReceiptVoucherListScreenState extends State<ReceiptVoucherListScreen> {
         },
       ),
     );
+  }
+
+  Future<bool> _confirmDelete(BuildContext context) async {
+    return await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text("Confirm Delete"),
+        content: const Text("Are you sure you want to delete this record?"),
+        actions: [
+          TextButton(
+            child: const Text("Cancel"),
+            onPressed: () => Navigator.pop(context, false),
+          ),
+          ElevatedButton(
+            child: const Text("Delete"),
+            onPressed: () => Navigator.pop(context, true),
+          ),
+        ],
+      ),
+    ) ??
+        false;
   }
 }

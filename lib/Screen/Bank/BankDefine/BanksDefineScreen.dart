@@ -3,6 +3,7 @@ import 'package:distribution/Screen/Bank/BankDefine/BankList/BankListScreen.dart
 import 'package:flutter/material.dart';
 
 import '../../../compoents/AppColors.dart';
+import 'BankList/PaymentVocherScreen/PaymentVoucherListScreen.dart';
 import 'BankList/ReceiptVoucherScreen/ReceiptVocherListScreen.dart';
 
 class BanksDefineScreen extends StatelessWidget {
@@ -78,6 +79,7 @@ class BanksDefineScreen extends StatelessWidget {
                   title: "Bank Payment Voucher",
                   color: Colors.amberAccent,
                   onTap: () {
+                    Navigator.push(context,MaterialPageRoute(builder: (context)=>PaymentVoucherListScreen()));
 
                   },
                 ),

@@ -5,6 +5,7 @@ import 'package:intl/intl.dart';
 import '../../../../../Provider/BankProvider/BankListProvider.dart';
 import '../../../../../Provider/BankProvider/ReceiptVoucherProvider.dart';
 import '../../../../../Provider/SaleManProvider/SaleManProvider.dart';
+import '../../../../../compoents/AppColors.dart';
 import '../../../../../model/BankModel/BankListModel.dart';
 import '../../../../../model/BankModel/ReceiptVoucher.dart';
 import '../../../../../model/SaleManModel/SaleManModel.dart';
@@ -56,8 +57,29 @@ class _AddReceiptVoucherScreenState extends State<AddReceiptVoucherScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Add Receipt Voucher"),
-        backgroundColor: Colors.blue,
+        iconTheme: const IconThemeData(color: Colors.white),
+        title: const Center(
+          child: Text(
+            " Add Receipt Vouchers",
+            style: TextStyle(
+              color: Colors.white,
+              fontWeight: FontWeight.bold,
+              fontSize: 22,
+              letterSpacing: 1.2,
+            ),
+          ),
+        ),
+        centerTitle: true,
+        elevation: 6,
+        flexibleSpace: Container(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              colors: [AppColors.secondary, AppColors.primary],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+          ),
+        ),
       ),
 
       body: Padding(
@@ -131,25 +153,6 @@ class _AddReceiptVoucherScreenState extends State<AddReceiptVoucherScreen> {
               /// ---------------------- SALESMAN DROPDOWN ----------------------
               salesmanProvider.isLoading
                   ? const CircularProgressIndicator()
-              //     : DropdownButtonFormField<Salesman>(
-              //   decoration: const InputDecoration(
-              //     labelText: "Select Salesman",
-              //     border: OutlineInputBorder(),
-              //   ),
-              //   value: selectedSalesman,
-              //   items: salesmanProvider.salesmen.map((s) {
-              //     return DropdownMenuItem(
-              //       value: s,
-              //       child: Text(s.employeeName),
-              //     );
-              //   }).toList(),
-              //   onChanged: (val) {
-              //     setState(() {
-              //       selectedSalesman = val;
-              //       salesmanReceivable = val?.receivable.toString() ?? "0";
-              //     });
-              //   },
-              // ),
              : DropdownButtonFormField<SaleManModel>(
                 decoration: const InputDecoration(
                   labelText: "Select Salesman",
@@ -259,7 +262,7 @@ class _AddReceiptVoucherScreenState extends State<AddReceiptVoucherScreen> {
                   },
                   style: ElevatedButton.styleFrom(
                     padding: const EdgeInsets.all(14),
-                    backgroundColor: Colors.blue,
+                    backgroundColor: AppColors.secondary,
                   ),
                   child: voucherProvider.isSubmitting
                       ? const CircularProgressIndicator(color: Colors.white)

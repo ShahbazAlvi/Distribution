@@ -112,7 +112,7 @@ class _AddReceiptVoucherScreenState extends State<AddReceiptVoucherScreen> {
                 items: bankProvider.bankList.map((bank) {
                   return DropdownMenuItem(
                     value: bank,
-                    child: Text(bank.bankName),
+                    child: Text("${bank.bankName} - ${bank.accountHolderName}"),
                   );
                 }).toList(),
                 onChanged: (val) {
@@ -169,7 +169,9 @@ class _AddReceiptVoucherScreenState extends State<AddReceiptVoucherScreen> {
                 onChanged: (val) {
                   setState(() {
                     selectedSalesman = val;
-                    salesmanReceivable = val?.preBalance.toString() ?? "0"; // use preBalance
+                    print("Selected balance: ${val?.preBalance}");
+                    //salesmanReceivable = val?.preBalance.toString() ?? "0"; // use preBalance
+                    salesmanReceivable = val?.recoveryBalance.toString() ?? "0";
                   });
                 },
               ),

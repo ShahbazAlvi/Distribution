@@ -460,6 +460,36 @@ class _SaleInvoiseScreenState extends State<SaleInvoiseScreen> {
                       ),
                     )
                         : ElevatedButton(
+                      // onPressed: () async {
+                      //   setState(() => isUpdating = true);
+                      //
+                      //   List<Map<String, dynamic>> updatedProducts = [];
+                      //
+                      //   for (int i = 0; i < order.products.length; i++) {
+                      //     updatedProducts.add({
+                      //       "itemName": order.products[i].itemName,
+                      //       "qty": int.parse(qtyControllers[i].text),
+                      //       "itemUnit": order.products[i].itemUnit,
+                      //       "rate": int.parse(rateControllers[i].text),
+                      //       "totalAmount": int.parse(rateControllers[i].text) *
+                      //           int.parse(qtyControllers[i].text),
+                      //     });
+                      //   }
+                      //
+                      //   await provider.createOrUpdateInvoice(
+                      //     order: order,
+                      //     products: updatedProducts,
+                      //     discount: int.parse(discountCtrl.text),
+                      //     received: int.parse(receivedCtrl.text),
+                      //     deliveryDate: deliveryDate,
+                      //     agingDate: agingDate,
+                      //   );
+                      //
+                      //   setState(() => isUpdating = false);
+                      //
+                      //   Navigator.pop(context);
+                      //   provider.fetchOrders();
+                      // },
                       onPressed: () async {
                         setState(() => isUpdating = true);
 
@@ -476,7 +506,7 @@ class _SaleInvoiseScreenState extends State<SaleInvoiseScreen> {
                           });
                         }
 
-                        await provider.createOrUpdateInvoice(
+                        String? responseMessage = await provider.createOrUpdateInvoice(
                           order: order,
                           products: updatedProducts,
                           discount: int.parse(discountCtrl.text),
@@ -488,8 +518,20 @@ class _SaleInvoiseScreenState extends State<SaleInvoiseScreen> {
                         setState(() => isUpdating = false);
 
                         Navigator.pop(context);
+
+                        // 🔥 SHOW SUCCESS / ERROR
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(responseMessage ?? "Unknown Response"),
+                            backgroundColor:
+                            responseMessage!.contains("Success") ? Colors.green : Colors.red,
+                            duration: const Duration(seconds: 3),
+                          ),
+                        );
+
                         provider.fetchOrders();
                       },
+
                       style: ElevatedButton.styleFrom(
                         minimumSize: const Size(double.infinity, 50),
                         backgroundColor: Colors.blue,

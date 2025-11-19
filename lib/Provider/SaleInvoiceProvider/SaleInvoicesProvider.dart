@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:distribution/ApiLink/ApiEndpoint.dart';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
@@ -28,7 +29,7 @@ class SaleInvoicesProvider with ChangeNotifier {
       await loadToken(); // ✅ Load token before API call
 
       String url =
-          "https://distribution-backend.vercel.app/api/order-taker/pending";
+          "${ApiEndpoints.baseUrl}/order-taker/pending";
 
       Map<String, String> params = {};
 
@@ -57,7 +58,62 @@ class SaleInvoicesProvider with ChangeNotifier {
   }
 
   // ✅ Create Invoice / Update Invoice
-  Future<void> createOrUpdateInvoice({
+  // Future<void> createOrUpdateInvoice({
+  //   required SaleInvoiceData order,
+  //   required List<Map<String, dynamic>> products,
+  //   required int discount,
+  //   required int received,
+  //   required DateTime deliveryDate,
+  //   required DateTime agingDate,
+  // }) async {
+  //   try {
+  //     isLoading = true;
+  //     notifyListeners();
+  //
+  //     await loadToken();
+  //
+  //     int totalAmount = products.fold(
+  //       0,
+  //           (sum, item) => sum + ((item['rate'] as num) * (item['qty'] as num)).toInt(),
+  //     );
+  //
+  //
+  //     int receivable = totalAmount - discount;
+  //
+  //     final body = {
+  //       "invoiceDate": DateFormat('yyyy-MM-dd').format(order.date),
+  //       "customerId": order.customerId.id,
+  //       "salesmanId": order.salesmanId.id,
+  //       "orderTakingId": order.id,
+  //       "products": products, // ✅ ALL PRODUCTS
+  //       "totalAmount": totalAmount,
+  //       "receivable": receivable,
+  //       "received": received,
+  //       "deliveryDate": DateFormat('yyyy-MM-dd').format(deliveryDate),
+  //       "agingDate": DateFormat('yyyy-MM-dd').format(agingDate),
+  //       "status": "Pending"
+  //     };
+  //
+  //     final response = await http.post(
+  //       Uri.parse("https://distribution-backend.vercel.app/api/sales-invoice"),
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //         "Authorization": "Bearer $token",
+  //       },
+  //       body: jsonEncode(body),
+  //     );
+  //
+  //     if (response.statusCode != 200 && response.statusCode != 201) {
+  //       error = "Failed: ${response.body}";
+  //     }
+  //   } catch (e) {
+  //     error = e.toString();
+  //   }
+  //
+  //   isLoading = false;
+  //   notifyListeners();
+  // }
+  Future<String?> createOrUpdateInvoice({
     required SaleInvoiceData order,
     required List<Map<String, dynamic>> products,
     required int discount,
@@ -76,7 +132,6 @@ class SaleInvoicesProvider with ChangeNotifier {
             (sum, item) => sum + ((item['rate'] as num) * (item['qty'] as num)).toInt(),
       );
 
-
       int receivable = totalAmount - discount;
 
       final body = {
@@ -84,7 +139,7 @@ class SaleInvoicesProvider with ChangeNotifier {
         "customerId": order.customerId.id,
         "salesmanId": order.salesmanId.id,
         "orderTakingId": order.id,
-        "products": products, // ✅ ALL PRODUCTS
+        "products": products,
         "totalAmount": totalAmount,
         "receivable": receivable,
         "received": received,
@@ -94,7 +149,7 @@ class SaleInvoicesProvider with ChangeNotifier {
       };
 
       final response = await http.post(
-        Uri.parse("https://distribution-backend.vercel.app/api/sales-invoice"),
+        Uri.parse("${ApiEndpoints.baseUrl}/sales-invoice"),
         headers: {
           "Content-Type": "application/json",
           "Authorization": "Bearer $token",
@@ -102,14 +157,19 @@ class SaleInvoicesProvider with ChangeNotifier {
         body: jsonEncode(body),
       );
 
-      if (response.statusCode != 200 && response.statusCode != 201) {
-        error = "Failed: ${response.body}";
+      final data = jsonDecode(response.body);
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        return data["message"] ?? "Invoice Updated Successfully";
+      } else {
+        return data["message"] ?? "Failed to update invoice";
       }
     } catch (e) {
-      error = e.toString();
+      return "Error: $e";
+    } finally {
+      isLoading = false;
+      notifyListeners();
     }
-
-    isLoading = false;
-    notifyListeners();
   }
+
 }

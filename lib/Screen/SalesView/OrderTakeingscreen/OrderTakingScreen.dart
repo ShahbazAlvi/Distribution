@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import '../../../Provider/OrderTakingProvider/OrderTakingProvider.dart';
 import '../../../compoents/AppColors.dart';
 import 'AddOrder.dart';
+import 'UpdateOrderScreen.dart';
 
 class OrderTakingScreen extends StatefulWidget {
   const OrderTakingScreen({super.key});
@@ -212,19 +213,33 @@ class _OrderTakingScreenState extends State<OrderTakingScreen> {
 
                         ElevatedButton.icon(
                           onPressed: () {
+                            // Navigator.push(
+                            //   context,
+                            //   MaterialPageRoute(
+                            //     builder: (context) => AddOrderScreen(
+                            //       nextOrderId: order.orderId,    // existing order ID
+                            //       existingOrder: order,          // passing full order
+                            //       isUpdate: true,                // telling to edit instead of create
+                            //     ),
+                            //   ),
+                            // );
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                builder: (context) => AddOrderScreen(
-                                  nextOrderId: order.orderId,    // existing order ID
-                                  existingOrder: order,          // passing full order
-                                  isUpdate: true,                // telling to edit instead of create
-                                ),
+                                builder: (context) => UpdateOrderScreen(order: order),
                               ),
                             );
+
                           },
-                          icon: Icon(Icons.edit),
-                          label: Text("Update"),
+                          icon: Icon(Icons.edit, color: AppColors.text),
+                          label: Text("Update",style:TextStyle(color: AppColors.text) ,),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: AppColors.betprologo,
+                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                          ),
                         ),
 
 

@@ -90,10 +90,54 @@ class SaleManProvider with ChangeNotifier {
   }
 
   /// ✅ Delete (You can plug API later)
+  // Future<void> deleteEmployee(String id) async {
+  //   _employees.removeWhere((e) => e.id == id);
+  //   notifyListeners();
+  // }
   Future<void> deleteEmployee(String id) async {
-    _employees.removeWhere((e) => e.id == id);
+    _isLoading = true;
+    notifyListeners();
+
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      final token = prefs.getString("token");
+
+      if (token == null) {
+        _error = "No token found. Please login again.";
+        _isLoading = false;
+        notifyListeners();
+        return;
+      }
+
+      final url = Uri.parse("${ApiEndpoints.baseUrl}/employees/$id");
+
+      final response = await http.delete(
+        url,
+        headers: {
+          "Authorization": "Bearer $token",
+          "Content-Type": "application/json"
+        },
+      );
+
+      print("DELETE RESPONSE: ${response.body}");
+
+      if (response.statusCode == 200) {
+        // Remove locally
+        _employees.removeWhere((e) => e.id == id);
+
+        // Refresh list from server
+        await fetchEmployees();
+      } else {
+        _error = "Delete failed: ${response.body}";
+      }
+    } catch (e) {
+      _error = "Error: $e";
+    }
+
+    _isLoading = false;
     notifyListeners();
   }
+
 
   Future<void> createEmployee(BuildContext context) async {
     final prefs = await SharedPreferences.getInstance();
@@ -107,21 +151,37 @@ class SaleManProvider with ChangeNotifier {
     final url = Uri.parse("${ApiEndpoints.baseUrl}/employees");
 
     try {
+      // final body = {
+      //   "departmentName": departmentController.text.trim(),
+      //   "employeeName": nameController.text.trim(),
+      //   "address": addressController.text.trim(),
+      //   "city": cityController.text.trim(),
+      //   "gender": gender,
+      //   "mobile": phoneController.text.trim(),
+      //   "nicNo": nicController.text.trim(),
+      //   "dob": dateOfBirth != null
+      //       ? DateFormat('dd-MM-yyyy').format(dateOfBirth!)
+      //       : "",
+      //   "qualification": qualificationController.text.trim(),
+      //   "bloodGroup": bloodController.text.trim(),
+      //   "isEnable": true
+      // };
       final body = {
         "departmentName": departmentController.text.trim(),
         "employeeName": nameController.text.trim(),
         "address": addressController.text.trim(),
         "city": cityController.text.trim(),
-        "gender": gender,
+        "gender": gender, // now lowercase
         "mobile": phoneController.text.trim(),
         "nicNo": nicController.text.trim(),
         "dob": dateOfBirth != null
-            ? DateFormat('dd-MM-yyyy').format(dateOfBirth!)
+            ? DateFormat('yyyy-MM-dd').format(dateOfBirth!)
             : "",
         "qualification": qualificationController.text.trim(),
         "bloodGroup": bloodController.text.trim(),
         "isEnable": true
       };
+
 
       final headers = {
         "Content-Type": "application/json",
@@ -176,5 +236,85 @@ class SaleManProvider with ChangeNotifier {
     dateOfBirth = null;
     notifyListeners();
   }
+  Future<void> updateEmployee(String id, BuildContext context) async {
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString("token");
+
+    if (token == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Token missing! Please login.")),
+      );
+      return;
+    }
+
+    final url = Uri.parse("${ApiEndpoints.baseUrl}/employees/$id");
+
+    final body = {
+      "departmentName": departmentController.text.trim(),
+      "employeeName": nameController.text.trim(),
+      "address": addressController.text.trim(),
+      "city": cityController.text.trim(),
+      "gender": gender,
+      "mobile": phoneController.text.trim(),
+      "nicNo": nicController.text.trim(),
+      "dob": dateOfBirth != null
+          ? DateFormat('yyyy-MM-dd').format(dateOfBirth!)
+          : "",
+      "qualification": qualificationController.text.trim(),
+      "bloodGroup": bloodController.text.trim(),
+      "isEnable": true
+    };
+
+    try {
+      _isLoading = true;
+      notifyListeners();
+
+      final response = await http.put(
+        url,
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer $token",
+        },
+        body: jsonEncode(body),
+      );
+
+      _isLoading = false;
+      notifyListeners();
+
+      if (response.statusCode == 200) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Employee updated successfully!")),
+        );
+
+        fetchEmployees();
+        Navigator.pop(context);
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Failed: ${response.body}")),
+        );
+      }
+    } catch (e) {
+      _isLoading = false;
+      notifyListeners();
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Error: $e")),
+      );
+    }
+  }
+  void resetFields() {
+    nameController.clear();
+    departmentController.clear();
+    addressController.clear();
+    cityController.clear();
+    phoneController.clear();
+    nicController.clear();
+    qualificationController.clear();
+    bloodController.clear();
+    gender = "";
+    dateOfBirth = null;
+    notifyListeners();
+  }
+
 
 }

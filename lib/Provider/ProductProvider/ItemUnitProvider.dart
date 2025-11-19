@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:distribution/ApiLink/ApiEndpoint.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
@@ -15,7 +16,7 @@ class ItemUnitProvider extends ChangeNotifier {
 
     try {
       final response = await http.get(
-        Uri.parse('https://distribution-backend.vercel.app/api/item-unit'),
+        Uri.parse('${ApiEndpoints.baseUrl}/item-unit'),
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer your_token_here', // optional if required
@@ -39,7 +40,7 @@ class ItemUnitProvider extends ChangeNotifier {
   Future<void> deleteItemUnit(String id) async {
     try {
       final response = await http.delete(
-        Uri.parse('https://distribution-backend.vercel.app/api/item-unit/$id'),
+        Uri.parse('${ApiEndpoints.baseUrl}/item-unit/$id'),
       );
       if (response.statusCode == 200) {
         units.removeWhere((u) => u.id == id);
@@ -58,7 +59,7 @@ class ItemUnitProvider extends ChangeNotifier {
   }) async {
     try {
       final response = await http.post(
-        Uri.parse('https://distribution-backend.vercel.app/api/item-unit'),
+        Uri.parse('${ApiEndpoints.baseUrl}/item-unit'),
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer $token',

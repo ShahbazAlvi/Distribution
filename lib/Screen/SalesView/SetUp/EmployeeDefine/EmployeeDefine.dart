@@ -1,3 +1,4 @@
+import 'package:distribution/Screen/SalesView/SetUp/EmployeeDefine/updateScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../../Provider/SaleManProvider/SaleManProvider.dart';
@@ -53,7 +54,8 @@ class _EmployeesScreenState extends State<EmployeesScreen> {
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
             child: ElevatedButton.icon(
               onPressed: () {
-                 Navigator.push(context,MaterialPageRoute(builder:(context)=>EmployeeAddScreen()));
+                provider.resetFields();
+                Navigator.push(context,MaterialPageRoute(builder:(context)=>EmployeeAddScreen()));
               },
               icon: const Icon(Icons.add_circle_outline, color: Colors.white),
               label: const Text(
@@ -153,15 +155,27 @@ class _EmployeesScreenState extends State<EmployeesScreen> {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         /// ✅ Update Button
+                        // IconButton(
+                        //   icon: const Icon(Icons.edit, color: Colors.blue),
+                        //   onPressed: () {
+                        //     ScaffoldMessenger.of(context).showSnackBar(
+                        //       const SnackBar(
+                        //           content: Text("Update clicked")),
+                        //     );
+                        //   },
+                        // ),
                         IconButton(
                           icon: const Icon(Icons.edit, color: Colors.blue),
                           onPressed: () {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                  content: Text("Update clicked")),
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => EmployeeUpdateScreen(employee: emp),
+                              ),
                             );
                           },
                         ),
+
 
                         /// ✅ Delete Button
                         IconButton(

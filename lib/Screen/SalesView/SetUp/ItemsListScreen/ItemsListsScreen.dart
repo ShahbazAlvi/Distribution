@@ -95,12 +95,20 @@ class _ItemListScreenState extends State<ItemListScreen> {
               return Card(
                 margin: const EdgeInsets.all(8),
                 child: ListTile(
-                  leading: Image.network(
+                  leading: item.itemImage != null && item.itemImage!.url.isNotEmpty
+                      ? Image.network(
                     item.itemImage!.url,
                     height: 50,
                     width: 50,
                     fit: BoxFit.cover,
+                  )
+                      : Container(
+                    height: 50,
+                    width: 50,
+                    color: Colors.grey.shade300,
+                    child: const Icon(Icons.image_not_supported),
                   ),
+
 
                   title: Text(item.itemName,
                       style: const TextStyle(fontWeight: FontWeight.bold)),
@@ -108,10 +116,10 @@ class _ItemListScreenState extends State<ItemListScreen> {
                   subtitle: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text("Type: ${item.itemType?.itemTypeName}"),
+                      //Text("Type: ${item.itemType?.itemTypeName}"),
                       Text("Category: ${item.itemCategory?.categoryName ?? 'N/A'}"),
                       Text("Purchase: ${item.purchase}"),
-                      Text("Price (Sales): ${item.price}"),
+                     // Text("Price (Sales): ${item.price}"),
                       Text("Stock: ${item.stock}"),
                     ],
                   ),
@@ -129,14 +137,45 @@ class _ItemListScreenState extends State<ItemListScreen> {
                       ),
 
                       // ✅ Delete Button
+                      // IconButton(
+                      //   icon: const Icon(Icons.delete, color: Colors.red),
+                      //   onPressed: () {
+                      //     Provider.of<ItemDetailsProvider>(context,
+                      //         listen: false)
+                      //         .deleteItem(item.id);
+                      //   },
+                      // ),
                       IconButton(
                         icon: const Icon(Icons.delete, color: Colors.red),
-                        onPressed: () {
-                          Provider.of<ItemDetailsProvider>(context,
-                              listen: false)
-                              .deleteItem(item.id);
+                        onPressed: () async {
+                          final confirm = await showDialog<bool>(
+                            context: context,
+                            builder: (context) {
+                              return AlertDialog(
+                                title: const Text("Delete Item"),
+                                content: const Text("Are you sure you want to delete this item?"),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () => Navigator.pop(context, false),
+                                    child: const Text("No"),
+                                  ),
+                                  TextButton(
+                                    onPressed: () => Navigator.pop(context, true),
+                                    child: const Text("Yes", style: TextStyle(color: Colors.red)),
+                                  ),
+                                ],
+                              );
+                            },
+                          );
+
+                          // If user pressed Yes
+                          if (confirm == true) {
+                            Provider.of<ItemDetailsProvider>(context, listen: false)
+                                .deleteItem(item.id);
+                          }
                         },
                       ),
+
                     ],
                   ),
                 ),

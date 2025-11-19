@@ -49,50 +49,62 @@ class ItemDetails {
   });
 
   factory ItemDetails.fromJson(Map<String, dynamic> json) {
+    num safeNum(dynamic value) {
+      if (value == null) return 0;
+      if (value is num) return value;
+      return num.tryParse(value.toString()) ?? 0;
+    }
+
     return ItemDetails(
-      itemImage: json["itemImage"] != null
+      itemImage: json["itemImage"] is Map
           ? ItemImage.fromJson(json["itemImage"])
           : null,
 
-      id: json["_id"] ?? "",
-      itemId: json["itemId"] ?? "",
-      itemType: json["itemType"] != null
+      id: json["_id"]?.toString() ?? "",
+      itemId: json["itemId"]?.toString() ?? "",
+
+      itemType: json["itemType"] is Map
           ? ItemType.fromJson(json["itemType"])
           : null,
 
-      itemCategory: json["itemCategory"] != null
+      itemCategory: json["itemCategory"] is Map
           ? ItemCategory.fromJson(json["itemCategory"])
           : null,
 
-      itemKind: json["itemKind"] ?? "",
-      manufacturer: json["manufacturer"] != null
+      itemKind: json["itemKind"]?.toString() ?? "",
+
+      manufacturer: json["manufacturer"] is Map
           ? Manufacturer.fromJson(json["manufacturer"])
           : null,
 
-      supplier: json["supplier"] != null
+      supplier: json["supplier"] is Map
           ? Supplier.fromJson(json["supplier"])
           : null,
 
-      shelveLocation: json["shelveLocation"] != null
+      shelveLocation: json["shelveLocation"] is Map
           ? ShelveLocation.fromJson(json["shelveLocation"])
           : null,
 
-      itemUnit: json["itemUnit"] != null
+      itemUnit: json["itemUnit"] is Map
           ? ItemUnit.fromJson(json["itemUnit"])
           : null,
 
-      itemName: json["itemName"] ?? "",
-      purchase: json["purchase"] ?? 0,
-      price: json["price"] ?? 0,
-      stock: json["stock"] ?? 0,
-      perUnit: json["perUnit"] ?? 0,
-      reorder: json["reorder"] ?? 0,
-      isEnable: json["isEnable"] ?? true,
-      primaryBarcode: json["primaryBarcode"] ?? "",
-      secondaryBarcode: json["secondaryBarcode"] ?? "",
-      noHasExpiray: json["noHasExpiray"] ?? false,
-      createdAt: json["createdAt"] ?? "",
-      updatedAt: json["updatedAt"] ?? "",
+      itemName: json["itemName"]?.toString() ?? "",
+
+      purchase: safeNum(json["purchase"]),
+      price: safeNum(json["price"]),
+      stock: safeNum(json["stock"]),
+      perUnit: safeNum(json["perUnit"]),
+      reorder: safeNum(json["reorder"]),
+
+      isEnable: json["isEnable"] == true,
+
+      primaryBarcode: json["primaryBarcode"]?.toString() ?? "",
+      secondaryBarcode: json["secondaryBarcode"]?.toString() ?? "",
+      noHasExpiray: json["noHasExpiray"] == true,
+
+      createdAt: json["createdAt"]?.toString() ?? "",
+      updatedAt: json["updatedAt"]?.toString() ?? "",
     );
   }
 }

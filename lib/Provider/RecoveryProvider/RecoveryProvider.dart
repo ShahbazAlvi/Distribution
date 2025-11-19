@@ -53,19 +53,58 @@ class RecoveryProvider extends ChangeNotifier {
 
   /// ✅ Update Received Amount (PATCH)
 
-  Future<bool> updateReceivedAmount(String invoiceId, String receivedAmount) async {
-    await loadToken();
+  // Future<bool> updateReceivedAmount(String invoiceId, String receivedAmount) async {
+  //   await loadToken();
+  //
+  //   if (token.isEmpty) {
+  //     print("Token missing!");
+  //     return false;
+  //   }
+  //
+  //   try {
+  //     isUpdating = true;
+  //     notifyListeners();
+  //
+  //     var url = Uri.parse("$baseUrl/recovery"); // POST to /recovery
+  //
+  //     var body = jsonEncode({
+  //       "invoiceId": invoiceId,
+  //       "amount": double.parse(receivedAmount),
+  //     });
+  //
+  //     final response = await http.post(
+  //       url,
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //         "Authorization": "Bearer $token",
+  //       },
+  //       body: body,
+  //     );
+  //
+  //     print("Response status: ${response.statusCode}");
+  //     print("Response body: ${response.body}");
+  //
+  //     isUpdating = false;
+  //     notifyListeners();
+  //
+  //     return response.statusCode == 200;
+  //   } catch (e) {
+  //     isUpdating = false;
+  //     notifyListeners();
+  //     print("Error updating recovery: $e");
+  //     return false;
+  //   }
+  // }
 
-    if (token.isEmpty) {
-      print("Token missing!");
-      return false;
-    }
+
+  Future<String?> updateReceivedAmount(String invoiceId, String receivedAmount) async {
+    await loadToken();
 
     try {
       isUpdating = true;
       notifyListeners();
 
-      var url = Uri.parse("$baseUrl/recovery"); // POST to /recovery
+      var url = Uri.parse("$baseUrl/recovery");
 
       var body = jsonEncode({
         "invoiceId": invoiceId,
@@ -81,18 +120,21 @@ class RecoveryProvider extends ChangeNotifier {
         body: body,
       );
 
-      print("Response status: ${response.statusCode}");
       print("Response body: ${response.body}");
 
       isUpdating = false;
       notifyListeners();
 
-      return response.statusCode == 200;
+      if (response.statusCode == 201 || response.statusCode == 200) {
+        final json = jsonDecode(response.body);
+        return json["message"]; // <-- return success message
+      }
+
+      return null;
     } catch (e) {
       isUpdating = false;
       notifyListeners();
-      print("Error updating recovery: $e");
-      return false;
+      return null;
     }
   }
 

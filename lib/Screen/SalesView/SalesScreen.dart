@@ -415,12 +415,12 @@ class SalesDashboard extends StatelessWidget {
                     Navigator.push(context, MaterialPageRoute(builder: (_) => const CreditAgingScreen()));
                   },
                 ),
-                DashboardCard(
-                  icon: Icons.cloud_upload_rounded,
-                  title: "Daily Sales Report",
-                  color: Colors.indigoAccent,
-                  onTap: () {},
-                ),
+                // DashboardCard(
+                //   icon: Icons.cloud_upload_rounded,
+                //   title: "Daily Sales Report",
+                //   color: Colors.indigoAccent,
+                //   onTap: () {},
+                // ),
               ]),
 
               const SizedBox(height: 30),
@@ -445,14 +445,7 @@ class SalesDashboard extends StatelessWidget {
                     Navigator.push(context, MaterialPageRoute(builder: (_) => const CategoriesScreen()));
                   },
                 ),
-                DashboardCard(
-                  icon: Icons.list_alt,
-                  title: "List of Items",
-                  color: Colors.lightGreenAccent,
-                  onTap: () {
-                    Navigator.push(context, MaterialPageRoute(builder: (_) => const ItemListScreen()));
-                  },
-                ),
+
                 DashboardCard(
                   icon: Icons.list_alt,
                   title: "Items Type ",
@@ -467,6 +460,14 @@ class SalesDashboard extends StatelessWidget {
                   color: Colors.lightGreenAccent,
                   onTap: () {
                     Navigator.push(context, MaterialPageRoute(builder: (_) => const ItemUnitScreen()));
+                  },
+                ),
+                DashboardCard(
+                  icon: Icons.list_alt,
+                  title: "List of Items",
+                  color: Colors.lightGreenAccent,
+                  onTap: () {
+                    Navigator.push(context, MaterialPageRoute(builder: (_) => const ItemListScreen()));
                   },
                 ),
                 DashboardCard(

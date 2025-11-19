@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:distribution/ApiLink/ApiEndpoint.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
@@ -12,7 +13,7 @@ class ItemDetailsProvider with ChangeNotifier {
   bool isLoading = false;
   String? errorMessage;
 
-  String baseUrl = "https://distribution-backend.vercel.app/api/item-details";
+  String baseUrl = "${ApiEndpoints.baseUrl}/item-details";
   String token = "";   // ✅ Put your token here
 
   Future<void> fetchItems({String? categoryName, bool? isEnable}) async {
@@ -45,24 +46,59 @@ class ItemDetailsProvider with ChangeNotifier {
   }
 
   // ✅ Delete Item
+  // Future<void> deleteItem(String id) async {
+  //   final uri =
+  //   Uri.parse("${ApiEndpoints.baseUrl}/item-details/$id");
+  //
+  //   try {
+  //     final res = await http.delete(
+  //       uri,
+  //       headers: {"Authorization": "Bearer $token"},
+  //     );
+  //
+  //     if (res.statusCode == 200) {
+  //       items.removeWhere((item) => item.id == id);
+  //       notifyListeners();
+  //     }
+  //   } catch (e) {
+  //     print("Delete error: $e");
+  //   }
+  // }
+
   Future<void> deleteItem(String id) async {
-    final uri =
-    Uri.parse("https://distribution-backend.vercel.app/api/item-details/$id");
+    final storedToken = await getToken();
+    // 🔥 load token from SharedPreferences
+
+    if (storedToken == null) {
+      print("Delete Error: Token is null");
+      return;
+    }
+
+    final uri = Uri.parse("${ApiEndpoints.baseUrl}/item-details/$id");
 
     try {
       final res = await http.delete(
         uri,
-        headers: {"Authorization": "Bearer $token"},
+        headers: {
+          "Authorization": "Bearer $storedToken",
+        },
       );
+
+      print("Delete response: ${res.body}");
 
       if (res.statusCode == 200) {
         items.removeWhere((item) => item.id == id);
         notifyListeners();
+
+        // refresh list from server
+        fetchItems();
       }
     } catch (e) {
       print("Delete error: $e");
     }
   }
+
+
   String getNextItemId() {
     if (items.isEmpty) {
       return "001"; // first item
@@ -108,7 +144,7 @@ class ItemDetailsProvider with ChangeNotifier {
       return false;
     }
 
-    final uri = Uri.parse("https://distribution-backend.vercel.app/api/item-details");
+    final uri = Uri.parse("${ApiEndpoints.baseUrl}/item-details");
     final request = http.MultipartRequest("POST", uri);
 
     request.headers['Authorization'] = 'Bearer $token';
@@ -145,5 +181,7 @@ class ItemDetailsProvider with ChangeNotifier {
     notifyListeners();
     return false;
   }
+
+
 
 }

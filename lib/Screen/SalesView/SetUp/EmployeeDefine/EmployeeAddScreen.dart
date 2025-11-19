@@ -23,7 +23,7 @@ class _EmployeeAddScreenState extends State<EmployeeAddScreen> {
         iconTheme: const IconThemeData(color: Colors.white),
         title: const Center(
           child: Text(
-            "SalesMan Add",
+            "Add Employee",
             style: TextStyle(
               color: Colors.white,
               fontWeight: FontWeight.bold,

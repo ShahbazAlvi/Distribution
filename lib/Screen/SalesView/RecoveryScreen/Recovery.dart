@@ -119,31 +119,32 @@ class _RecoveryListScreenState extends State<RecoveryListScreen> {
                     shadowColor: Colors.grey.withOpacity(0.3),
                     child: InkWell(
                       borderRadius: BorderRadius.circular(12),
-                      // onTap: () {
-                      //   Navigator.push(
-                      //     context,
-                      //     MaterialPageRoute(
-                      //       builder: (_) => EditRecoveryScreen(invoice: item),
-                      //     ),
-                      //   );
-                    //  },
+
                       onTap: () async {
-                        // Wait until the Edit screen is closed
-                        bool? updated = await Navigator.push(
+                        String? message = await Navigator.push(
                           context,
                           MaterialPageRoute(
                             builder: (_) => EditRecoveryScreen(invoice: item),
                           ),
                         );
 
-                        // If update was successful, refresh the list
-                        if (updated == true) {
+                        if (message != null) {
+                          // Refresh data
                           provider.fetchRecoveryReport(
                             selectedCustomer?.id ?? "",
                             selectedDate ?? "",
                           );
+
+                          // Show success message
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(message),
+                              backgroundColor: Colors.green,
+                            ),
+                          );
                         }
                       },
+
 
                       child: Padding(
                         padding: const EdgeInsets.all(16),
@@ -280,17 +281,31 @@ class _EditRecoveryScreenState extends State<EditRecoveryScreen> {
     final provider = Provider.of<RecoveryProvider>(context);
 
     return Scaffold(
-      appBar: AppBar(title: const Text("Edit Recovery")),
+      appBar: AppBar(
+        title: const Text("Edit Recovery Report",
+            style: TextStyle(color: Colors.white, fontSize: 22)),
+        centerTitle: true,
+        iconTheme: const IconThemeData(color: Colors.white),
+        flexibleSpace: Container(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              colors: [AppColors.secondary, AppColors.primary],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+          ),
+        ),
+      ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _infoRow("Recovery Id", widget.invoice.recoveryId ?? "N/A"),
-            _infoRow("Recovery Date", widget.invoice.agingDate ?? ""),
+            _infoRow("Recovery Id", widget.invoice.invoiceNo ?? "N/A"),
+            _infoRow("Recovery Date", formatDate(widget.invoice.agingDate ?? "")),
             const SizedBox(height: 10),
             _infoRow("Invoice No.", widget.invoice.invoiceNo ?? ""),
-            _infoRow("Invoice Date", widget.invoice.invoiceDate ?? ""),
+            _infoRow("Invoice Date", formatDate(widget.invoice.invoiceDate ?? "")),
             _infoRow("Customer", widget.invoice.customer ?? ""),
             _infoRow("Salesman", widget.invoice.salesman ?? ""),
             const SizedBox(height: 20),
@@ -323,36 +338,33 @@ class _EditRecoveryScreenState extends State<EditRecoveryScreen> {
                 ? const Center(child: CircularProgressIndicator())
                 : ElevatedButton(
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.teal,
+                backgroundColor: AppColors.secondary,
                 minimumSize: const Size(double.infinity, 50),
               ),
+
               onPressed: () async {
                 if (receivedController.text.isEmpty) {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                        content: Text("Enter received amount")),
+                    const SnackBar(content: Text("Enter received amount")),
                   );
                   return;
                 }
 
-                bool ok = await provider.updateReceivedAmount(
+                String? msg = await provider.updateReceivedAmount(
                   widget.invoice.invoiceId!,
                   receivedController.text.trim(),
                 );
 
-                // if (ok) Navigator.pop(context);
-                // if (ok) Navigator.pop(context, true); // <-- return true
-                if (ok) {
-                  // Optionally update local invoice fields for immediate reflection
-                  widget.invoice.received = double.parse(receivedController.text);
-                  widget.invoice.balance = balance;
-
-                  // Pop screen and signal that update happened
-                  Navigator.pop(context, true);
+                if (msg != null) {
+                  // return message to previous screen
+                  Navigator.pop(context, msg);
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text("Failed to update recovery")),
+                  );
                 }
-
-
               },
+
               child: const Text(
                 "Update Recovery",
                 style: TextStyle(color: Colors.white, fontSize: 18),
@@ -420,4 +432,15 @@ class _EditRecoveryScreenState extends State<EditRecoveryScreen> {
       textAlign: TextAlign.center,
     ),
   );
+  String formatDate(String? date) {
+    if (date == null || date.isEmpty) return "N/A";
+
+    try {
+      DateTime parsed = DateTime.parse(date);
+      return DateFormat('dd-MM-yyyy').format(parsed); // simple date
+    } catch (e) {
+      return date; // fallback if parsing fails
+    }
+  }
+
 }

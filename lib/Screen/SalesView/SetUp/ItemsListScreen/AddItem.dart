@@ -38,19 +38,30 @@ class _AddItemScreenState extends State<AddItemScreen> {
   File? pickedImage;
 
   @override
+  // void initState() {
+  //   super.initState();
+  //   Future.microtask(() {
+  //     Provider.of<CategoriesProvider>(context, listen: false).fetchCategories();
+  //     Provider.of<ItemTypeProvider>(context, listen: false).fetchItemTypes();
+  //     Provider.of<ItemUnitProvider>(context, listen: false).fetchItemUnits();
+  //   });
+  // }
+  @override
   void initState() {
     super.initState();
     Future.microtask(() {
+      final unitProvider =
+      Provider.of<ItemUnitProvider>(context, listen: false);
+
+      if (unitProvider.units.isEmpty) {
+        unitProvider.fetchItemUnits();
+      }
+
       Provider.of<CategoriesProvider>(context, listen: false).fetchCategories();
       Provider.of<ItemTypeProvider>(context, listen: false).fetchItemTypes();
-      Provider.of<ItemUnitProvider>(context, listen: false).fetchItemUnits();
     });
   }
 
-  // Future pickImage() async {
-  //   final img = await ImagePicker().pickImage(source: ImageSource.gallery);
-  //   if (img != null) setState(() => pickedImage = File(img.path));
-  // }
   Future pickImage() async {
     // Request permission first
     if (await Permission.photos.request().isGranted) {
@@ -94,6 +105,7 @@ class _AddItemScreenState extends State<AddItemScreen> {
     if (success) {
       ScaffoldMessenger.of(context)
           .showSnackBar(const SnackBar(content: Text("Item added successfully")));
+
       Navigator.pop(context);
     } else {
       ScaffoldMessenger.of(context)
@@ -156,13 +168,7 @@ class _AddItemScreenState extends State<AddItemScreen> {
                 const SizedBox(height: 10),
                 AppTextField(controller: itemKindCtrl, label: "Item Kind" ,  validator: (value) => validator(value as String?)),
                 const SizedBox(height: 20),
-                // Row(
-                //   children: [
-                //     ElevatedButton(onPressed: pickImage, child: const Text("Pick Image")),
-                //     const SizedBox(width: 10),
-                //     pickedImage == null ? const Text("No image selected") : Text(pickedImage!.path, overflow: TextOverflow.ellipsis),
-                //   ],
-                // ),
+
                 Row(
                   children: [
                     ElevatedButton(

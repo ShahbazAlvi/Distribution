@@ -171,7 +171,7 @@ class _AddReceiptVoucherScreenState extends State<AddReceiptVoucherScreen> {
                     selectedSalesman = val;
                     print("Selected balance: ${val?.preBalance}");
                     //salesmanReceivable = val?.preBalance.toString() ?? "0"; // use preBalance
-                    salesmanReceivable = val?.recoveryBalance.toString() ?? "0";
+                    salesmanReceivable = val?.preBalance.toString() ?? "0";
                   });
                 },
               ),

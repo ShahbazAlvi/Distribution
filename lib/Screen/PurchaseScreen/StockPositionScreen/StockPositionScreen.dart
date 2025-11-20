@@ -1,104 +1,4 @@
-//
-// import 'package:flutter/material.dart';
-// import 'package:provider/provider.dart';
-//
-// import '../../../Provider/Purchase_Provider/StockPositionProvider/StockPositionProvider.dart';
-// import '../../../compoents/AppColors.dart';
-// import '../../../model/Purchase_Model/StockPostionModel/StockPostionModel.dart';
-//
-// class StockPositionScreen extends StatelessWidget {
-//   const StockPositionScreen({super.key});
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     return ChangeNotifierProvider(
-//       create: (_) => StockPositionProvider()..fetchStockPosition(),
-//       child: Scaffold(
-//         appBar: AppBar(
-//           iconTheme: const IconThemeData(color: Colors.white),
-//           title: const Center(
-//             child: Text(
-//               "Stocks Position",
-//               style: TextStyle(
-//                 color: Colors.white,
-//                 fontWeight: FontWeight.bold,
-//                 fontSize: 22,
-//                 letterSpacing: 1.2,
-//               ),
-//             ),
-//           ),
-//           centerTitle: true,
-//           elevation: 6,
-//           flexibleSpace: Container(
-//             decoration: const BoxDecoration(
-//               gradient: LinearGradient(
-//                 colors: [AppColors.secondary, AppColors.primary],
-//                 begin: Alignment.topLeft,
-//                 end: Alignment.bottomRight,
-//               ),
-//             ),
-//           ),
-//         ),
-//         body: Consumer<StockPositionProvider>(
-//           builder: (context, provider, child) {
-//             if (provider.isLoading) {
-//               return const Center(child: CircularProgressIndicator());
-//             }
-//
-//             if (provider.stockItems.isEmpty) {
-//               return const Center(child: Text("No stock data found"));
-//             }
-//
-//             return SingleChildScrollView(
-//               padding: const EdgeInsets.all(20),
-//               scrollDirection: Axis.vertical,
-//               child: SingleChildScrollView(
-//                 scrollDirection: Axis.horizontal,
-//                 child: DataTable(
-//                   columns: const [
-//                     DataColumn(
-//                         label: Text(
-//                           'S.No',
-//                           style:
-//                           TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-//                         )),
-//                     DataColumn(
-//                         label: Text(
-//                           'Item Name',
-//                           style:
-//                           TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-//                         )),
-//                     DataColumn(
-//                         label: Text(
-//                           'Stock',
-//                           style:
-//                           TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-//                         )),
-//                   ],
-//                   rows: provider.stockItems
-//                       .asMap()
-//                       .entries
-//                       .map((entry) {
-//                     int index = entry.key;
-//                     StockPositionModel item = entry.value;
-//                     return DataRow(
-//                       cells: [
-//                         DataCell(Text((index + 1).toString())), // S.No
-//                         DataCell(Text(item.itemName ?? '-')),
-//                         DataCell(Text((item.stock ?? 0).toString())),
-//                       ],
-//                     );
-//                   })
-//                       .toList(),
-//                 ),
-//               ),
-//             );
-//           },
-//         ),
-//       ),
-//     );
-//   }
-// }
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -260,8 +160,22 @@ class _StockPositionScreenState extends State<StockPositionScreen> {
                             return DataRow(
                               cells: [
                                 DataCell(Text((index + 1).toString())),
-                                DataCell(Text(item.itemName?.trim() ?? '-')), // trim spaces
-                                DataCell(Text((item.stock ?? 0).toString())),
+                               // DataCell(Text(item.itemName?.trim() ?? '-')), // trim spaces
+                                DataCell(
+                                  Text(item.itemName?.trim() ?? '-'),
+                                  onTap: () {
+                                    _showUpdateStockDialog(context, item);
+                                  },
+                                ),
+
+                               // DataCell(Text((item.stock ?? 0).toString())),
+                                DataCell(
+                                  Text((item.stock ?? 0).toString()),
+                                  onTap: () {
+                                    _showUpdateStockDialog(context, item);
+                                  },
+                                ),
+
                               ],
                             );
                           }).toList(),
@@ -277,4 +191,53 @@ class _StockPositionScreenState extends State<StockPositionScreen> {
       ),
     );
   }
+  void _showUpdateStockDialog(BuildContext context, StockPositionModel item) {
+    final TextEditingController stockController =
+    TextEditingController(text: item.stock?.toString() ?? '0');
+
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text('Update Stock for ${item.itemName}'),
+          content: TextField(
+            controller: stockController,
+            keyboardType: TextInputType.number,
+            decoration: const InputDecoration(
+              labelText: 'Stock',
+              border: OutlineInputBorder(),
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('Cancel'),
+            ),
+            ElevatedButton(
+              onPressed: () async {
+                final newStock = stockController.text.trim();
+                if (newStock.isEmpty) return;
+
+                final provider = Provider.of<StockPositionProvider>(context, listen: false);
+                final success = await provider.updateStock(item.id!, newStock);
+
+                if (success) {
+                  Navigator.pop(context);
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Stock updated successfully')),
+                  );
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Failed to update stock')),
+                  );
+                }
+              },
+              child: const Text('Update'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
 }

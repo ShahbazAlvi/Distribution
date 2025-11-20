@@ -66,7 +66,7 @@ class _GRNScreenState extends State<GRNScreen> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => AddGRNScreen(nextGrnId: nextGrnId),
+                    builder: (context) => AddGRNScreen(),
                   ),
                 );
               },

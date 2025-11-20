@@ -8,6 +8,7 @@ import '../../../../../Provider/SaleManProvider/SaleManProvider.dart';
 import '../../../../../compoents/AppColors.dart';
 import '../../../../../model/BankModel/BankListModel.dart';
 import '../../../../../model/BankModel/ReceiptVoucher.dart';
+import '../../../../../model/SaleManModel/EmployeesModel.dart';
 import '../../../../../model/SaleManModel/SaleManModel.dart';
 
 
@@ -26,7 +27,9 @@ class _AddReceiptVoucherScreenState extends State<AddReceiptVoucherScreen> {
   BankData? selectedBank;
   //Salesman? selectedSalesman;// was Salesman? -> use SaleManModel
   String salesmanReceivable = "0";
-  SaleManModel? selectedSalesman;
+  //SaleManModel? selectedSalesman;
+  EmployeeData? selectedSalesman;
+
 
 
 
@@ -45,7 +48,7 @@ class _AddReceiptVoucherScreenState extends State<AddReceiptVoucherScreen> {
     // fetch bank and salesman lists
     Future.microtask(() {
       Provider.of<BankProvider>(context, listen: false).fetchBanks();
-      Provider.of<SaleManProvider>(context, listen: false).fetchSalesmen();
+      Provider.of<SaleManProvider>(context, listen: false).fetchEmployees();
     });
   }
 
@@ -151,30 +154,56 @@ class _AddReceiptVoucherScreenState extends State<AddReceiptVoucherScreen> {
               const SizedBox(height: 16),
 
               /// ---------------------- SALESMAN DROPDOWN ----------------------
+             //  salesmanProvider.isLoading
+             //      ? const CircularProgressIndicator()
+             // : DropdownButtonFormField<EmployeeData>(
+             //    decoration: const InputDecoration(
+             //      labelText: "Select Salesman",
+             //      border: OutlineInputBorder(),
+             //    ),
+             //    value: selectedSalesman,
+             //    isExpanded: true,
+             //    items: salesmanProvider.salesmen.map((s) {
+             //      return DropdownMenuItem<SaleManModel>(
+             //        value: s,
+             //        child: Text(s.employeeName),
+             //      );
+             //    }).toList(),
+             //    onChanged: (val) {
+             //      setState(() {
+             //        selectedSalesman = val;
+             //        print("Selected balance: ${val?.preBalance}");
+             //        //salesmanReceivable = val?.preBalance.toString() ?? "0"; // use preBalance
+             //        salesmanReceivable = val?.preBalance.toString() ?? "0";
+             //      });
+             //    },
+             //  ),
+              /// ---------------------- SALESMAN DROPDOWN ----------------------
               salesmanProvider.isLoading
                   ? const CircularProgressIndicator()
-             : DropdownButtonFormField<SaleManModel>(
+                  : DropdownButtonFormField<EmployeeData>(
                 decoration: const InputDecoration(
                   labelText: "Select Salesman",
                   border: OutlineInputBorder(),
                 ),
                 value: selectedSalesman,
                 isExpanded: true,
-                items: salesmanProvider.salesmen.map((s) {
-                  return DropdownMenuItem<SaleManModel>(
-                    value: s,
-                    child: Text(s.employeeName),
+                items: salesmanProvider.employees.map((emp) {
+                  return DropdownMenuItem<EmployeeData>(
+                    value: emp,
+                    child: Text(emp.employeeName),
                   );
                 }).toList(),
                 onChanged: (val) {
                   setState(() {
                     selectedSalesman = val;
-                    print("Selected balance: ${val?.preBalance}");
-                    //salesmanReceivable = val?.preBalance.toString() ?? "0"; // use preBalance
-                    salesmanReceivable = val?.preBalance.toString() ?? "0";
+                    salesmanReceivable = val?.recoveryBalance.toString() ?? "0";
+                    // Optional debug print
+                    print("Selected Salesman: ${val?.employeeName}, Receivable: ${salesmanReceivable}");
                   });
                 },
               ),
+
 
 
 
@@ -229,37 +258,107 @@ class _AddReceiptVoucherScreenState extends State<AddReceiptVoucherScreen> {
               const SizedBox(height: 20),
 
               /// ---------------------- SUBMIT BUTTON ----------------------
+              // SizedBox(
+              //   width: double.infinity,
+              //   child: ElevatedButton(
+              //     onPressed: voucherProvider.isSubmitting
+              //         ? null
+              //         : () async {
+              //       if (selectedBank == null ||
+              //           selectedSalesman == null ||
+              //           amountController.text.isEmpty) {
+              //         ScaffoldMessenger.of(context).showSnackBar(
+              //           const SnackBar(
+              //               content: Text("Please fill all fields")),
+              //         );
+              //         return;
+              //       }
+              //
+              //       final success = await voucherProvider.addVoucher(
+              //         date: currentDate,
+              //         receiptId: widget.receiptId,
+              //         bankId: selectedBank!.id,
+              //         salesmanId: selectedSalesman!.id,
+              //         amount: int.parse(amountController.text),
+              //         remarks: remarkController.text,
+              //       );
+              //
+              //       if (success) {
+              //         ScaffoldMessenger.of(context).showSnackBar(
+              //           const SnackBar(
+              //               content: Text("Voucher Added Successfully")),
+              //         );
+              //         Navigator.pop(context);
+              //       }
+              //     },
+              //     style: ElevatedButton.styleFrom(
+              //       padding: const EdgeInsets.all(14),
+              //       backgroundColor: AppColors.secondary,
+              //     ),
+              //     child: voucherProvider.isSubmitting
+              //         ? const CircularProgressIndicator(color: Colors.white)
+              //         : const Text(
+              //       "Submit Voucher",
+              //       style: TextStyle(
+              //           color: Colors.white,
+              //           fontWeight: FontWeight.bold),
+              //     ),
+              //   ),
+              // ),
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
                   onPressed: voucherProvider.isSubmitting
                       ? null
                       : () async {
+                    // 1️⃣ Check all required fields
                     if (selectedBank == null ||
                         selectedSalesman == null ||
                         amountController.text.isEmpty) {
                       ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                            content: Text("Please fill all fields")),
+                        const SnackBar(content: Text("Please fill all fields")),
                       );
                       return;
                     }
 
+                    // 2️⃣ Parse entered amount
+                    final enteredAmount = int.tryParse(amountController.text) ?? 0;
+                    final receivable = int.tryParse(salesmanReceivable) ?? 0;
+
+                    // 3️⃣ Validate against Salesman receivable
+                    if (enteredAmount > receivable) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(
+                            "Amount cannot exceed Salesman receivable ($receivable)",
+                          ),
+                        ),
+                      );
+                      return;
+                    }
+
+                    // 4️⃣ Call API to add voucher
                     final success = await voucherProvider.addVoucher(
                       date: currentDate,
                       receiptId: widget.receiptId,
                       bankId: selectedBank!.id,
                       salesmanId: selectedSalesman!.id,
-                      amount: int.parse(amountController.text),
+                      amount: enteredAmount,
                       remarks: remarkController.text,
                     );
 
+                    // 5️⃣ Handle API response
                     if (success) {
                       ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                            content: Text("Voucher Added Successfully")),
+                        const SnackBar(content: Text("Voucher Added Successfully")),
                       );
                       Navigator.pop(context);
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text("❌ Failed to add voucher. Check the values."),
+                        ),
+                      );
                     }
                   },
                   style: ElevatedButton.styleFrom(
@@ -271,11 +370,13 @@ class _AddReceiptVoucherScreenState extends State<AddReceiptVoucherScreen> {
                       : const Text(
                     "Submit Voucher",
                     style: TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold),
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
-              ),
+              )
+
             ],
           ),
         ),

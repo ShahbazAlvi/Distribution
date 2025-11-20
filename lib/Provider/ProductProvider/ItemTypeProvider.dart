@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
+import '../../ApiLink/ApiEndpoint.dart';
 import '../../model/ProductModel/ItemTypeModel.dart';
 
 
@@ -15,7 +16,7 @@ class ItemTypeProvider extends ChangeNotifier {
     loading = true;
     notifyListeners();
 
-    final url = Uri.parse('https://distribution-backend.vercel.app/api/item-type');
+    final url = Uri.parse('${ApiEndpoints.baseUrl}/item-type');
 
     try {
       final response = await http.get(
@@ -49,7 +50,7 @@ class ItemTypeProvider extends ChangeNotifier {
 
   Future<void> deleteItemType(String id) async {
     final url =
-    Uri.parse('https://distribution-backend.vercel.app/api/item-type/$id');
+    Uri.parse('${ApiEndpoints.baseUrl}/item-type/$id');
 
     try {
       final response = await http.delete(url);
@@ -69,7 +70,7 @@ class ItemTypeProvider extends ChangeNotifier {
     required String itemTypeName,
     required String token,
   }) async {
-    final url = Uri.parse('https://distribution-backend.vercel.app/api/item-type');
+    final url = Uri.parse('${ApiEndpoints.baseUrl}/item-type');
 
     try {
       final response = await http.post(

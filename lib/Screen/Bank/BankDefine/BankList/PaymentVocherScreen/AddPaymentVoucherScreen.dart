@@ -22,6 +22,9 @@ class _AddPaymentVoucherScreenState extends State<AddPaymentVoucherScreen> {
 
   String? selectedBankId;
   String? selectedSupplierId;
+  String? bankBalance = "0";
+  String? supplierBalance = "0";
+
 
   TextEditingController amountController = TextEditingController();
   TextEditingController remarkController = TextEditingController();
@@ -88,15 +91,46 @@ class _AddPaymentVoucherScreenState extends State<AddPaymentVoucherScreen> {
                   items: bankP.bankList.map((b) {
                     return DropdownMenuItem(
                       value: b.id,
-                      child: Text(b.bankName),
+                      child: Text("${b.bankName}-${b.accountHolderName}"),
                     );
                   }).toList(),
                   onChanged: (value) {
-                    selectedBankId = value;
+                    setState(() {
+                      selectedBankId = value;
+
+                      final bank = bankP.bankList.firstWhere((b) => b.id == value);
+
+                      bankBalance = bank.balance.toString();
+                    });
                   },
+
                 );
               },
             ),
+            const SizedBox(height: 6),
+
+            /// ---------------------- BANK BALANCE ----------------------
+            if (selectedBankId != null)
+              Container(
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color: Colors.green.shade50,
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Row(
+                  children: [
+                    const Icon(Icons.account_balance_wallet,
+                        color: Colors.green),
+                    const SizedBox(width: 8),
+                    Text(
+                      "Bank Balance: $bankBalance",
+                      style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: Colors.green),
+                    ),
+                  ],
+                ),
+              ),
 
             const SizedBox(height: 16),
 
@@ -118,12 +152,44 @@ class _AddPaymentVoucherScreenState extends State<AddPaymentVoucherScreen> {
                       child: Text(s.supplierName),
                     );
                   }).toList(),
+                  // onChanged: (value) {
+                  //   selectedSupplierId = value;
+                  // },
                   onChanged: (value) {
-                    selectedSupplierId = value;
+                    setState(() {
+                      selectedSupplierId = value;
+
+                      final supplier = supplierP.suppliers.firstWhere((s) => s.id == value);
+
+                      supplierBalance = supplier.payableBalance.toString(); // <-- supplier balance
+                    });
                   },
                 );
               },
             ),
+            const SizedBox(height: 6),
+            if (selectedSupplierId != null)
+              Container(
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color: Colors.blue.shade50,
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Row(
+                  children: [
+                    const Icon(Icons.person, color: Colors.blue),
+                    const SizedBox(width: 8),
+                    Text(
+                      "Supplier Balance: $supplierBalance",
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: Colors.blue,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+
 
             const SizedBox(height: 16),
 

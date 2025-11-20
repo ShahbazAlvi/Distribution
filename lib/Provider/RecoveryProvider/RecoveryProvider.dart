@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:distribution/ApiLink/ApiEndpoint.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
@@ -14,7 +15,7 @@ class RecoveryProvider extends ChangeNotifier {
   RecoveryReport? recoveryData;
   String token = "";
 
-  String baseUrl = "https://distribution-backend.vercel.app/api";
+  String baseUrl = "${ApiEndpoints.baseUrl}";
 
   /// ✅ Load Token Automatically
   Future<void> loadToken() async {

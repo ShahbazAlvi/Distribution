@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:distribution/ApiLink/ApiEndpoint.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import '../../../model/Purchase_Model/StockPostionModel/StockPostionModel.dart';
@@ -14,7 +15,7 @@ class StockPositionProvider extends ChangeNotifier {
 
     try {
       final response = await http.get(
-        Uri.parse('https://distribution-backend.vercel.app/api/item-details'),
+        Uri.parse('${ApiEndpoints.baseUrl}/item-details'),
       );
 
       if (response.statusCode == 200) {
@@ -38,5 +39,34 @@ class StockPositionProvider extends ChangeNotifier {
     0,
         (sum, item) => sum + ((item.stock ?? 0) * (item.purchase ?? 0)),
   );
+
+  Future<bool> updateStock(String itemId, String newStock) async {
+    final url = Uri.parse('${ApiEndpoints.baseUrl}/item-details/$itemId/stock');
+
+    try {
+      final response = await http.put(
+        url,
+        headers: {'Content-Type': 'application/json'},
+        body: json.encode({'stock': newStock}),
+      );
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        // Update local list
+        final index = stockItems.indexWhere((item) => item.id == itemId);
+        if (index != -1) {
+          stockItems[index].stock = int.tryParse(newStock) ?? stockItems[index].stock;
+          notifyListeners();
+        }
+        return true;
+      } else {
+        print('Failed to update stock: ${response.body}');
+        return false;
+      }
+    } catch (e) {
+      print('Error updating stock: $e');
+      return false;
+    }
+  }
+
 
 }

@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:distribution/ApiLink/ApiEndpoint.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
@@ -20,7 +21,7 @@ class PaymentVoucherProvider with ChangeNotifier {
     isLoading = true;
     notifyListeners();
 
-    var url = Uri.parse("https://distribution-backend.vercel.app/api/payment-vouchers");
+    var url = Uri.parse("${ApiEndpoints.baseUrl}/payment-vouchers");
 
     final response = await http.get(url);
 
@@ -39,7 +40,7 @@ class PaymentVoucherProvider with ChangeNotifier {
     if (token == null) return false;
 
     final url = Uri.parse(
-        "https://distribution-backend.vercel.app/api/payment-vouchers/$id");
+        "${ApiEndpoints.baseUrl}/payment-vouchers/$id");
 
     final response = await http.delete(
       url,
@@ -74,7 +75,7 @@ class PaymentVoucherProvider with ChangeNotifier {
 
     String? token = await _getToken();
 
-    var url = Uri.parse("https://distribution-backend.vercel.app/api/payment-vouchers");
+    var url = Uri.parse("${ApiEndpoints.baseUrl}/payment-vouchers");
 
     final body = {
       "date": date,

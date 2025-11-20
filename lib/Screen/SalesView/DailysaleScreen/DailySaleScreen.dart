@@ -222,6 +222,7 @@
 // }
 import 'package:distribution/compoents/AppColors.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 import '../../../Provider/DailySaleReport/DailySaleReportProvider.dart';
@@ -292,7 +293,7 @@ class _DailySaleReportScreenState extends State<DailySaleReportScreen> {
                   );
                 }
               },
-              label: "Select Salesman",
+             // label: "Select Salesman",
             ),
 
             const SizedBox(height: 20),
@@ -379,7 +380,20 @@ class _DailySaleReportScreenState extends State<DailySaleReportScreen> {
       children: [
         Text("Salesman: ${report.salesman}",
             style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-        Text("Date: ${report.date}"),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            const Text(
+              'Date',
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+            Text(
+              formatDate(report.date),
+              style: const TextStyle(fontSize: 16),
+            ),
+          ],
+        ),
+
 
         const SizedBox(height: 20),
 
@@ -426,6 +440,7 @@ class _DailySaleReportScreenState extends State<DailySaleReportScreen> {
               DataColumn(label: Text("Customer")),
               DataColumn(label: Text("Sales")),
               DataColumn(label: Text("Recovery")),
+              DataColumn(label: Text("Balance"))
             ],
             rows: report.customerSection.map((item) {
               return DataRow(
@@ -433,6 +448,12 @@ class _DailySaleReportScreenState extends State<DailySaleReportScreen> {
                   DataCell(Text(item.customer)),
                   DataCell(Text(item.sales.toString())),
                   DataCell(Text(item.recovery.toString())),
+              DataCell(
+              Text(
+              ((item.sales ?? 0) - (item.recovery ?? 0)).toString(),
+              style: const TextStyle(fontWeight: FontWeight.bold),
+              ),
+              ),
                 ],
               );
             }).toList(),
@@ -448,5 +469,15 @@ class _DailySaleReportScreenState extends State<DailySaleReportScreen> {
             style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
       ],
     );
+  }
+  String formatDate(String? date) {
+    if (date == null || date.isEmpty) return "N/A";
+
+    try {
+      DateTime parsed = DateTime.parse(date);
+      return DateFormat('dd-MM-yyyy').format(parsed); // simple date
+    } catch (e) {
+      return date; // fallback if parsing fails
+    }
   }
 }

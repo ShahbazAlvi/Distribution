@@ -95,7 +95,9 @@ class _EmployeeAddScreenState extends State<EmployeeAddScreen> {
                               setState(() {
                                 selectedGender = value;
                               });
-                              provider.gender = value ?? "";
+                              provider.setGender(value!);
+
+                              //provider.gender = value ?? "";
                             },
                           ),
                         ),

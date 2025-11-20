@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:distribution/ApiLink/ApiEndpoint.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
@@ -9,7 +10,7 @@ class ReceiptVoucherProvider extends ChangeNotifier {
   List<ReceiptVoucher> vouchers = [];
   bool isSubmitting= false;
 
-  String baseUrl = "https://distribution-backend.vercel.app/api";
+  String baseUrl = "${ApiEndpoints.baseUrl}";
   String token = "";
 
   setToken(String t) {
@@ -86,6 +87,7 @@ class ReceiptVoucherProvider extends ChangeNotifier {
       "amountReceived": amount,
       "remarks": remarks,
     };
+    print(body);
 
     final response = await http.post(
       Uri.parse(url),
@@ -93,8 +95,11 @@ class ReceiptVoucherProvider extends ChangeNotifier {
         "Content-Type": "application/json",
         "Authorization": "Bearer $token",
       },
+
       body: jsonEncode(body),
     );
+    print("STATUS CODE: ${response.statusCode}");
+    print("RESPONSE BODY: ${response.body}");
 
     isSubmitting = false;
     notifyListeners();
@@ -102,6 +107,10 @@ class ReceiptVoucherProvider extends ChangeNotifier {
     if (response.statusCode == 201) {
       fetchVouchers(); // refresh list
       return true;
+    }else {
+      print("ERROR ❌");
+      print("STATUS CODE: ${response.statusCode}");
+      print("RESPONSE: ${response.body}");
     }
 
     return false;

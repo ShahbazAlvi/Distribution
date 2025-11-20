@@ -89,9 +89,12 @@ class _AddOrderScreenState extends State<AddOrderScreen> {
 
     }
 
-    Future.microtask(() {
-      Provider.of<SaleManProvider>(context, listen: false).fetchSalesmen();
-    });
+    // Future.microtask(() {
+    //   Provider.of<SaleManProvider>(context, listen: false).fetchSalesmen();
+    // });
+    Future.microtask(() =>
+        Provider.of<SaleManProvider>(context, listen: false).fetchEmployees());
+
   }
 
   void addProductToOrder() {

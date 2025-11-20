@@ -147,7 +147,7 @@ class _EmployeesScreenState extends State<EmployeesScreen> {
                         Text("City: ${emp.city}"),
                         Text("Mobile: ${emp.mobile}"),
                         Text("CNIC: ${emp.nicNo}"),
-                        Text("Pre Balance: ${emp.preBalance}"),
+                        Text("Recovery Balance: ${emp.recoveryBalance}"),
                       ],
                     ),
 

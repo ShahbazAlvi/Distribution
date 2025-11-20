@@ -13,6 +13,8 @@ class SaleManProvider with ChangeNotifier {
   List<EmployeeData> _employees = [];
   bool _isLoading = false;
   String? _error;
+  String? gender;
+
 
   List<SaleManModel> get salesmen => _salesmen;
   List<EmployeeData>get employees=>_employees;
@@ -27,13 +29,15 @@ class SaleManProvider with ChangeNotifier {
   final TextEditingController nicController=TextEditingController();
   final TextEditingController qualificationController=TextEditingController();
   final TextEditingController bloodController=TextEditingController();
-  String gender = "";
+  //String gender = "";
   DateTime? dateOfBirth;
-
   void setGender(String value) {
-    gender = value;
+    gender = value; // no lowercase
     notifyListeners();
   }
+
+
+  //
 
   void setDateOfBirth(DateTime date) {
     dateOfBirth = date;
@@ -90,10 +94,7 @@ class SaleManProvider with ChangeNotifier {
   }
 
   /// ✅ Delete (You can plug API later)
-  // Future<void> deleteEmployee(String id) async {
-  //   _employees.removeWhere((e) => e.id == id);
-  //   notifyListeners();
-  // }
+
   Future<void> deleteEmployee(String id) async {
     _isLoading = true;
     notifyListeners();
@@ -151,27 +152,13 @@ class SaleManProvider with ChangeNotifier {
     final url = Uri.parse("${ApiEndpoints.baseUrl}/employees");
 
     try {
-      // final body = {
-      //   "departmentName": departmentController.text.trim(),
-      //   "employeeName": nameController.text.trim(),
-      //   "address": addressController.text.trim(),
-      //   "city": cityController.text.trim(),
-      //   "gender": gender,
-      //   "mobile": phoneController.text.trim(),
-      //   "nicNo": nicController.text.trim(),
-      //   "dob": dateOfBirth != null
-      //       ? DateFormat('dd-MM-yyyy').format(dateOfBirth!)
-      //       : "",
-      //   "qualification": qualificationController.text.trim(),
-      //   "bloodGroup": bloodController.text.trim(),
-      //   "isEnable": true
-      // };
+
       final body = {
         "departmentName": departmentController.text.trim(),
         "employeeName": nameController.text.trim(),
         "address": addressController.text.trim(),
         "city": cityController.text.trim(),
-        "gender": gender, // now lowercase
+        "gender": gender,// now lowercase
         "mobile": phoneController.text.trim(),
         "nicNo": nicController.text.trim(),
         "dob": dateOfBirth != null

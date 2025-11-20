@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:distribution/ApiLink/ApiEndpoint.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
@@ -15,7 +16,7 @@ class CategoriesProvider extends ChangeNotifier {
     loading = true;
     notifyListeners();
 
-    final url = Uri.parse('https://distribution-backend.vercel.app/api/categories');
+    final url = Uri.parse('${ApiEndpoints.baseUrl}/categories');
 
     try {
       final response = await http.get(
@@ -48,7 +49,7 @@ class CategoriesProvider extends ChangeNotifier {
 
   Future<void> deleteCategory(String id) async {
     final url =
-    Uri.parse('https://distribution-backend.vercel.app/api/categories/$id');
+    Uri.parse('${ApiEndpoints.baseUrl}/categories/$id');
 
     try {
       final response = await http.delete(
@@ -67,7 +68,7 @@ class CategoriesProvider extends ChangeNotifier {
     }
   }
   Future<void> addCategory(String name, String token) async {
-    final url = Uri.parse('https://distribution-backend.vercel.app/api/categories');
+    final url = Uri.parse('${ApiEndpoints.baseUrl}/categories');
 
     try {
       final response = await http.post(

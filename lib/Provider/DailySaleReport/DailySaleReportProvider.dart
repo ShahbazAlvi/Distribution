@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:distribution/ApiLink/ApiEndpoint.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
@@ -8,7 +9,7 @@ class DailySaleReportProvider extends ChangeNotifier {
   bool isLoading = false;
   DailySaleReportModel? reportData;
 
-  String baseUrl = "https://distribution-backend.vercel.app/api";
+  String baseUrl = "${ApiEndpoints.baseUrl}";
 
   /// 🔥 Fetch Daily Sales Report
   Future<void> fetchDailyReport({

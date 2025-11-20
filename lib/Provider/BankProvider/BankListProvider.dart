@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:distribution/ApiLink/ApiEndpoint.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
@@ -16,7 +17,7 @@ class BankProvider extends ChangeNotifier {
 
     try {
       final response = await http.get(
-        Uri.parse("https://distribution-backend.vercel.app/api/banks"),
+        Uri.parse("${ApiEndpoints.baseUrl}/banks"),
         headers: {
           "Content-Type": "application/json",
           "Authorization": "Bearer YOUR_TOKEN_HERE",
@@ -39,7 +40,7 @@ class BankProvider extends ChangeNotifier {
   Future<void> deleteBank(String id) async {
     try {
       final response = await http.delete(
-        Uri.parse("https://distribution-backend.vercel.app/api/banks/$id"),
+        Uri.parse("${ApiEndpoints.baseUrl}/banks/$id"),
         headers: {
           "Authorization": "Bearer YOUR_TOKEN_HERE",
         },
@@ -69,7 +70,7 @@ class BankProvider extends ChangeNotifier {
 
     try {
       final response = await http.post(
-        Uri.parse("https://distribution-backend.vercel.app/api/banks"),
+        Uri.parse("${ApiEndpoints.baseUrl}/banks"),
         headers: {
           "Content-Type": "application/json",
           "Authorization": "Bearer YOUR_TOKEN_HERE",

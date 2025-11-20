@@ -27,6 +27,11 @@ class EmployeeData {
   final int preBalance;
   final String createdAt;
   final String updatedAt;
+  final int recoveryBalance;
+
+
+
+
 
   EmployeeData({
     required this.id,
@@ -45,6 +50,9 @@ class EmployeeData {
     required this.preBalance,
     required this.createdAt,
     required this.updatedAt,
+    required this.recoveryBalance,
+
+
   });
 
   factory EmployeeData.fromJson(Map<String, dynamic> json) {
@@ -65,6 +73,10 @@ class EmployeeData {
       preBalance: json["preBalance"] ?? 0,
       createdAt: json["createdAt"] ?? "",
       updatedAt: json["updatedAt"] ?? "",
+      recoveryBalance: json["recoveryBalance"] ?? 0,
+
+
+
     );
   }
 
@@ -84,6 +96,7 @@ class EmployeeData {
       "isEnable": isEnable,
       "OrderTacker": orderTacker,
       "preBalance": preBalance,
+      "recoveryBalance":recoveryBalance,
       "createdAt": createdAt,
       "updatedAt": updatedAt,
     };

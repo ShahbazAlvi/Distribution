@@ -176,20 +176,15 @@ class _ItemUnitScreenState extends State<ItemUnitScreen> {
                   trailing: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
+                      // Update the edit IconButton's onPressed
                       IconButton(
-                        icon: const Icon(Icons.edit, color:AppColors.secondary),
-                        onPressed: () {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                                content: Text(
-                                    'Update ${unit.unitName} coming soon')),
-                          );
-                        },
+                        icon: const Icon(Icons.edit, color: AppColors.secondary),
+                        onPressed: () => _showEditUnitDialog(unit),
                       ),
                       IconButton(
                         icon: const Icon(Icons.delete, color: Colors.red),
                         onPressed: () {
-                          provider.deleteItemUnit(unit.id!);
+                          _showDeleteConfirmationDialog(context, unit.id!, provider);
                         },
                       ),
                     ],
@@ -202,4 +197,94 @@ class _ItemUnitScreenState extends State<ItemUnitScreen> {
       ),
     );
   }
+  void _showDeleteConfirmationDialog(BuildContext context, String unitId, ItemUnitProvider provider) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Confirm Delete'),
+          content: const Text('Are you sure you want to delete this item unit?'),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(false),
+              child: const Text('No'),
+            ),
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(true),
+              child: const Text('Yes'),
+            ),
+          ],
+        );
+      },
+    ).then((confirmed) {
+      if (confirmed == true) {
+        provider.deleteItemUnit(unitId);
+      }
+    });
+  }
+
+
+
+  // In your ItemUnitScreen, add this method inside _ItemUnitScreenState
+  void _showEditUnitDialog(ItemUnitModel unit) async {
+    final TextEditingController unitNameCtrl = TextEditingController(text: unit.unitName ?? '');
+    final TextEditingController descCtrl = TextEditingController(text: unit.description ?? '');
+
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Edit Item Unit'),
+        content: SizedBox(
+          height: 150,
+          child: Column(
+            children: [
+              TextField(
+                controller: unitNameCtrl,
+                decoration: const InputDecoration(
+                  hintText: 'Enter Unit Name',
+                ),
+              ),
+              const SizedBox(height: 16),
+              TextField(
+                controller: descCtrl,
+                decoration: const InputDecoration(
+                  hintText: 'Enter Description',
+                ),
+              ),
+            ],
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancel'),
+          ),
+          ElevatedButton(
+            onPressed: () async {
+              final name = unitNameCtrl.text.trim();
+              final desc = descCtrl.text.trim();
+              if (name.isEmpty) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Unit Name is required')),
+                );
+                return;
+              }
+
+              final prefs = await SharedPreferences.getInstance();
+              final token = prefs.getString('token');
+              if (token == null) return;
+
+              await Provider.of<ItemUnitProvider>(context, listen: false)
+                  .updateItemUnit(unit.id!, name, desc, token);
+
+              Navigator.pop(context);
+            },
+            child: const Text('Update'),
+          ),
+        ],
+      ),
+    );
+  }
+
+
 }

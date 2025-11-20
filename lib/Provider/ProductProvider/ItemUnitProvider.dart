@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:distribution/ApiLink/ApiEndpoint.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../model/ProductModel/ItemUnitModel.dart';
 
@@ -9,6 +10,12 @@ import '../../model/ProductModel/ItemUnitModel.dart';
 class ItemUnitProvider extends ChangeNotifier {
   List<ItemUnitModel> units = [];
   bool loading = false;
+
+
+  Future<String?> _getToken() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString('token'); // Adjust key as per your storage
+  }
 
   Future<void> fetchItemUnits() async {
     loading = true;
@@ -37,19 +44,34 @@ class ItemUnitProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> deleteItemUnit(String id) async {
+  Future<bool> deleteItemUnit(String id) async {
+    final token = await _getToken();
+
+    if (token == null) {
+      debugPrint("No token found");
+      return false;
+    }
+
     try {
       final response = await http.delete(
         Uri.parse('${ApiEndpoints.baseUrl}/item-unit/$id'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
       );
+
       if (response.statusCode == 200) {
         units.removeWhere((u) => u.id == id);
         notifyListeners();
+        return true;
       } else {
         debugPrint('Delete failed: ${response.body}');
+        return false;
       }
     } catch (e) {
       debugPrint("Error deleting unit: $e");
+      return false;
     }
   }
   Future<void> addItemUnit({
@@ -78,6 +100,42 @@ class ItemUnitProvider extends ChangeNotifier {
       }
     } catch (e) {
       debugPrint('Error adding unit: $e');
+    }
+  }
+  // Add this method to your ItemUnitProvider class
+  Future<void> updateItemUnit(String id, String unitName, String description, String token) async {
+    final url = Uri.parse('${ApiEndpoints.baseUrl}/item-unit/$id');
+
+    try {
+      final response = await http.put(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+        body: json.encode({
+          'unitName': unitName,
+          'description': description,
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        // Update the local list
+        final index = units.indexWhere((unit) => unit.id == id);
+        if (index != -1) {
+          units[index] = ItemUnitModel(
+            id: id,
+            unitName: unitName,
+            description: description,
+            // Add other fields if needed
+          );
+          notifyListeners();
+        }
+      } else {
+        debugPrint("Update failed: ${response.body}");
+      }
+    } catch (e) {
+      debugPrint("Error updating item unit: $e");
     }
   }
 

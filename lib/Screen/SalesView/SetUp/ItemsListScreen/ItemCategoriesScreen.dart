@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../../Provider/ProductProvider/ItemCategoriesProvider.dart';
 import '../../../../compoents/AppColors.dart';
+import '../../../../model/ProductModel/ItemCategoriesModel.dart';
 
 class CategoriesScreen extends StatefulWidget {
   const CategoriesScreen({super.key});
@@ -13,11 +14,6 @@ class CategoriesScreen extends StatefulWidget {
 
 class _CategoriesScreenState extends State<CategoriesScreen> {
   final TextEditingController _categoryCtrl = TextEditingController();
-  @override
-  // void initState() {
-  //   super.initState();
-  //   Provider.of<CategoriesProvider>(context, listen: false).fetchCategories();
-  // }
   @override
   void initState() {
     super.initState();
@@ -217,22 +213,49 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                         // Action buttons
                         Row(
                           children: [
+                            // IconButton(
+                            //   icon:
+                            //   const Icon(Icons.edit, color: AppColors.secondary),
+                            //   onPressed: () {
+                            //     ScaffoldMessenger.of(context).showSnackBar(
+                            //       const SnackBar(
+                            //         content:
+                            //         Text('Update feature coming soon...'),
+                            //       ),
+                            //     );
+                            //   },
+                            // ),
+                            // Update the edit IconButton's onPressed
                             IconButton(
-                              icon:
-                              const Icon(Icons.edit, color: AppColors.secondary),
-                              onPressed: () {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                    content:
-                                    Text('Update feature coming soon...'),
-                                  ),
-                                );
-                              },
+                              icon: const Icon(Icons.edit, color: AppColors.secondary),
+                              onPressed: () => _showEditCategoryDialog(cat),
                             ),
+
                             IconButton(
                               icon: const Icon(Icons.delete, color: Colors.red),
-                              onPressed: () {
-                                provider.deleteCategory(cat.id!);
+                              onPressed: () async {
+                                bool? confirm = await showDialog<bool>(
+                                  context: context,  // Assuming this is inside a widget with access to context
+                                  builder: (BuildContext context) {
+                                    return AlertDialog(
+                                      title: const Text('Confirm Delete'),
+                                      content: const Text('Are you sure you want to delete this category?'),
+                                      actions: <Widget>[
+                                        TextButton(
+                                          onPressed: () => Navigator.of(context).pop(false),
+                                          child: const Text('No'),
+                                        ),
+                                        TextButton(
+                                          onPressed: () => Navigator.of(context).pop(true),
+                                          child: const Text('Yes'),
+                                        ),
+                                      ],
+                                    );
+                                  },
+                                );
+                                if (confirm == true) {
+                                  provider.deleteCategory(cat.id!);
+                                }
                               },
                             ),
                           ],
@@ -245,6 +268,65 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
             ),
           );
         },
+      ),
+    );
+  }
+  // In your CategoriesScreen, add this method inside _CategoriesScreenState
+  void _showEditCategoryDialog(CategoriesModel cat) async {
+    _categoryCtrl.text = cat.categoryName ?? '';
+    bool isEnabled = cat.isEnable ?? true;
+
+    showDialog(
+      context: context,
+      builder: (context) => StatefulBuilder(
+        builder: (context, setState) => AlertDialog(
+          title: const Text('Edit Category'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextField(
+                controller: _categoryCtrl,
+                decoration: const InputDecoration(
+                  hintText: 'Enter category name',
+                ),
+              ),
+              Row(
+                children: [
+                  const Text('Enable'),
+                  Switch(
+                    value: isEnabled,
+                    onChanged: (value) {
+                      setState(() {
+                        isEnabled = value;
+                      });
+                    },
+                  ),
+                ],
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('Cancel'),
+            ),
+            ElevatedButton(
+              onPressed: () async {
+                final name = _categoryCtrl.text.trim();
+                if (name.isEmpty) return;
+
+                final token = await getToken();
+                if (token == null) return;
+
+                await Provider.of<CategoriesProvider>(context, listen: false)
+                    .updateCategory(cat.id!, name, isEnabled,);
+
+                Navigator.pop(context);
+              },
+              child: const Text('Update'),
+            ),
+          ],
+        ),
       ),
     );
   }

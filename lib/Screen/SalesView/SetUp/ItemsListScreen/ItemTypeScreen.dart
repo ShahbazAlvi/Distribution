@@ -5,6 +5,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../../../../Provider/ProductProvider/ItemTypeProvider.dart';
 import '../../../../compoents/AppColors.dart';
 import '../../../../compoents/ItemCategoriesDropDown.dart';
+import '../../../../model/ProductModel/ItemTypeModel.dart';
 
 
 class ItemTypeScreen extends StatefulWidget {
@@ -239,20 +240,36 @@ class _ItemTypeScreenState extends State<ItemTypeScreen> {
                         Row(
                           children: [
                             IconButton(
-                              icon:
-                              const Icon(Icons.edit, color:AppColors.secondary),
+                              icon: const Icon(Icons.edit, color: AppColors.secondary),
                               onPressed: () {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                      content: Text(
-                                          'Update feature coming soon...')),
-                                );
+                                _showEditItemTypeDialog(item);
                               },
                             ),
                             IconButton(
                               icon: const Icon(Icons.delete, color: Colors.red),
-                              onPressed: () {
-                                provider.deleteItemType(item.id!);
+                              onPressed: () async {
+                                bool? confirm = await showDialog<bool>(
+                                  context: context,  // Assuming this is inside a widget with access to context
+                                  builder: (BuildContext context) {
+                                    return AlertDialog(
+                                      title: const Text('Confirm Delete'),
+                                      content: const Text('Are you sure you want to delete this item type?'),
+                                      actions: <Widget>[
+                                        TextButton(
+                                          onPressed: () => Navigator.of(context).pop(false),
+                                          child: const Text('No'),
+                                        ),
+                                        TextButton(
+                                          onPressed: () => Navigator.of(context).pop(true),
+                                          child: const Text('Yes'),
+                                        ),
+                                      ],
+                                    );
+                                  },
+                                );
+                                if (confirm == true) {
+                                  provider.deleteItemType(item.id!);
+                                }
                               },
                             ),
                           ],
@@ -265,6 +282,136 @@ class _ItemTypeScreenState extends State<ItemTypeScreen> {
             ),
           );
         },
+      ),
+    );
+  }
+  void _showEditItemTypeDialog(ItemTypeModel item) async {
+    final TextEditingController itemTypeCtrl = TextEditingController(text: item.itemTypeName);
+    String? selectedCategoryId = item.category?.id;
+    bool isEnable = item.isEnable ?? true;
+
+    showDialog(
+      context: context,
+      builder: (context) => StatefulBuilder(
+        builder: (context, setState) => AlertDialog(
+          title: const Text('Edit Item Type'),
+          content: SizedBox(
+            height: 200,
+            child: Column(
+              children: [
+                // Category dropdown
+                CategoriesDropdown(
+                  selectedId: selectedCategoryId,
+                  onChanged: (id) {
+                    setState(() {
+                      selectedCategoryId = id;
+                    });
+                  },
+                ),
+                const SizedBox(height: 16),
+
+                // Item type name
+                TextField(
+                  controller: itemTypeCtrl,
+                  decoration: const InputDecoration(
+                    labelText: 'Item Type Name',
+                    border: OutlineInputBorder(),
+                  ),
+                ),
+                const SizedBox(height: 16),
+
+                // Enable/Disable toggle
+                Row(
+                  children: [
+                    const Text('Status:'),
+                    const SizedBox(width: 16),
+                    Switch(
+                      value: isEnable,
+                      onChanged: (value) {
+                        setState(() {
+                          isEnable = value;
+                        });
+                      },
+                    ),
+                    Text(
+                      isEnable ? 'Enabled' : 'Disabled',
+                      style: TextStyle(
+                        color: isEnable ? Colors.green : Colors.red,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('Cancel'),
+            ),
+            ElevatedButton(
+              onPressed: () async {
+                if (selectedCategoryId == null || itemTypeCtrl.text.trim().isEmpty) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Please fill all fields')),
+                  );
+                  return;
+                }
+
+                // Show loading
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Row(
+                      children: [
+                        CircularProgressIndicator(color: Colors.white),
+                        SizedBox(width: 10),
+                        Text('Updating item type...'),
+                      ],
+                    ),
+                    duration: Duration(seconds: 30),
+                  ),
+                );
+
+                final success = await Provider.of<ItemTypeProvider>(context, listen: false).updateItemType(
+                  id: item.id!,
+                  categoryId: selectedCategoryId!,
+                  itemTypeName: itemTypeCtrl.text.trim(),
+                  isEnable: isEnable,
+                );
+
+                // Hide loading
+                ScaffoldMessenger.of(context).hideCurrentSnackBar();
+
+                if (context.mounted) {
+                  Navigator.pop(context); // Close dialog
+
+                  // Show result
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Row(
+                        children: [
+                          Icon(
+                            success ? Icons.check_circle : Icons.error,
+                            color: Colors.white,
+                          ),
+                          const SizedBox(width: 10),
+                          Text(success
+                              ? 'Item type updated successfully!'
+                              : 'Failed to update item type'
+                          ),
+                        ],
+                      ),
+                      backgroundColor: success ? Colors.green : Colors.red,
+                      duration: const Duration(seconds: 3),
+                    ),
+                  );
+                }
+              },
+              child: const Text('Update'),
+            ),
+          ],
+        ),
       ),
     );
   }

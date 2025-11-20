@@ -45,25 +45,7 @@ class ItemDetailsProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  // ✅ Delete Item
-  // Future<void> deleteItem(String id) async {
-  //   final uri =
-  //   Uri.parse("${ApiEndpoints.baseUrl}/item-details/$id");
-  //
-  //   try {
-  //     final res = await http.delete(
-  //       uri,
-  //       headers: {"Authorization": "Bearer $token"},
-  //     );
-  //
-  //     if (res.statusCode == 200) {
-  //       items.removeWhere((item) => item.id == id);
-  //       notifyListeners();
-  //     }
-  //   } catch (e) {
-  //     print("Delete error: $e");
-  //   }
-  // }
+
 
   Future<void> deleteItem(String id) async {
     final storedToken = await getToken();

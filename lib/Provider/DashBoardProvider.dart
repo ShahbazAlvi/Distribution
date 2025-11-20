@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:distribution/ApiLink/ApiEndpoint.dart';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart'as http;
 
@@ -10,7 +11,7 @@ class DashBoardProvider with ChangeNotifier{
   Future<DashboardModel?> fetchDashboardData() async {
     try {
       final response = await http.get(
-        Uri.parse('https://distribution-backend.vercel.app/api/dashboard/summary'),
+        Uri.parse('${ApiEndpoints.baseUrl}/dashboard/summary'),
       );
 
       if (response.statusCode == 200) {

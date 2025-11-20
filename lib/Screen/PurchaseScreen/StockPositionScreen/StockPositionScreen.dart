@@ -94,43 +94,59 @@ class _StockPositionScreenState extends State<StockPositionScreen> {
                     scrollDirection: Axis.vertical,
                     child: SingleChildScrollView(
                       scrollDirection: Axis.horizontal,
-                      // child: DataTable(
-                      //   columns: const [
-                      //     DataColumn(
-                      //         label: Text(
-                      //           'S.No',
-                      //           style: TextStyle(
-                      //               fontWeight: FontWeight.bold, fontSize: 16),
-                      //         )),
-                      //     DataColumn(
-                      //         label: Text(
-                      //           'Item Name',
-                      //           style: TextStyle(
-                      //               fontWeight: FontWeight.bold, fontSize: 16),
-                      //         )),
-                      //     DataColumn(
-                      //         label: Text(
-                      //           'Stock',
-                      //           style: TextStyle(
-                      //               fontWeight: FontWeight.bold, fontSize: 16),
-                      //         )),
-                      //   ],
-                      //   rows: filteredList
-                      //       .asMap()
-                      //       .entries
-                      //       .map((entry) {
-                      //     int index = entry.key;
-                      //     StockPositionModel item = entry.value;
-                      //     return DataRow(
-                      //       cells: [
-                      //         DataCell(Text((index + 1).toString())),
-                      //         DataCell(Text(item.itemName ?? '-')),
-                      //         DataCell(Text((item.stock ?? 0).toString())),
-                      //       ],
-                      //     );
-                      //   }).toList(),
-                      // ),
-                       child:  DataTable(
+
+                       // child:  DataTable(
+                       //    columnSpacing: 20, // reduce space between columns
+                       //    horizontalMargin: 10, // reduce left+right padding
+                       //    columns: const [
+                       //      DataColumn(
+                       //        label: Text(
+                       //          'S.No',
+                       //          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
+                       //        ),
+                       //      ),
+                       //      DataColumn(
+                       //        label: Text(
+                       //          'Item Name',
+                       //          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
+                       //        ),
+                       //      ),
+                       //      DataColumn(
+                       //        label: Text(
+                       //          'Stock',
+                       //          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
+                       //        ),
+                       //      ),
+                       //    ],
+                       //    rows: filteredList.asMap().entries.map((entry) {
+                       //      int index = entry.key;
+                       //      StockPositionModel item = entry.value;
+                       //
+                       //      return DataRow(
+                       //        cells: [
+                       //          DataCell(Text((index + 1).toString())),
+                       //         // DataCell(Text(item.itemName?.trim() ?? '-')), // trim spaces
+                       //          DataCell(
+                       //            Text(item.itemName?.trim() ?? '-'),
+                       //            onTap: () {
+                       //              _showUpdateStockDialog(context, item);
+                       //            },
+                       //          ),
+                       //
+                       //         // DataCell(Text((item.stock ?? 0).toString())),
+                       //          DataCell(
+                       //            Text((item.stock ?? 0).toString()),
+                       //            onTap: () {
+                       //              _showUpdateStockDialog(context, item);
+                       //            },
+                       //          ),
+                       //
+                       //        ],
+                       //      );
+                       //    }).toList(),
+                       //  )
+                        // In your StockPositionScreen, update the DataTable to include an Actions column
+                        child: DataTable(
                           columnSpacing: 20, // reduce space between columns
                           horizontalMargin: 10, // reduce left+right padding
                           columns: const [
@@ -152,6 +168,12 @@ class _StockPositionScreenState extends State<StockPositionScreen> {
                                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
                               ),
                             ),
+                            DataColumn(
+                              label: Text(
+                                'Actions',
+                                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
+                              ),
+                            ),
                           ],
                           rows: filteredList.asMap().entries.map((entry) {
                             int index = entry.key;
@@ -160,22 +182,14 @@ class _StockPositionScreenState extends State<StockPositionScreen> {
                             return DataRow(
                               cells: [
                                 DataCell(Text((index + 1).toString())),
-                               // DataCell(Text(item.itemName?.trim() ?? '-')), // trim spaces
+                                DataCell(Text(item.itemName?.trim() ?? '-')),
+                                DataCell(Text((item.stock ?? 0).toString())),
                                 DataCell(
-                                  Text(item.itemName?.trim() ?? '-'),
-                                  onTap: () {
-                                    _showUpdateStockDialog(context, item);
-                                  },
+                                  IconButton(
+                                    icon: const Icon(Icons.edit, color: AppColors.secondary),
+                                    onPressed: () => _showUpdateStockDialog(context, item),
+                                  ),
                                 ),
-
-                               // DataCell(Text((item.stock ?? 0).toString())),
-                                DataCell(
-                                  Text((item.stock ?? 0).toString()),
-                                  onTap: () {
-                                    _showUpdateStockDialog(context, item);
-                                  },
-                                ),
-
                               ],
                             );
                           }).toList(),
@@ -223,6 +237,7 @@ class _StockPositionScreenState extends State<StockPositionScreen> {
 
                 if (success) {
                   Navigator.pop(context);
+
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(content: Text('Stock updated successfully')),
                   );

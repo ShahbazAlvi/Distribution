@@ -21,6 +21,7 @@ class StockPositionProvider extends ChangeNotifier {
       if (response.statusCode == 200) {
         final List data = json.decode(response.body);
         stockItems = data.map((json) => StockPositionModel.fromJson(json)).toList();
+
       } else {
         stockItems = [];
       }

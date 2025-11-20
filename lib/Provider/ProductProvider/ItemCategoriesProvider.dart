@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:distribution/ApiLink/ApiEndpoint.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../model/ProductModel/ItemCategoriesModel.dart';
 
@@ -48,6 +49,13 @@ class CategoriesProvider extends ChangeNotifier {
   }
 
   Future<void> deleteCategory(String id) async {
+    final storedToken = await getToken();
+    // 🔥 load token from SharedPreferences
+
+    if (storedToken == null) {
+      print("Delete Error: Token is null");
+      return;
+    }
     final url =
     Uri.parse('${ApiEndpoints.baseUrl}/categories/$id');
 
@@ -55,13 +63,16 @@ class CategoriesProvider extends ChangeNotifier {
       final response = await http.delete(
         url,
         headers: {
-          'Authorization': 'Bearer YOUR_TOKEN_HERE',
+          "Authorization": "Bearer $storedToken",
         },
       );
 
       if (response.statusCode == 200) {
         _categories.removeWhere((item) => item.id == id);
         notifyListeners();
+      }
+      else{
+        print(response.body);
       }
     } catch (e) {
       debugPrint("Delete Error: $e");
@@ -91,6 +102,54 @@ class CategoriesProvider extends ChangeNotifier {
       }
     } catch (e) {
       debugPrint("Error adding category: $e");
+    }
+  }
+  Future<String?> getToken() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getString("token");
+  }
+
+  // Add this method to your CategoriesProvider class
+  Future<void> updateCategory(String id, String name, bool isEnable) async {
+    final storedToken = await getToken();
+    // 🔥 load token from SharedPreferences
+
+    if (storedToken == null) {
+      print("update Error: Token is null");
+      return;
+    }
+    final url = Uri.parse('${ApiEndpoints.baseUrl}/categories/$id');
+
+    try {
+      final response = await http.put(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $storedToken',
+        },
+        body: json.encode({
+          'categoryName': name,
+          'isEnable': isEnable,
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        // Update the local list
+        final index = _categories.indexWhere((cat) => cat.id == id);
+        if (index != -1) {
+          _categories[index] = CategoriesModel(
+            id: id,
+            categoryName: name,
+            isEnable: isEnable,
+            createdAt: _categories[index].createdAt,
+          );
+          notifyListeners();
+        }
+      } else {
+        debugPrint("Update failed: ${response.body}");
+      }
+    } catch (e) {
+      debugPrint("Error updating category: $e");
     }
   }
 

@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../ApiLink/ApiEndpoint.dart';
 import '../../model/ProductModel/ItemTypeModel.dart';
@@ -11,6 +12,12 @@ class ItemTypeProvider extends ChangeNotifier {
   bool loading = false;
 
   List<ItemTypeModel> get itemTypes => _itemTypes;
+
+
+  Future<String?> _getToken() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString('token'); // Adjust key as per your storage
+  }
 
   Future<void> fetchItemTypes() async {
     loading = true;
@@ -95,5 +102,61 @@ class ItemTypeProvider extends ChangeNotifier {
       debugPrint('Error adding item type: $e');
     }
   }
+
+
+  Future<bool> updateItemType({
+    required String id,
+    required String categoryId,
+    required String itemTypeName,
+    required bool isEnable,
+  }) async {
+    final url = Uri.parse('${ApiEndpoints.baseUrl}/item-type/$id');
+    final token = await _getToken();
+
+    if (token == null) {
+      debugPrint("No token found for update");
+      return false;
+    }
+
+    try {
+      final response = await http.put(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+        body: json.encode({
+          'categoryId': categoryId,
+          'itemTypeName': itemTypeName,
+          'isEnable': isEnable,
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        // Update the item in the local list
+        final index = _itemTypes.indexWhere((item) => item.id == id);
+        if (index != -1) {
+          _itemTypes[index] = ItemTypeModel(
+            id: id,
+            itemTypeName: itemTypeName,
+            isEnable: isEnable,
+            category: _itemTypes[index].category, // Keep existing category object
+            createdAt: _itemTypes[index].createdAt,
+            updatedAt: DateTime.now().toIso8601String(),
+          );
+          notifyListeners();
+        }
+        debugPrint('Item type updated successfully');
+        return true;
+      } else {
+        debugPrint('Failed to update item type: ${response.statusCode} - ${response.body}');
+        return false;
+      }
+    } catch (e) {
+      debugPrint('Error updating item type: $e');
+      return false;
+    }
+  }
+
 
 }

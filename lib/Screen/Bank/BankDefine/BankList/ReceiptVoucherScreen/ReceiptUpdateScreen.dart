@@ -422,24 +422,25 @@ class _UpdateReceiptVoucherScreenState
                   ),
                 ],
               ),
-              child: DropdownButtonFormField<BankData>(
-                value: selectedBank,
+              child: DropdownButtonFormField<String>(
+                value: selectedBank?.id, // store only the ID
                 decoration: const InputDecoration(
                   labelText: "Select Bank",
                   border: InputBorder.none,
                 ),
                 items: bankProvider.bankList.map((bank) {
-                  return DropdownMenuItem(
-                    value: bank,
+                  return DropdownMenuItem<String>(
+                    value: bank.id,                     // dropdown value = bank.id
                     child: Text("${bank.bankName} (${bank.accountHolderName})"),
                   );
                 }).toList(),
                 onChanged: (val) {
                   setState(() {
-                    selectedBank = val;
+                    selectedBank = bankProvider.bankList.firstWhere((b) => b.id == val);
                   });
                 },
               ),
+
             ),
 
             // Salesman Dropdown
@@ -459,24 +460,26 @@ class _UpdateReceiptVoucherScreenState
                   ),
                 ],
               ),
-              child: DropdownButtonFormField<EmployeeData>(
-                value: selectedSalesman,
+              child: DropdownButtonFormField<String>(
+                value: selectedSalesman?.id,
                 decoration: const InputDecoration(
                   labelText: "Select Salesman",
                   border: InputBorder.none,
                 ),
                 items: salesmanProvider.employees.map((emp) {
-                  return DropdownMenuItem<EmployeeData>(
-                    value: emp,
+                  return DropdownMenuItem<String>(
+                    value: emp.id,
                     child: Text(emp.employeeName),
                   );
                 }).toList(),
                 onChanged: (val) {
                   setState(() {
-                    selectedSalesman = val;
+                    selectedSalesman =
+                        salesmanProvider.employees.firstWhere((s) => s.id == val);
                   });
                 },
               ),
+
             ),
 
             const SizedBox(height: 20),

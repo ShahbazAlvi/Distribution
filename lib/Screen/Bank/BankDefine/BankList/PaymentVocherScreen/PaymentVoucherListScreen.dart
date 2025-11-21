@@ -243,7 +243,7 @@ class _PaymentVoucherListScreenState extends State<PaymentVoucherListScreen> {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                    builder: (_) => UpdatePaymentVoucherScreen(paymentId: pay.paymentId),
+                                    builder: (_) => UpdatePaymentVoucherScreen(id: pay.id),
                                   ),
                                 );
                               },

@@ -540,6 +540,7 @@ import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
 
 import '../../../Provider/Purchase_Provider/GRNProvider/GRN_Provider.dart';
+import '../../../compoents/AppColors.dart';
 import '../../../compoents/ProductDropdown.dart';
 import '../../../compoents/SupplierDropdown.dart';
 import '../../../model/ProductModel/itemsdetailsModel.dart';
@@ -602,7 +603,29 @@ class _AddGRNScreenState extends State<AddGRNScreen> {
     final grnProvider = Provider.of<GRNProvider>(context);
 
     return Scaffold(
-      appBar: AppBar(title: const Text("Add GRN")),
+      appBar: AppBar(
+        iconTheme: const IconThemeData(color: Colors.white),
+        title: Center(child: const Text("Add GRN",
+            style: TextStyle(
+              color: Colors.white,
+              fontWeight: FontWeight.bold,
+              fontSize: 22,
+              letterSpacing: 1.2,
+            )),
+        ),
+
+        centerTitle: true,
+        elevation: 6,
+        flexibleSpace: Container(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              colors: [AppColors.secondary, AppColors.primary],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+          ),
+        ),
+      ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(14),
         child: Column(
@@ -654,7 +677,7 @@ class _AddGRNScreenState extends State<AddGRNScreen> {
 
                   const SizedBox(height: 10),
                   Text(
-                    "Total: ₹ $productTotal",
+                    "Total: Rs $productTotal",
                     style: const TextStyle(
                         fontWeight: FontWeight.bold, fontSize: 16),
                   ),
@@ -743,7 +766,7 @@ class _AddGRNScreenState extends State<AddGRNScreen> {
                   const SizedBox(height: 10),
 
                   Text(
-                    "Grand Total: ₹ $grandTotal",
+                    "Grand Total: Rs $grandTotal",
                     style: const TextStyle(
                         fontWeight: FontWeight.bold, fontSize: 18),
                   )

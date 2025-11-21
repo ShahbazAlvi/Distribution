@@ -226,6 +226,7 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 import '../../../Provider/DailySaleReport/DailySaleReportProvider.dart';
+import '../../../Provider/SaleManProvider/SaleManProvider.dart';
 import '../../../compoents/SaleManDropdown.dart';
 
 class DailySaleReportScreen extends StatefulWidget {
@@ -251,95 +252,98 @@ class _DailySaleReportScreenState extends State<DailySaleReportScreen> {
   Widget build(BuildContext context) {
     final provider = Provider.of<DailySaleReportProvider>(context);
 
-    return Scaffold(
-      appBar: AppBar(
-        iconTheme: const IconThemeData(color: Colors.white),
-        title: const Text(
-          "Daily Sales Report",
-          style: TextStyle(
-            color: Colors.white,
-            fontWeight: FontWeight.bold,
-            fontSize: 22,
-          ),
-        ),
-        centerTitle: true,
-        elevation: 6,
-        flexibleSpace: Container(
-          decoration: const BoxDecoration(
-            gradient: LinearGradient(
-              colors: [AppColors.secondary, AppColors.primary],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
+    return ChangeNotifierProvider(
+      create: (_) => SaleManProvider()..fetchEmployees(),
+      child: Scaffold(
+        appBar: AppBar(
+          iconTheme: const IconThemeData(color: Colors.white),
+          title: const Text(
+            "Daily Sales Report",
+            style: TextStyle(
+              color: Colors.white,
+              fontWeight: FontWeight.bold,
+              fontSize: 22,
             ),
           ),
-        ),
-      ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(12),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            /// 🔥 Salesman Dropdown
-            SalesmanDropdown(
-              selectedId: selectedSalesmanId,
-              onChanged: (value) {
-                setState(() => selectedSalesmanId = value);
-
-                // 🔥 Auto fetch report when salesman selected
-                if (selectedSalesmanId != null) {
-                  provider.fetchDailyReport(
-                    salesmanId: selectedSalesmanId!,
-                    date: selectedDate,
-                  );
-                }
-              },
-             // label: "Select Salesman",
-            ),
-
-            const SizedBox(height: 20),
-
-            /// 🔥 Date Picker
-            Text(
-              "Select Date",
-              style: const TextStyle(fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 8),
-            InkWell(
-              onTap: pickDate,
-              child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 16),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(width: 1.2),
-                  color: Colors.grey.shade100,
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      selectedDate,
-                      style: const TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w500,
-                        color: Colors.black87,
-                      ),
-                    ),
-                    const Icon(Icons.calendar_month),
-                  ],
-                ),
+          centerTitle: true,
+          elevation: 6,
+          flexibleSpace: Container(
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                colors: [AppColors.secondary, AppColors.primary],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
               ),
             ),
-
-            const SizedBox(height: 30),
-
-            /// 🔥 Show Loading
-            if (provider.isLoading)
-              const Center(child: CircularProgressIndicator()),
-
-            /// 🔥 Show Report
-            if (!provider.isLoading && provider.reportData != null)
-              buildReport(provider),
-          ],
+          ),
+        ),
+        body: SingleChildScrollView(
+          padding: const EdgeInsets.all(12),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              /// 🔥 Salesman Dropdown
+              SalesmanDropdown(
+                selectedId: selectedSalesmanId,
+                onChanged: (value) {
+                  setState(() => selectedSalesmanId = value);
+      
+                  // 🔥 Auto fetch report when salesman selected
+                  if (selectedSalesmanId != null) {
+                    provider.fetchDailyReport(
+                      salesmanId: selectedSalesmanId!,
+                      date: selectedDate,
+                    );
+                  }
+                },
+               // label: "Select Salesman",
+              ),
+      
+              const SizedBox(height: 20),
+      
+              /// 🔥 Date Picker
+              Text(
+                "Select Date",
+                style: const TextStyle(fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 8),
+              InkWell(
+                onTap: pickDate,
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 16),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(width: 1.2),
+                    color: Colors.grey.shade100,
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        selectedDate,
+                        style: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w500,
+                          color: Colors.black87,
+                        ),
+                      ),
+                      const Icon(Icons.calendar_month),
+                    ],
+                  ),
+                ),
+              ),
+      
+              const SizedBox(height: 30),
+      
+              /// 🔥 Show Loading
+              if (provider.isLoading)
+                const Center(child: CircularProgressIndicator()),
+      
+              /// 🔥 Show Report
+              if (!provider.isLoading && provider.reportData != null)
+                buildReport(provider),
+            ],
+          ),
         ),
       ),
     );

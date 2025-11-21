@@ -38,14 +38,6 @@ class _AddItemScreenState extends State<AddItemScreen> {
   File? pickedImage;
 
   @override
-  // void initState() {
-  //   super.initState();
-  //   Future.microtask(() {
-  //     Provider.of<CategoriesProvider>(context, listen: false).fetchCategories();
-  //     Provider.of<ItemTypeProvider>(context, listen: false).fetchItemTypes();
-  //     Provider.of<ItemUnitProvider>(context, listen: false).fetchItemUnits();
-  //   });
-  // }
   @override
   void initState() {
     super.initState();

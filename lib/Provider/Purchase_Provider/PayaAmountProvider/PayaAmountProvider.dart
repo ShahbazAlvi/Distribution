@@ -1,6 +1,7 @@
   import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import '../../../ApiLink/ApiEndpoint.dart';
 import '../../../model/PayableAmountModel/PayaAmountModel.dart';
 
 
@@ -14,7 +15,7 @@ class PayableAmountProvider extends ChangeNotifier {
     notifyListeners();
 
     final url =
-        "https://distribution-backend.vercel.app/api/supplier-ledger/payables?withZero=$withZero";
+        "${ApiEndpoints.baseUrl}/supplier-ledger/payables?withZero=$withZero";
 
     try {
       final response = await http.get(Uri.parse(url));

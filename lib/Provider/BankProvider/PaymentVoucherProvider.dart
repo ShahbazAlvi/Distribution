@@ -105,4 +105,48 @@ class PaymentVoucherProvider with ChangeNotifier {
 
     return false;
   }
+
+  Future<bool> updatePayment({
+    required String paymentId,
+    required String bankId,
+    required String supplierId,
+    required int amount,
+    required String remarks,
+  }) async {
+    isSubmitting = true;
+    notifyListeners();
+
+    String? token = await _getToken();
+    if (token == null) return false;
+
+    final url = Uri.parse("${ApiEndpoints.baseUrl}/payment-vouchers/$paymentId");
+
+    final body = {
+      "bank": bankId,
+      "supplier": supplierId,
+      "amountPaid": amount,
+      "remarks": remarks,
+    };
+
+    final response = await http.put(
+      url,
+      body: json.encode(body),
+      headers: {
+        "Authorization": "Bearer $token",
+        "Content-Type": "application/json",
+      },
+    );
+
+    isSubmitting = false;
+    notifyListeners();
+
+    if (response.statusCode == 200) {
+      await fetchPayments(); // refresh list
+      return true;
+    }
+
+    print("Update failed: ${response.statusCode} ${response.body}");
+    return false;
+  }
+
 }

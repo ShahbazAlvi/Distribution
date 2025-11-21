@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:distribution/ApiLink/ApiEndpoint.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
@@ -19,7 +20,7 @@ class ReceivableProvider extends ChangeNotifier {
       notifyListeners();
 
       final url = Uri.parse(
-        'https://distribution-backend.vercel.app/api/customer-ledger/receivables?withZero=$withZero',
+        '${ApiEndpoints.baseUrl}/customer-ledger/receivables?withZero=$withZero',
       );
 
       final headers = {

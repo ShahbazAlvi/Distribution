@@ -213,16 +213,6 @@ class _OrderTakingScreenState extends State<OrderTakingScreen> {
 
                         ElevatedButton.icon(
                           onPressed: () {
-                            // Navigator.push(
-                            //   context,
-                            //   MaterialPageRoute(
-                            //     builder: (context) => AddOrderScreen(
-                            //       nextOrderId: order.orderId,    // existing order ID
-                            //       existingOrder: order,          // passing full order
-                            //       isUpdate: true,                // telling to edit instead of create
-                            //     ),
-                            //   ),
-                            // );
                             Navigator.push(
                               context,
                               MaterialPageRoute(

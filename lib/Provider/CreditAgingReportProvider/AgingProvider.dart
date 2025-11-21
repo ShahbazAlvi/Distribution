@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:distribution/ApiLink/ApiEndpoint.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
@@ -18,7 +19,7 @@ class CreditAgingProvider with ChangeNotifier {
       notifyListeners();
 
       final url = Uri.parse(
-          "https://distribution-backend.vercel.app/api/credit-aging");
+          "${ApiEndpoints.baseUrl}/credit-aging");
 
       final response = await http.get(
         url,

@@ -429,43 +429,43 @@ class SalesDashboard extends StatelessWidget {
               _buildSectionTitle("🧩 Setup"),
               const SizedBox(height: 14),
               _buildCardGrid([
+                // DashboardCard(
+                //   icon: Icons.location_on_rounded,
+                //   title: "Sales Areas",
+                //   color: Colors.limeAccent,
+                //   onTap: () {
+                //     Navigator.push(context, MaterialPageRoute(builder: (_) => const SalesAreaScreen()));
+                //   },
+                // ),
                 DashboardCard(
-                  icon: Icons.location_on_rounded,
-                  title: "Sales Areas",
-                  color: Colors.limeAccent,
-                  onTap: () {
-                    Navigator.push(context, MaterialPageRoute(builder: (_) => const SalesAreaScreen()));
-                  },
-                ),
-                DashboardCard(
-                  icon: Icons.list_alt,
+                  icon: Icons.category,
                   title: "Category Item",
-                  color: Colors.lightGreenAccent,
+                  color: Colors.orangeAccent,
                   onTap: () {
                     Navigator.push(context, MaterialPageRoute(builder: (_) => const CategoriesScreen()));
                   },
                 ),
 
                 DashboardCard(
-                  icon: Icons.list_alt,
+                  icon: Icons.layers,
                   title: "Items Type ",
-                  color: Colors.lightGreenAccent,
+                  color: Colors.blueAccent,
                   onTap: () {
                     Navigator.push(context, MaterialPageRoute(builder: (_) => const ItemTypeScreen()));
                   },
                 ),
                 DashboardCard(
-                  icon: Icons.list_alt,
+                  icon: Icons.straighten,
                   title: "Item Unit ",
-                  color: Colors.lightGreenAccent,
+                  color: Colors.tealAccent  ,
                   onTap: () {
                     Navigator.push(context, MaterialPageRoute(builder: (_) => const ItemUnitScreen()));
                   },
                 ),
                 DashboardCard(
-                  icon: Icons.list_alt,
+                  icon: Icons.inventory_2,
                   title: "List of Items",
-                  color: Colors.lightGreenAccent,
+                  color: Colors.lightBlueAccent,
                   onTap: () {
                     Navigator.push(context, MaterialPageRoute(builder: (_) => const ItemListScreen()));
                   },

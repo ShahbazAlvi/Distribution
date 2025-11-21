@@ -51,6 +51,7 @@ class _ItemListScreenState extends State<ItemListScreen> {
                     builder: (context) => AddItemScreen(nextItemId: nextItemId),
                   ),
                 );
+                Provider.of<ItemDetailsProvider>(context, listen: false).fetchItems();
               },
               icon: Icon(Icons.add_circle_outline, color: Colors.white),
               label: Text("Add Items", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),),

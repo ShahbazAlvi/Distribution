@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:distribution/ApiLink/ApiEndpoint.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
@@ -18,7 +19,7 @@ class DatewisePurchaseProvider extends ChangeNotifier {
       notifyListeners();
 
       final url = Uri.parse(
-          'https://distribution-backend.vercel.app/api/reports/datewise?startDate=$startDate&endDate=$endDate');
+          '${ApiEndpoints.baseUrl}/reports/datewise?startDate=$startDate&endDate=$endDate');
 
       final response = await http.get(
         url,

@@ -141,12 +141,22 @@ class ItemDetailsProvider with ChangeNotifier {
     request.fields['isEnable'] = "true";
 
     request.files.add(await http.MultipartFile.fromPath('itemImage', itemImage.path));
+    print("📤 SENDING DATA TO API -------------------------");
+    print("URL: ${uri.toString()}");
+    print("Headers: ${request.headers}");
+    print("Fields:");
+    request.fields.forEach((key, value) {
+      print("  ➤ $key : $value");
+    });
+    print("Image File: ${itemImage.path}");
+    print("--------------------");
 
     try {
       final response = await request.send();
       final resBody = await response.stream.bytesToString();
 
       if (response.statusCode == 200 || response.statusCode == 201) {
+        await fetchItems();
         isLoading = false;
         notifyListeners();
         return true;

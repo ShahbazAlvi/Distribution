@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:distribution/ApiLink/ApiEndpoint.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
@@ -17,7 +18,7 @@ class ItemWisePurchaseProvider with ChangeNotifier {
 
     try {
       final uri = Uri.parse(
-          'https://distribution-backend.vercel.app/api/reports/itemwise?itemName=$itemName');
+          '${ApiEndpoints.baseUrl}/reports/itemwise?itemName=$itemName');
 
       final response = await http.get(
         uri,

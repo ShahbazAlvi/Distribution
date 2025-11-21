@@ -30,6 +30,8 @@ class _UpdateOrderScreenState extends State<UpdateOrderScreen> {
 
 
   final TextEditingController qtyController = TextEditingController();
+  final TextEditingController rateController = TextEditingController();
+
 
   List<Map<String, dynamic>> orderItems = [];
   late String currentDate;
@@ -80,20 +82,24 @@ class _UpdateOrderScreenState extends State<UpdateOrderScreen> {
   void addProductToOrder() {
     if (selectedProduct != null && qtyController.text.isNotEmpty) {
       final qty = double.tryParse(qtyController.text) ?? 0;
-      final total = selectedProduct!.price * qty;
+      final rate = double.tryParse(rateController.text) ?? 0;
+      //final total = selectedProduct!.price * qty;
+      final total = qty * rate;
 
       setState(() {
         orderItems.add({
           "itemName": selectedProduct!.itemName,
           "qty": qty,
           "itemUnit": selectedProduct!.itemUnit?.unitName ?? "",
-          "rate": selectedProduct!.price.toDouble(),
+         // "rate": selectedProduct!.price.toDouble(),
+          "rate": rate,
           "purchase": selectedProduct!.purchase.toDouble(),
           "totalAmount": total,
         });
       });
 
       qtyController.clear();
+      rateController.clear();
       selectedProduct = null;
     }
   }
@@ -143,150 +149,164 @@ class _UpdateOrderScreenState extends State<UpdateOrderScreen> {
   Widget build(BuildContext context) {
     final order = widget.order;
 
-    return Scaffold(
-      appBar: AppBar(
-        iconTheme: const IconThemeData(color: Colors.white),
-        title: const Text(
-          "Update Order",
-          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-        ),
-        centerTitle: true,
-        elevation: 6,
-        flexibleSpace: Container(
-          decoration: const BoxDecoration(
-            gradient: LinearGradient(
-              colors: [AppColors.secondary, AppColors.primary],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
+    return ChangeNotifierProvider(
+      create: (_) => SaleManProvider()..fetchEmployees(),
+      child: Scaffold(
+        appBar: AppBar(
+          iconTheme: const IconThemeData(color: Colors.white),
+          title: const Text(
+            "Update Order",
+            style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+          ),
+          centerTitle: true,
+          elevation: 6,
+          flexibleSpace: Container(
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                colors: [AppColors.secondary, AppColors.primary],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
             ),
           ),
         ),
-      ),
 
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          children: [
-            /// TOP INFO
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text("Order ID: ${order.orderId}"),
-                Text("Date: $currentDate"),
-              ],
-            ),
-            const SizedBox(height: 20),
-            const Divider(),
-
-            /// SALESMAN
-            SalesmanDropdown(
-              selectedId: selectedSalesmanId,
-              onChanged: (value) {
-                setState(() => selectedSalesmanId = value);
-              },
-            ),
-
-            const SizedBox(height: 25),
-
-            /// CUSTOMER
-            CustomerDropdown(
-              selectedCustomerId: selectedCustomer?.id,
-              onChanged: (customer) {
-                setState(() => selectedCustomer = customer);
-              },
-            ),
-
-            const SizedBox(height: 25),
-
-            /// PRODUCT SELECTOR
-            ItemDetailsDropdown(
-              onItemSelected: (item) {
-                setState(() => selectedProduct = item);
-              },
-            ),
-
-            const SizedBox(height: 10),
-
-            /// QTY + ADD PRODUCT
-            if (selectedProduct != null)
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+        body: SingleChildScrollView(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            children: [
+              /// TOP INFO
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text("Purchase: ${selectedProduct!.purchase}"),
-                  Text("Unit: ${selectedProduct!.itemUnit?.unitName}"),
-                  const SizedBox(height: 10),
-
-                  TextField(
-                    controller: qtyController,
-                    keyboardType: TextInputType.number,
-                    decoration: const InputDecoration(
-                      labelText: "Enter Quantity",
-                      border: OutlineInputBorder(),
-                    ),
-                  ),
-
-                  const SizedBox(height: 10),
-                  ElevatedButton.icon(
-                    onPressed: addProductToOrder,
-                    icon: const Icon(Icons.add),
-                    label: const Text("Add Product"),
-                  )
+                  Text("Order ID: ${order.orderId}"),
+                  Text("Date: $currentDate"),
                 ],
               ),
+              const SizedBox(height: 20),
+              const Divider(),
 
-            const SizedBox(height: 20),
+              /// SALESMAN
+              SalesmanDropdown(
+                selectedId: selectedSalesmanId,
+                onChanged: (value) {
+                  setState(() => selectedSalesmanId = value);
+                },
+              ),
 
-            /// PRODUCT LIST
-            ...orderItems.map((item) {
-              return Card(
-                elevation: 3,
-                shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                margin: const EdgeInsets.symmetric(vertical: 6),
-                child: ListTile(
-                  title: Text(item["itemName"]),
-                  subtitle: Text(
-                      "${item["qty"]} ${item["itemUnit"]} × ${item["rate"]}  =  Rs. ${item["totalAmount"]}"),
-                  trailing: IconButton(
-                    icon: const Icon(Icons.delete, color: Colors.red),
-                    onPressed: () {
-                      setState(() => orderItems.remove(item));
-                    },
+              const SizedBox(height: 25),
+
+              /// CUSTOMER
+              CustomerDropdown(
+                selectedCustomerId: selectedCustomer?.id,
+                onChanged: (customer) {
+                  setState(() => selectedCustomer = customer);
+                },
+              ),
+
+              const SizedBox(height: 25),
+
+              /// PRODUCT SELECTOR
+              ItemDetailsDropdown(
+                onItemSelected: (item) {
+                  setState(() => selectedProduct = item);
+                },
+              ),
+
+              const SizedBox(height: 10),
+
+              /// QTY + ADD PRODUCT
+              if (selectedProduct != null)
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text("Purchase: ${selectedProduct!.purchase}"),
+                    Text("Unit: ${selectedProduct!.itemUnit?.unitName}"),
+                    const SizedBox(height: 10),
+
+                    TextField(
+                      controller: qtyController,
+                      keyboardType: TextInputType.number,
+                      decoration: const InputDecoration(
+                        labelText: "Enter Quantity",
+                        border: OutlineInputBorder(),
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+
+                    /// RATE FIELD (NEW)
+                    TextField(
+                      controller: rateController,
+                      keyboardType: TextInputType.number,
+                      decoration: const InputDecoration(
+                        labelText: "Enter Rate",
+                        border: OutlineInputBorder(),
+                      ),
+                    ),
+
+                    const SizedBox(height: 10),
+                    ElevatedButton.icon(
+                      onPressed: addProductToOrder,
+                      icon: const Icon(Icons.add),
+                      label: const Text("Add Product"),
+                    )
+                  ],
+                ),
+
+              const SizedBox(height: 20),
+
+              /// PRODUCT LIST
+              ...orderItems.map((item) {
+                return Card(
+                  elevation: 3,
+                  shape:
+                  RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  margin: const EdgeInsets.symmetric(vertical: 6),
+                  child: ListTile(
+                    title: Text(item["itemName"]),
+                    subtitle: Text(
+                        "${item["qty"]} ${item["itemUnit"]} × ${item["rate"]}  =  Rs. ${item["totalAmount"]}"),
+                    trailing: IconButton(
+                      icon: const Icon(Icons.delete, color: Colors.red),
+                      onPressed: () {
+                        setState(() => orderItems.remove(item));
+                      },
+                    ),
+                  ),
+                );
+              }),
+
+              const SizedBox(height: 20),
+
+              /// UPDATE ORDER BUTTON
+              ElevatedButton(
+                onPressed: isLoading ? null : updateOrder,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColors.secondary,
+                  padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 35),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
                   ),
                 ),
-              );
-            }),
-
-            const SizedBox(height: 20),
-
-            /// UPDATE ORDER BUTTON
-            ElevatedButton(
-              onPressed: isLoading ? null : updateOrder,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.secondary,
-                padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 35),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
+                child: isLoading
+                    ? const SizedBox(
+                  height: 24,
+                  width: 24,
+                  child: CircularProgressIndicator(
+                    color: Colors.white,
+                    strokeWidth: 3,
+                  ),
+                )
+                    : const Text(
+                  "Update Order",
+                  style: TextStyle(color: Colors.white, fontSize: 18),
                 ),
               ),
-              child: isLoading
-                  ? const SizedBox(
-                height: 24,
-                width: 24,
-                child: CircularProgressIndicator(
-                  color: Colors.white,
-                  strokeWidth: 3,
-                ),
-              )
-                  : const Text(
-                "Update Order",
-                style: TextStyle(color: Colors.white, fontSize: 18),
-              ),
-            ),
 
 
-            const SizedBox(height: 30),
-          ],
+              const SizedBox(height: 30),
+            ],
+          ),
         ),
       ),
     );

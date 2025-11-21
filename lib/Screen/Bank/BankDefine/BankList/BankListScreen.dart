@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 
 import '../../../../Provider/BankProvider/BankListProvider.dart';
 import '../../../../compoents/AppColors.dart';
+import 'BankListUpdate.dart';
 import 'addBank.dart';
 
 
@@ -117,15 +118,28 @@ class _BankListScreenState extends State<BankListScreen> {
                               IconButton(
                                 icon: const Icon(Icons.edit, color: Colors.blue),
                                 onPressed: () {
-                                  // navigate to update page
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (_) => UpdateBankScreen(
+                                        id: bank.id,
+                                        bankName: bank.bankName,
+                                        holderName: bank.accountHolderName,
+                                        accountNo: bank.accountNumber,
+                                        balance: bank.balance,
+                                      ),
+                                    ),
+                                  );
                                 },
                               ),
+
                               IconButton(
                                 icon: const Icon(Icons.delete, color: Colors.red),
                                 onPressed: () {
-                                  provider.deleteBank(bank.id);
+                                  _showDeleteDialog(context, provider, bank.id);
                                 },
                               ),
+
                             ],
                           )
                         ],
@@ -155,4 +169,43 @@ class _BankListScreenState extends State<BankListScreen> {
       ),
     );
   }
+  void _showDeleteDialog(BuildContext context, BankProvider provider, String id) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text("Confirm Delete"),
+          content: const Text("Are you sure you want to delete this bank?"),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text(
+                "NO",
+                style: TextStyle(color: Colors.blue),
+              ),
+            ),
+
+            TextButton(
+              onPressed: () async {
+                Navigator.pop(context); // close dialog
+                await provider.deleteBank(id);
+
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text("Bank deleted successfully"),
+                    backgroundColor: Colors.red,
+                  ),
+                );
+              },
+              child: const Text(
+                "YES",
+                style: TextStyle(color: Colors.red),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
 }

@@ -82,14 +82,14 @@ class PurchaseDashboard extends StatelessWidget {
                     Navigator.push(context, MaterialPageRoute(builder: (context)=>GRNScreen()));
                   },
                 ),
-                DashboardCard(
-                  icon: Icons.attach_money_rounded,
-                  title: "Payment to Supplier",
-                  color: Colors.amberAccent,
-                  onTap: () {
-                    Navigator.push(context, MaterialPageRoute(builder: (context)=>PaymentToSupplierScreen()));
-                  },
-                ),
+                // DashboardCard(
+                //   icon: Icons.attach_money_rounded,
+                //   title: "Payment to Supplier",
+                //   color: Colors.amberAccent,
+                //   onTap: () {
+                //     Navigator.push(context, MaterialPageRoute(builder: (context)=>PaymentToSupplierScreen()));
+                //   },
+                // ),
               ]),
 
               const SizedBox(height: 30),
@@ -151,16 +151,16 @@ class PurchaseDashboard extends StatelessWidget {
               const SizedBox(height: 30),
 
               // 🔸 Setup Section
-              _buildSectionTitle("🧩 Setup"),
-              const SizedBox(height: 14),
-              _buildCardGrid([
-                DashboardCard(
-                  icon: Icons.add_business_rounded,
-                  title: "Define Supplier",
-                  color: Colors.limeAccent,
-                  onTap: () {},
-                ),
-              ]),
+              // _buildSectionTitle("🧩 Setup"),
+              // const SizedBox(height: 14),
+              // _buildCardGrid([
+              //   DashboardCard(
+              //     icon: Icons.add_business_rounded,
+              //     title: "Define Supplier",
+              //     color: Colors.limeAccent,
+              //     onTap: () {},
+              //   ),
+              // ]),
 
               const SizedBox(height: 40),
             ],

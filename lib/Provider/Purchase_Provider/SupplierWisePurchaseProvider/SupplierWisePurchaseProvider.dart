@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:distribution/ApiLink/ApiEndpoint.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
@@ -19,7 +20,7 @@ class SupplierwisePurchaseProvider extends ChangeNotifier {
 
     try {
       final url = Uri.parse(
-          'https://distribution-backend.vercel.app/api/reports/supplierwise?supplierId=$supplierId');
+          '${ApiEndpoints.baseUrl}/reports/supplierwise?supplierId=$supplierId');
       final response = await http.get(url, headers: {
         'Authorization': 'Bearer YOUR_TOKEN_HERE',
       });

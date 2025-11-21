@@ -6,6 +6,7 @@ import '../../../../../Provider/BankProvider/ReceiptVoucherProvider.dart';
 import '../../../../../compoents/AppColors.dart';
 import '../addBank.dart';
 import 'AddReceiptVoucher.dart';
+import 'ReceiptUpdateScreen.dart';
 
 class ReceiptVoucherListScreen extends StatefulWidget {
   const ReceiptVoucherListScreen({super.key});
@@ -233,25 +234,53 @@ class _ReceiptVoucherListScreenState extends State<ReceiptVoucherListScreen> {
                           mainAxisAlignment: MainAxisAlignment.end,
                           children: [
                             IconButton(
-                              icon: const Icon(Icons.edit,
-                                  color: Colors.blueAccent),
+                              icon: const Icon(Icons.edit, color: Colors.blueAccent),
                               onPressed: () {
-                                // TODO: Navigate to update screen
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (_) => UpdateReceiptVoucherScreen(voucher: item)
+                                  ),
+                                );
                               },
                             ),
+
                             IconButton(
-                              icon:
-                              const Icon(Icons.delete, color: Colors.red),
+                              icon: const Icon(Icons.delete, color: Colors.red),
                               onPressed: () async {
-                                bool ok = await provider.deleteVoucher(item.id);
-                                if (ok) {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(
-                                        content: Text("Deleted successfully")),
-                                  );
+                                final confirm = await showDialog(
+                                  context: context,
+                                  builder: (context) => AlertDialog(
+                                    title: const Text("Confirm Delete"),
+                                    content: const Text("Are you sure you want to delete this item?"),
+                                    actions: [
+                                      TextButton(
+                                        onPressed: () => Navigator.pop(context, false),
+                                        child: const Text("No"),
+                                      ),
+                                      TextButton(
+                                        onPressed: () => Navigator.pop(context, true),
+                                        child: const Text(
+                                          "Yes",
+                                          style: TextStyle(color: Colors.red),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                );
+
+                                if (confirm == true) {
+                                  bool ok = await provider.deleteVoucher(item.id);
+
+                                  if (ok) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(content: Text("Deleted successfully")),
+                                    );
+                                  }
                                 }
                               },
-                            ),
+                            )
+
                           ],
                         )
                       ],

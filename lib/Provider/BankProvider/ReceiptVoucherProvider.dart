@@ -116,4 +116,53 @@ class ReceiptVoucherProvider extends ChangeNotifier {
     return false;
   }
 
+
+  Future<bool> updateVoucher({
+    required String id,
+    required String date,
+    required String receiptId,
+    required String bankId,
+    required String salesmanId,
+    required int amount,
+    required String remarks,
+  }) async {
+    final url = "$baseUrl/receipt-vouchers/$id";
+
+    final body = {
+      "date": date,
+      "receiptId": receiptId,
+      "bank": bankId,
+      "salesman": salesmanId,
+      "amountReceived": amount,
+      "remarks": remarks
+    };
+
+    print("📤 UPDATE SEND BODY: $body");
+
+    try {
+      final response = await http.put(
+        Uri.parse(url),
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer $token",
+        },
+        body: jsonEncode(body),
+      );
+
+      print("PUT STATUS CODE: ${response.statusCode}");
+      print("PUT RESPONSE BODY: ${response.body}");
+
+      if (response.statusCode == 200) {
+        // Update list locally
+        await fetchVouchers();
+        return true;
+      }
+    } catch (e) {
+      debugPrint("Update Error: $e");
+    }
+
+    return false;
+  }
+
+
 }

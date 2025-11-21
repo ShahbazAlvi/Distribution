@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 
 import '../../../Provider/OrderTakingProvider/OrderTakingProvider.dart';
 import '../../../Provider/SaleInvoiceProvider/SaleInvoicesProvider.dart';
+import '../../../Provider/SaleManProvider/SaleManProvider.dart';
 import '../../../compoents/AppColors.dart';
 import '../../../compoents/SaleManDropdown.dart';
 
@@ -32,134 +33,137 @@ class _SaleInvoiseScreenState extends State<SaleInvoiseScreen> {
 
     final orders = provider.orderData?.data ?? [];
 
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text("Sales Invoice",
-            style: TextStyle(color: Colors.white, fontSize: 22)),
-        centerTitle: true,
-        iconTheme: const IconThemeData(color: Colors.white),
-        flexibleSpace: Container(
-          decoration: const BoxDecoration(
-            gradient: LinearGradient(
-              colors: [AppColors.secondary, AppColors.primary],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
+    return ChangeNotifierProvider(
+      create: (_) => SaleManProvider()..fetchEmployees(),
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text("Sales Invoice",
+              style: TextStyle(color: Colors.white, fontSize: 22)),
+          centerTitle: true,
+          iconTheme: const IconThemeData(color: Colors.white),
+          flexibleSpace: Container(
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                colors: [AppColors.secondary, AppColors.primary],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
             ),
           ),
         ),
-      ),
 
-      body: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(12),
-            child: Column(
-              children: [
-                // ✅ Date Picker
-                GestureDetector(
-                  onTap: () async {
-                    DateTime? picked = await showDatePicker(
-                      context: context,
-                      initialDate: DateTime.now(),
-                      firstDate: DateTime(2020),
-                      lastDate: DateTime(2030),
-                    );
+        body: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(12),
+              child: Column(
+                children: [
+                  // ✅ Date Picker
+                  GestureDetector(
+                    onTap: () async {
+                      DateTime? picked = await showDatePicker(
+                        context: context,
+                        initialDate: DateTime.now(),
+                        firstDate: DateTime(2020),
+                        lastDate: DateTime(2030),
+                      );
 
-                    if (picked != null) {
-                      selectedDate = DateFormat('yyyy-MM-dd').format(picked);
+                      if (picked != null) {
+                        selectedDate = DateFormat('yyyy-MM-dd').format(picked);
+                        setState(() {});
+
+                        provider.fetchOrders(
+                          date: selectedDate,
+                          salesmanId: selectedSalesmanId,
+                        );
+                      }
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(12),
+                        color: Colors.grey.shade200,
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(selectedDate ?? "Select Date"),
+                          const Icon(Icons.calendar_today),
+                        ],
+                      ),
+                    ),
+                  ),
+
+                  const SizedBox(height: 10),
+
+                  // ✅ Salesman Dropdown
+                  SalesmanDropdown(
+                    selectedId: selectedSalesmanId,
+                    onChanged: (value) {
+                      selectedSalesmanId = value;
                       setState(() {});
 
                       provider.fetchOrders(
                         date: selectedDate,
                         salesmanId: selectedSalesmanId,
                       );
-                    }
-                  },
-                  child: Container(
-                    padding: const EdgeInsets.all(12),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(12),
-                      color: Colors.grey.shade200,
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(selectedDate ?? "Select Date"),
-                        const Icon(Icons.calendar_today),
-                      ],
-                    ),
+                    },
                   ),
+                ],
+              ),
+            ),
+
+            // ✅ Loading
+            if (provider.isLoading)
+              const Expanded(
+                child: Center(child: CircularProgressIndicator()),
+              )
+
+            // ✅ Error
+            else if (provider.error != null)
+              Expanded(
+                child: Center(
+                  child: Text(provider.error!,
+                      style: const TextStyle()),
                 ),
+              )
 
-                const SizedBox(height: 10),
+            // ✅ Order List
+            else
+              Expanded(
+                child: orders.isEmpty
+                    ? const Center(child: Text("No Orders Found"))
+                    : ListView.builder(
+                  itemCount: orders.length,
+                  itemBuilder: (context, index) {
+                    final order = orders[index];
 
-                // ✅ Salesman Dropdown
-                SalesmanDropdown(
-                  selectedId: selectedSalesmanId,
-                  onChanged: (value) {
-                    selectedSalesmanId = value;
-                    setState(() {});
-
-                    provider.fetchOrders(
-                      date: selectedDate,
-                      salesmanId: selectedSalesmanId,
+                    return Card(
+                      margin: const EdgeInsets.all(8),
+                      child: ListTile(
+                        title: Text("INV: ${order.orderId}"),
+                        subtitle: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(order.customerId.customerName),
+                            Text(order.customerId.phoneNumber),
+                            Text("Balance: ${order.customerId.salesBalance}"),
+                            Text(order.salesmanId?.employeeName ??
+                                "No Salesman"),
+                          ],
+                        ),
+                        trailing: const Icon(Icons.receipt_long,
+                            color: AppColors.secondary),
+                        onTap: () {
+                          showOrderDetailsSheet(context, order.orderId);
+                        },
+                      ),
                     );
                   },
                 ),
-              ],
-            ),
-          ),
-
-          // ✅ Loading
-          if (provider.isLoading)
-            const Expanded(
-              child: Center(child: CircularProgressIndicator()),
-            )
-
-          // ✅ Error
-          else if (provider.error != null)
-            Expanded(
-              child: Center(
-                child: Text(provider.error!,
-                    style: const TextStyle(color: Colors.red)),
               ),
-            )
-
-          // ✅ Order List
-          else
-            Expanded(
-              child: orders.isEmpty
-                  ? const Center(child: Text("No Orders Found"))
-                  : ListView.builder(
-                itemCount: orders.length,
-                itemBuilder: (context, index) {
-                  final order = orders[index];
-
-                  return Card(
-                    margin: const EdgeInsets.all(8),
-                    child: ListTile(
-                      title: Text("INV: ${order.orderId}"),
-                      subtitle: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(order.customerId.customerName),
-                          Text(order.customerId.phoneNumber),
-                          Text("Balance: ${order.customerId.salesBalance}"),
-                          Text(order.salesmanId?.employeeName ??
-                              "No Salesman"),
-                        ],
-                      ),
-                      trailing: const Icon(Icons.receipt_long,
-                          color: AppColors.secondary),
-                      onTap: () {
-                        showOrderDetailsSheet(context, order.orderId);
-                      },
-                    ),
-                  );
-                },
-              ),
-            ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -460,36 +464,6 @@ class _SaleInvoiseScreenState extends State<SaleInvoiseScreen> {
                       ),
                     )
                         : ElevatedButton(
-                      // onPressed: () async {
-                      //   setState(() => isUpdating = true);
-                      //
-                      //   List<Map<String, dynamic>> updatedProducts = [];
-                      //
-                      //   for (int i = 0; i < order.products.length; i++) {
-                      //     updatedProducts.add({
-                      //       "itemName": order.products[i].itemName,
-                      //       "qty": int.parse(qtyControllers[i].text),
-                      //       "itemUnit": order.products[i].itemUnit,
-                      //       "rate": int.parse(rateControllers[i].text),
-                      //       "totalAmount": int.parse(rateControllers[i].text) *
-                      //           int.parse(qtyControllers[i].text),
-                      //     });
-                      //   }
-                      //
-                      //   await provider.createOrUpdateInvoice(
-                      //     order: order,
-                      //     products: updatedProducts,
-                      //     discount: int.parse(discountCtrl.text),
-                      //     received: int.parse(receivedCtrl.text),
-                      //     deliveryDate: deliveryDate,
-                      //     agingDate: agingDate,
-                      //   );
-                      //
-                      //   setState(() => isUpdating = false);
-                      //
-                      //   Navigator.pop(context);
-                      //   provider.fetchOrders();
-                      // },
                       onPressed: () async {
                         setState(() => isUpdating = true);
 
@@ -520,11 +494,12 @@ class _SaleInvoiseScreenState extends State<SaleInvoiseScreen> {
                         Navigator.pop(context);
 
                         // 🔥 SHOW SUCCESS / ERROR
+                        print(responseMessage);
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
                             content: Text(responseMessage ?? "Unknown Response"),
                             backgroundColor:
-                            responseMessage!.contains("Success") ? Colors.green : Colors.red,
+                            responseMessage!.contains("success") ? Colors.green : Colors.red,
                             duration: const Duration(seconds: 3),
                           ),
                         );

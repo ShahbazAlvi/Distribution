@@ -6,6 +6,7 @@ import '../../../../../Provider/BankProvider/PaymentVoucherProvider.dart';
 import '../../../../../compoents/AppColors.dart';
 import '../../../../../model/BankModel/PaymentVoucher.dart';
 import 'AddPaymentVoucherScreen.dart';
+import 'UpdatePaymentVoucher.dart';
 
 class PaymentVoucherListScreen extends StatefulWidget {
   const PaymentVoucherListScreen({super.key});
@@ -238,23 +239,54 @@ class _PaymentVoucherListScreenState extends State<PaymentVoucherListScreen> {
                           children: [
                             IconButton(
                               icon: const Icon(Icons.edit, color: Colors.blue),
-                              onPressed: () {},
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (_) => UpdatePaymentVoucherScreen(paymentId: pay.paymentId),
+                                  ),
+                                );
+                              },
                             ),
+
                             IconButton(
                               icon: const Icon(Icons.delete, color: Colors.red),
                               onPressed: () async {
-                                //bool ok = await provider.deletePayment(item.id);
-                                bool ok = await provider.deletePayment(pay.id);
+                                // Show confirmation dialog
+                                bool? confirm = await showDialog<bool>(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return AlertDialog(
+                                      title: const Text("Confirm Delete"),
+                                      content: const Text("Are you sure you want to delete this payment? This action cannot be undone."),
+                                      actions: [
+                                        TextButton(
+                                          onPressed: () => Navigator.of(context).pop(false), // User pressed No
+                                          child: const Text("No"),
+                                        ),
+                                        TextButton(
+                                          onPressed: () => Navigator.of(context).pop(true), // User pressed Yes
+                                          child: const Text("Yes"),
+                                        ),
+                                      ],
+                                    );
+                                  },
+                                );
 
-                                if (ok) {
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(
-                                      content: Text("Payment Deleted"),
-                                    ),
-                                  );
+                                // If user confirmed
+                                if (confirm == true) {
+                                  bool ok = await provider.deletePayment(pay.id);
+                                  if (ok) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(
+                                        content: Text("Payment Deleted"),
+                                      ),
+                                    );
+                                  }
                                 }
                               },
                             ),
+
                           ],
                         )
                       ],

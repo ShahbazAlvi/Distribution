@@ -88,5 +88,41 @@ class BankProvider extends ChangeNotifier {
       print("Add Bank Error: $e");
     }
   }
+  Future<void> updateBank(
+      String id,
+      String bankName,
+      String holderName,
+      String accountNo,
+      String balance,
+      ) async {
+    final body = jsonEncode({
+      "bankName": bankName,
+      "accountHolderName": holderName,
+      "accountNumber": accountNo,
+      "balance": int.parse(balance),
+    });
+
+    try {
+      final response = await http.put(
+        Uri.parse("${ApiEndpoints.baseUrl}/banks/$id"),
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer YOUR_TOKEN_HERE",
+        },
+        body: body,
+      );
+
+      if (response.statusCode == 200) {
+        // Refresh list
+        await fetchBanks();
+        notifyListeners();
+      } else {
+        print("Update Error: ${response.body}");
+      }
+    } catch (e) {
+      print("Update Bank Error: $e");
+    }
+  }
+
 
 }

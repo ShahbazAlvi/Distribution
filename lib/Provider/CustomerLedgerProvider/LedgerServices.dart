@@ -1,10 +1,11 @@
 import 'dart:convert';
+import 'package:distribution/ApiLink/ApiEndpoint.dart';
 import 'package:http/http.dart' as http;
 import '../../model/CustomersLedger/CustomerLedger.dart';
 
 class CustomerLedgerService {
   static const String baseUrl =
-      "https://distribution-backend.vercel.app/api/customer-ledger";
+      "${ApiEndpoints.baseUrl}/customer-ledger";
 
   Future<CustomerLedgerDetailsModel?> fetchCustomerLedger({
     required String customerId,

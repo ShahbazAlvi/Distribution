@@ -1,5 +1,6 @@
 import 'package:distribution/Screen/PurchaseScreen/PurchaseScreen.dart';
 import 'package:distribution/Screen/SalesView/SalesScreen.dart';
+import 'package:distribution/Screen/SalesView/SetUp/ItemsListScreen/ItemsListsScreen.dart';
 import 'package:distribution/Screen/dashBoardView/calender.dart';
 import 'package:distribution/Screen/dashBoardView/chartdashboard.dart';
 import 'package:distribution/Screen/dashBoardView/recoverienChart.dart';
@@ -10,6 +11,9 @@ import '../Provider/DashBoardProvider.dart';
 import '../model/DashBoardModel.dart';
 import 'Auth/LoginScreen.dart';
 import 'Bank/BankDefine/BanksDefineScreen.dart';
+import 'CustomerScreen/CustomersDefineScreen.dart';
+import 'SalesView/DailysaleScreen/DailySaleScreen.dart';
+import 'SalesView/SetUp/EmployeeDefine/EmployeeDefine.dart';
 
 class Dashboardscreen extends StatefulWidget {
   const Dashboardscreen({super.key});
@@ -327,30 +331,50 @@ class _DashboardscreenState extends State<Dashboardscreen> {
                             spacing: 16,
                             runSpacing: 16,
                             children: [
-                              AnimatedDashboardCard(
-                                  icon: Icons.person,
-                                  title: 'Total Sales',
-                                  count: dashboardData.stats.totalSales
-                                      .toString(),
-                                  bcolor: Colors.green),
-                              AnimatedDashboardCard(
-                                  icon: Icons.shop,
-                                  title: 'Total Products',
-                                  count: dashboardData.stats.totalProducts
-                                      .toString(),
-                                  bcolor: Colors.red),
-                              AnimatedDashboardCard(
-                                  icon: Icons.people_alt,
-                                  title: 'Total Customer',
-                                  count: dashboardData.stats.totalCustomers
-                                      .toString(),
-                                  bcolor: Colors.blue),
-                              AnimatedDashboardCard(
-                                  icon: Icons.account_balance_wallet,
-                                  title: 'Total Staff',
-                                  count: dashboardData.stats.totalStaff
-                                      .toString(),
-                                  bcolor: Colors.orange),
+                              GestureDetector(
+                                onTap: (){
+                                  Navigator.push(context,MaterialPageRoute(builder: (context)=>DailySaleReportScreen()));
+                                },
+                                child: AnimatedDashboardCard(
+                                    icon: Icons.person,
+                                    title: 'Total Sales',
+                                    count: dashboardData.stats.totalSales
+                                        .toString(),
+                                    bcolor: Colors.green),
+                              ),
+                              GestureDetector(
+                                onTap: (){
+                                  Navigator.push(context,MaterialPageRoute(builder: (context)=>ItemListScreen()));
+                                },
+                                child: AnimatedDashboardCard(
+                                    icon: Icons.shop,
+                                    title: 'Total Products',
+                                    count: dashboardData.stats.totalProducts
+                                        .toString(),
+                                    bcolor: Colors.red),
+                              ),
+                              GestureDetector(
+                                onTap: (){
+                                  Navigator.push(context, MaterialPageRoute(builder: (context)=>CustomersDefineScreen()));
+                                },
+                                child: AnimatedDashboardCard(
+                                    icon: Icons.people_alt,
+                                    title: 'Total Customer',
+                                    count: dashboardData.stats.totalCustomers
+                                        .toString(),
+                                    bcolor: Colors.blue),
+                              ),
+                              GestureDetector(
+                                onTap: (){
+                                  Navigator.push(context, MaterialPageRoute(builder: (context)=>EmployeesScreen()));
+                                },
+                                child: AnimatedDashboardCard(
+                                    icon: Icons.account_balance_wallet,
+                                    title: 'Total Staff',
+                                    count: dashboardData.stats.totalStaff
+                                        .toString(),
+                                    bcolor: Colors.orange),
+                              ),
                             ],
                           ),
                         )

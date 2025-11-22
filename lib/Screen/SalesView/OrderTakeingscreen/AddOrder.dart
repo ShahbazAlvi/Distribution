@@ -42,6 +42,7 @@ class _AddOrderScreenState extends State<AddOrderScreen> {
 
 
   final TextEditingController qtyController = TextEditingController();
+  final TextEditingController rateController = TextEditingController();
   List<Map<String, dynamic>> orderItems = [];
 
   @override
@@ -100,12 +101,14 @@ class _AddOrderScreenState extends State<AddOrderScreen> {
   void addProductToOrder() {
     if (selectedProduct != null && qtyController.text.isNotEmpty) {
       final qty = double.tryParse(qtyController.text) ?? 0;
-      final total = selectedProduct!.price * qty;
+      final price = double.tryParse(rateController.text)?? 0;
+      final total = price * qty;
 
       setState(() {
         orderItems.add({
           "product": selectedProduct!,
           "qty": qty,
+          "price": price,
           "total": total,
         });
       });
@@ -144,6 +147,7 @@ class _AddOrderScreenState extends State<AddOrderScreen> {
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
 
             /// ✅ Order ID & Date
@@ -158,6 +162,8 @@ class _AddOrderScreenState extends State<AddOrderScreen> {
             const Divider(),
 
             /// ✅ Salesman
+            Text("Select Salesman",style: TextStyle(fontWeight:FontWeight.bold),),
+            SizedBox(height: 5,),
             SalesmanDropdown(
               selectedId: selectedSalesmanId,
               onChanged: (value) {
@@ -202,6 +208,14 @@ class _AddOrderScreenState extends State<AddOrderScreen> {
                     ),
                   ),
                   const SizedBox(height: 8),
+                  TextField(
+                    controller: rateController,
+                    keyboardType: TextInputType.number,
+                    decoration: const InputDecoration(
+                      labelText: "Enter Rate",
+                      border: OutlineInputBorder(),
+                    ),
+                  ),
 
                   ElevatedButton.icon(
                     onPressed: addProductToOrder,
@@ -249,117 +263,125 @@ class _AddOrderScreenState extends State<AddOrderScreen> {
                     }
 
                     return Card(
-                      elevation: 4,
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                      margin: const EdgeInsets.symmetric(vertical: 6),
-                      color: Colors.grey[50],
+                      elevation: 6,
+                      shadowColor: Colors.black26,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
+                      color: Colors.white,
                       child: Padding(
-                        padding: const EdgeInsets.all(12.0),
+                        padding: const EdgeInsets.all(16.0),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            // Product name and delete icon
+                            // Title + Delete Button
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                Text(
-                                  itemName,
-                                  style: const TextStyle(
-                                      fontSize: 18, fontWeight: FontWeight.bold),
+                                Expanded(
+                                  child: Text(
+                                    itemName,
+                                    style: const TextStyle(
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.w700,
+                                      color: Colors.black87,
+                                    ),
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
                                 ),
-                                IconButton(
-                                  icon: const Icon(Icons.delete, color: Colors.red),
-                                  onPressed: () => setState(() => orderItems.remove(item)),
+                                Container(
+                                  decoration: BoxDecoration(
+                                    color: Colors.red.shade50,
+                                    shape: BoxShape.circle,
+                                  ),
+                                  child: IconButton(
+                                    icon: Icon(Icons.delete, color: Colors.red.shade400, size: 22),
+                                    onPressed: () {
+                                      setState(() {
+                                        orderItems.remove(item);
+                                      });
+                                    },
+                                  ),
                                 ),
                               ],
                             ),
-                            Text("Purchase: $purchase"),
+
                             const SizedBox(height: 6),
 
-                            // Unit & Editable Price
+                            Text(
+                              "Purchase: $purchase",
+                              style: const TextStyle(
+                                fontSize: 15,
+                                color: Colors.black54,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+
+                            const SizedBox(height: 14),
+
+                            // Unit + Price badges
                             Row(
                               children: [
-                                Chip(
-                                  label: Text("Unit: $unit"),
-                                  backgroundColor: Colors.blue[100],
-                                ),
-                                const SizedBox(width: 10),
-                                SizedBox(
-                                  width: 100,
-                                  child: TextFormField(
-                                    initialValue: price.toString(),
-                                    keyboardType:
-                                    const TextInputType.numberWithOptions(decimal: true),
-                                    decoration: const InputDecoration(
-                                      contentPadding: EdgeInsets.symmetric(vertical: 4, horizontal: 8),
-                                      border: OutlineInputBorder(),
-                                      labelText: "Price",
+                                Container(
+                                  padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 14),
+                                  decoration: BoxDecoration(
+                                    color: Colors.blue.shade100,
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                  child: Text(
+                                    "Qty: $qty",
+                                    style: const TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w600,
                                     ),
-                                    onChanged: (v) {
-                                      setState(() {
-                                        final newPrice = double.tryParse(v) ?? 0;
-                                        price = newPrice;
+                                  ),
+                                ),
+                                const SizedBox(width: 12),
 
-                                        // Save editable price in orderItems map
-                                        if (isNew) {
-                                          item["price"] = newPrice; // ✅ store local editable price
-                                        } else {
-                                          item["rate"] = newPrice;
-                                        }
+                                Container(
+                                  padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 14),
+                                  decoration: BoxDecoration(
+                                    color: Colors.orange.shade100,
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                  child: Text(
+                                    "Price: $price",
+                                    style: const TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(width: 12),
+                                Container(
+                                  padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 14),
+                                  decoration: BoxDecoration(
+                                    color: Colors.green.shade100,
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                  child: Text(
+                                    "Total: $total",
+                                    style: const TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w600,
 
-                                        final newTotal = newPrice * qty;
-                                        item["totalAmount"] = newTotal;
-                                        item["total"] = newTotal;
-                                        total = newTotal;
-                                      });
-                                    },
+                                    ),
                                   ),
                                 ),
                               ],
                             ),
 
-                            const SizedBox(height: 10),
+                            const SizedBox(height: 12),
 
-                            // Quantity Input & Total
-                            Row(
-                              children: [
-                                const Text("Qty: "),
-                                SizedBox(
-                                  width: 60,
-                                  child: TextFormField(
-                                    initialValue: qty.toString(),
-                                    keyboardType:
-                                    const TextInputType.numberWithOptions(decimal: true),
-                                    decoration: const InputDecoration(
-                                      contentPadding: EdgeInsets.symmetric(vertical: 4, horizontal: 8),
-                                      border: OutlineInputBorder(),
-                                    ),
-                                    onChanged: (v) {
-                                      setState(() {
-                                        final newQty = double.tryParse(v) ?? 0;
-                                        qty = newQty;
-                                        item["qty"] = newQty;
+                            // Qty + Total (highlighted)
 
-                                        final newTotal = newQty * price;
-                                        item["totalAmount"] = newTotal;
-                                        item["total"] = newTotal;
-                                        total = newTotal;
-                                      });
-                                    },
-                                  ),
-                                ),
-                                const SizedBox(width: 20),
-                                Text(
-                                  "Total: $total",
-                                  style: const TextStyle(
-                                      fontWeight: FontWeight.bold, fontSize: 16),
-                                ),
-                              ],
-                            ),
                           ],
                         ),
                       ),
                     );
+
+
                   })
 
 
@@ -511,18 +533,19 @@ class _AddOrderScreenState extends State<AddOrderScreen> {
                 }
               },
               style: ElevatedButton.styleFrom(
-                minimumSize: const Size(double.infinity, 50),
+                backgroundColor: AppColors.secondary,
+                minimumSize: const Size(double.infinity, 60),
               ),
               child: isLoading
                   ? const SizedBox(
                 height: 24,
                 width: 24,
                 child: CircularProgressIndicator(
-                  color: Colors.white,
-                  strokeWidth: 2,
+                  color: AppColors.secondary,
+                  strokeWidth: 1,
                 ),
               )
-                  : Text(widget.isUpdate ? "Update Order" : "Create Order"),
+                  : Text(widget.isUpdate ? "Update Order" : "Create Order",style: TextStyle(color: Colors.white),),
             ),
 
 

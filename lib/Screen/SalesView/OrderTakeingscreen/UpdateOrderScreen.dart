@@ -294,7 +294,7 @@ class _UpdateOrderScreenState extends State<UpdateOrderScreen> {
                   width: 24,
                   child: CircularProgressIndicator(
                     color: Colors.white,
-                    strokeWidth: 3,
+                    strokeWidth: 1,
                   ),
                 )
                     : const Text(

@@ -33,7 +33,7 @@ class _OrderTakingScreenState extends State<OrderTakingScreen> {
             style: TextStyle(
               color: Colors.white,
               fontWeight: FontWeight.bold,
-              fontSize: 22,
+              fontSize: 18,
               letterSpacing: 1.2,
             )),
         ),
@@ -211,7 +211,75 @@ class _OrderTakingScreenState extends State<OrderTakingScreen> {
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
 
-                        ElevatedButton.icon(
+                        // ElevatedButton.icon(
+                        //   onPressed: () {
+                        //     Navigator.push(
+                        //       context,
+                        //       MaterialPageRoute(
+                        //         builder: (context) => UpdateOrderScreen(order: order),
+                        //       ),
+                        //     );
+                        //
+                        //   },
+                        //   icon: Icon(Icons.edit, color: AppColors.text),
+                        //   label: Text("Update",style:TextStyle(color: AppColors.text) ,),
+                        //   style: ElevatedButton.styleFrom(
+                        //     backgroundColor: AppColors.betprologo,
+                        //     padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                        //     shape: RoundedRectangleBorder(
+                        //       borderRadius: BorderRadius.circular(10),
+                        //     ),
+                        //   ),
+                        // ),
+                        //
+                        //
+                        // const SizedBox(width: 8),
+                        // ElevatedButton.icon(
+                        //   onPressed: () {
+                        //     _confirmDelete(context, order.id); // ✅ show dialog
+                        //   },
+                        //   style: ElevatedButton.styleFrom(
+                        //     backgroundColor: AppColors.Instructions,
+                        //     padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                        //     shape: RoundedRectangleBorder(
+                        //       borderRadius: BorderRadius.circular(10),
+                        //     ),
+                        //   ),
+                        //   icon: const Icon(Icons.delete, size: 18, color: AppColors.text),
+                        //   label: const Text("Delete", style: TextStyle(color: AppColors.text)),
+                        // ),
+                        //
+                        //
+                        // const SizedBox(width: 8),
+                        // ElevatedButton.icon(
+                        //   onPressed: () {
+                        //     showModalBottomSheet(
+                        //       context: context,
+                        //       shape: const RoundedRectangleBorder(
+                        //         borderRadius:
+                        //         BorderRadius.vertical(
+                        //             top:
+                        //             Radius.circular(20)),
+                        //       ),
+                        //       builder: (_) =>
+                        //           _OrderDetailsSheet(
+                        //               orderId: orderId),
+                        //     );
+                        //   },
+                        //   style: ElevatedButton.styleFrom(
+                        //     backgroundColor: AppColors.secondary,
+                        //     padding: const EdgeInsets.symmetric(
+                        //         horizontal: 10, vertical: 6),
+                        //     shape: RoundedRectangleBorder(
+                        //         borderRadius:
+                        //         BorderRadius.circular(10)),
+                        //   ),
+                        //   icon: const Icon(Icons.visibility,
+                        //       size: 18,color: AppColors.text),
+                        //   label: const Text("Details",style: TextStyle(color: AppColors.text)),
+                        // ),
+                        // UPDATE
+                        ElevatedButton(
                           onPressed: () {
                             Navigator.push(
                               context,
@@ -219,65 +287,57 @@ class _OrderTakingScreenState extends State<OrderTakingScreen> {
                                 builder: (context) => UpdateOrderScreen(order: order),
                               ),
                             );
-
                           },
-                          icon: Icon(Icons.edit, color: AppColors.text),
-                          label: Text("Update",style:TextStyle(color: AppColors.text) ,),
                           style: ElevatedButton.styleFrom(
                             backgroundColor: AppColors.betprologo,
-                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                            padding: const EdgeInsets.all(8),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(10),
                             ),
                           ),
+                          child: const Icon(Icons.edit, color: AppColors.text),
                         ),
 
+                        SizedBox(width: 8),
 
-                        const SizedBox(width: 8),
-                        ElevatedButton.icon(
+// DELETE
+                        ElevatedButton(
                           onPressed: () {
-                            _confirmDelete(context, order.id); // ✅ show dialog
+                            _confirmDelete(context, order.id);
                           },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: AppColors.Instructions,
-                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                            padding: const EdgeInsets.all(8),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(10),
                             ),
                           ),
-                          icon: const Icon(Icons.delete, size: 18, color: AppColors.text),
-                          label: const Text("Delete", style: TextStyle(color: AppColors.text)),
+                          child: const Icon(Icons.delete, color: AppColors.text),
                         ),
 
+                        SizedBox(width: 8),
 
-                        const SizedBox(width: 8),
-                        ElevatedButton.icon(
+// DETAILS
+                        ElevatedButton(
                           onPressed: () {
                             showModalBottomSheet(
                               context: context,
                               shape: const RoundedRectangleBorder(
-                                borderRadius:
-                                BorderRadius.vertical(
-                                    top:
-                                    Radius.circular(20)),
+                                borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
                               ),
-                              builder: (_) =>
-                                  _OrderDetailsSheet(
-                                      orderId: orderId),
+                              builder: (_) => _OrderDetailsSheet(orderId: orderId),
                             );
                           },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: AppColors.secondary,
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 10, vertical: 6),
+                            padding: const EdgeInsets.all(8),
                             shape: RoundedRectangleBorder(
-                                borderRadius:
-                                BorderRadius.circular(10)),
+                              borderRadius: BorderRadius.circular(10),
+                            ),
                           ),
-                          icon: const Icon(Icons.visibility,
-                              size: 18,color: AppColors.text),
-                          label: const Text("Details",style: TextStyle(color: AppColors.text)),
+                          child: const Icon(Icons.visibility, color: AppColors.text),
                         ),
+
                       ],
                     ),
                   ],

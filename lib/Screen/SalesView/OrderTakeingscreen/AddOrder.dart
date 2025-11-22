@@ -123,6 +123,7 @@ class _AddOrderScreenState extends State<AddOrderScreen> {
     final orderProvider = Provider.of<OrderTakingProvider>(context);
 
     return Scaffold(
+      backgroundColor: Color(0xFFEEEEEE),
       appBar: AppBar(
         iconTheme: const IconThemeData(color: Colors.white),
         title: const Text("Order Taking",

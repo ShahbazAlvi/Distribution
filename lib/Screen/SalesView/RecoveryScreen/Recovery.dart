@@ -27,6 +27,7 @@ class _RecoveryListScreenState extends State<RecoveryListScreen> {
     final records = provider.recoveryData?.data ?? [];
 
     return Scaffold(
+      backgroundColor: Color(0xFFEEEEEE),
       appBar: AppBar(
         title: const Text("Recovery Report",
             style: TextStyle(color: Colors.white, fontSize: 22)),
@@ -281,6 +282,7 @@ class _EditRecoveryScreenState extends State<EditRecoveryScreen> {
     final provider = Provider.of<RecoveryProvider>(context);
 
     return Scaffold(
+      backgroundColor: Color(0xFFEEEEEE),
       appBar: AppBar(
         title: const Text("Edit Recovery Report",
             style: TextStyle(color: Colors.white, fontSize: 22)),

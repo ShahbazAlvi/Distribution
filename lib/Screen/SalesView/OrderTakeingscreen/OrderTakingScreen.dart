@@ -27,6 +27,7 @@ class _OrderTakingScreenState extends State<OrderTakingScreen> {
     final provider = Provider.of<OrderTakingProvider>(context);
 
     return Scaffold(
+      backgroundColor: Color(0xFFEEEEEE),
       appBar: AppBar(
         iconTheme: const IconThemeData(color: Colors.white),
         title: Center(child: const Text("Order Taking",
@@ -211,74 +212,7 @@ class _OrderTakingScreenState extends State<OrderTakingScreen> {
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
 
-                        // ElevatedButton.icon(
-                        //   onPressed: () {
-                        //     Navigator.push(
-                        //       context,
-                        //       MaterialPageRoute(
-                        //         builder: (context) => UpdateOrderScreen(order: order),
-                        //       ),
-                        //     );
-                        //
-                        //   },
-                        //   icon: Icon(Icons.edit, color: AppColors.text),
-                        //   label: Text("Update",style:TextStyle(color: AppColors.text) ,),
-                        //   style: ElevatedButton.styleFrom(
-                        //     backgroundColor: AppColors.betprologo,
-                        //     padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                        //     shape: RoundedRectangleBorder(
-                        //       borderRadius: BorderRadius.circular(10),
-                        //     ),
-                        //   ),
-                        // ),
-                        //
-                        //
-                        // const SizedBox(width: 8),
-                        // ElevatedButton.icon(
-                        //   onPressed: () {
-                        //     _confirmDelete(context, order.id); // ✅ show dialog
-                        //   },
-                        //   style: ElevatedButton.styleFrom(
-                        //     backgroundColor: AppColors.Instructions,
-                        //     padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                        //     shape: RoundedRectangleBorder(
-                        //       borderRadius: BorderRadius.circular(10),
-                        //     ),
-                        //   ),
-                        //   icon: const Icon(Icons.delete, size: 18, color: AppColors.text),
-                        //   label: const Text("Delete", style: TextStyle(color: AppColors.text)),
-                        // ),
-                        //
-                        //
-                        // const SizedBox(width: 8),
-                        // ElevatedButton.icon(
-                        //   onPressed: () {
-                        //     showModalBottomSheet(
-                        //       context: context,
-                        //       shape: const RoundedRectangleBorder(
-                        //         borderRadius:
-                        //         BorderRadius.vertical(
-                        //             top:
-                        //             Radius.circular(20)),
-                        //       ),
-                        //       builder: (_) =>
-                        //           _OrderDetailsSheet(
-                        //               orderId: orderId),
-                        //     );
-                        //   },
-                        //   style: ElevatedButton.styleFrom(
-                        //     backgroundColor: AppColors.secondary,
-                        //     padding: const EdgeInsets.symmetric(
-                        //         horizontal: 10, vertical: 6),
-                        //     shape: RoundedRectangleBorder(
-                        //         borderRadius:
-                        //         BorderRadius.circular(10)),
-                        //   ),
-                        //   icon: const Icon(Icons.visibility,
-                        //       size: 18,color: AppColors.text),
-                        //   label: const Text("Details",style: TextStyle(color: AppColors.text)),
-                        // ),
-                        // UPDATE
+                 // Update         Button in Order Taking
                         ElevatedButton(
                           onPressed: () {
                             Navigator.push(
@@ -300,7 +234,7 @@ class _OrderTakingScreenState extends State<OrderTakingScreen> {
 
                         SizedBox(width: 8),
 
-// DELETE
+// DELETE Button in Order Taking
                         ElevatedButton(
                           onPressed: () {
                             _confirmDelete(context, order.id);
@@ -317,7 +251,7 @@ class _OrderTakingScreenState extends State<OrderTakingScreen> {
 
                         SizedBox(width: 8),
 
-// DETAILS
+// DETAILS  Button in Order Taking
                         ElevatedButton(
                           onPressed: () {
                             showModalBottomSheet(
@@ -363,7 +297,7 @@ class _OrderTakingScreenState extends State<OrderTakingScreen> {
             style: TextStyle(fontWeight: FontWeight.bold),
           ),
           content: const Text(
-            "Are you sure you want to delete this order? This action cannot be undone.",
+            "Are you sure you want to delete this order?",
           ),
           actions: [
             TextButton(
@@ -372,10 +306,7 @@ class _OrderTakingScreenState extends State<OrderTakingScreen> {
               },
               child: const Text("Cancel"),
             ),
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.red,
-              ),
+            TextButton(
               onPressed: () async {
                 Navigator.pop(context); // close dialog first
 
@@ -387,6 +318,21 @@ class _OrderTakingScreenState extends State<OrderTakingScreen> {
               },
               child: const Text("Delete"),
             ),
+            // ElevatedButton(
+            //   // style: ElevatedButton.styleFrom(
+            //   //   backgroundColor: Colors.red,
+            //   // ),
+            //   onPressed: () async {
+            //     Navigator.pop(context); // close dialog first
+            //
+            //     await provider.deleteOrder(orderId);
+            //
+            //     ScaffoldMessenger.of(context).showSnackBar(
+            //       const SnackBar(content: Text("Order deleted successfully")),
+            //     );
+            //   },
+            //   child: const Text("Delete"),
+            // ),
           ],
         );
       },

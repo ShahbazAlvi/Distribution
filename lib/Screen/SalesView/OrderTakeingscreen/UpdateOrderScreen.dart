@@ -152,6 +152,7 @@ class _UpdateOrderScreenState extends State<UpdateOrderScreen> {
     return ChangeNotifierProvider(
       create: (_) => SaleManProvider()..fetchEmployees(),
       child: Scaffold(
+        backgroundColor: Color(0xFFEEEEEE),
         appBar: AppBar(
           iconTheme: const IconThemeData(color: Colors.white),
           title: const Text(

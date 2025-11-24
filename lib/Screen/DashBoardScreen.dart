@@ -77,6 +77,7 @@ class _DashboardscreenState extends State<Dashboardscreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Color(0xFFEEEEEE),
       appBar: AppBar(
         iconTheme: const IconThemeData(color: Colors.white),
         title: Center(child: const Text("Dashboard",
@@ -100,6 +101,7 @@ class _DashboardscreenState extends State<Dashboardscreen> {
         ),
       ),
       drawer: Drawer(
+        backgroundColor: Color(0xFFEEEEEE),
         child: ListView(
           padding: EdgeInsets.zero,
           children: [

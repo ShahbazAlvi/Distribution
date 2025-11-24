@@ -31,7 +31,7 @@ class _PaymentVoucherListScreenState extends State<PaymentVoucherListScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xfff5f7fa),
+      backgroundColor: Color(0xFFEEEEEE),
 
       appBar: AppBar(
         iconTheme: const IconThemeData(color: Colors.white),

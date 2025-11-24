@@ -59,6 +59,7 @@ class _AddReceiptVoucherScreenState extends State<AddReceiptVoucherScreen> {
     final voucherProvider = Provider.of<ReceiptVoucherProvider>(context);
 
     return Scaffold(
+      backgroundColor: Color(0xFFEEEEEE),
       appBar: AppBar(
         iconTheme: const IconThemeData(color: Colors.white),
         title: const Center(
@@ -361,9 +362,16 @@ class _AddReceiptVoucherScreenState extends State<AddReceiptVoucherScreen> {
                       );
                     }
                   },
+                  // style: ElevatedButton.styleFrom(
+                  //   padding: const EdgeInsets.all(14),
+                  //   backgroundColor: AppColors.secondary,
+                  // ),
                   style: ElevatedButton.styleFrom(
-                    padding: const EdgeInsets.all(14),
                     backgroundColor: AppColors.secondary,
+                    padding: const EdgeInsets.symmetric(vertical: 14),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
                   ),
                   child: voucherProvider.isSubmitting
                       ? const CircularProgressIndicator(color: Colors.white)

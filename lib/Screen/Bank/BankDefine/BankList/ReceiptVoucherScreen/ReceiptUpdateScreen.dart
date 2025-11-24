@@ -359,6 +359,7 @@ class _UpdateReceiptVoucherScreenState
     final voucherProvider = Provider.of<ReceiptVoucherProvider>(context);
 
     return Scaffold(
+      backgroundColor: Color(0xFFEEEEEE),
       appBar: AppBar(
         iconTheme: const IconThemeData(color: Colors.white),
         title: const Text(
@@ -537,7 +538,7 @@ class _UpdateReceiptVoucherScreenState
                     : const Text(
                   "Update Voucher",
                   style: TextStyle(
-                      fontSize: 18, fontWeight: FontWeight.bold),
+                      fontSize: 18, fontWeight: FontWeight.bold,color: AppColors.text),
                 ),
               ),
             ),

@@ -29,7 +29,7 @@ class _ReceiptVoucherListScreenState extends State<ReceiptVoucherListScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xfff5f7fa),
+      backgroundColor: Color(0xFFEEEEEE),
         appBar: AppBar(
         iconTheme: const IconThemeData(color: Colors.white),
         title: const Center(

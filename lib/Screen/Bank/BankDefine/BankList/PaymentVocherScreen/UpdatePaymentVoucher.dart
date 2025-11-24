@@ -350,8 +350,16 @@ class _UpdatePaymentVoucherScreenState
     final paymentProvider = Provider.of<PaymentVoucherProvider>(context);
 
     return Scaffold(
+      backgroundColor: Color(0xFFEEEEEE),
       appBar: AppBar(
-        title: const Text("Update Payment Voucher"),
+        iconTheme: const IconThemeData(color: Colors.white),
+        title: const Text("Update Payment Voucher",
+          style: TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
+            fontSize: 22,
+            letterSpacing: 1.2,
+          ),),
         centerTitle: true,
         flexibleSpace: Container(
           decoration: const BoxDecoration(

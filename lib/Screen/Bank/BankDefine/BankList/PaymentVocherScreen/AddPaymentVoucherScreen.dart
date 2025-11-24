@@ -43,6 +43,7 @@ class _AddPaymentVoucherScreenState extends State<AddPaymentVoucherScreen> {
     final paymentProvider = Provider.of<PaymentVoucherProvider>(context);
 
     return Scaffold(
+      backgroundColor: Color(0xFFEEEEEE),
       appBar: AppBar(
         iconTheme: const IconThemeData(color: Colors.white),
         title: const Center(

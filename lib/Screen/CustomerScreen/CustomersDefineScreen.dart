@@ -3,6 +3,8 @@ import 'package:provider/provider.dart';
 import '../../Provider/CustomerProvider/CustomerProvider.dart';
 import '../../compoents/AppColors.dart';
 import '../../model/CustomerModel/CustomersDefineModel.dart';
+import 'AddCustomerScreen.dart';
+import 'Update customer.dart';
 
 class CustomersDefineScreen extends StatefulWidget {
   const CustomersDefineScreen({super.key});
@@ -44,7 +46,7 @@ class _CustomersDefineScreenState extends State<CustomersDefineScreen> {
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
             child: ElevatedButton.icon(
               onPressed: () {
-                // Navigator.push(context,MaterialPageRoute(builder:(context)=>AddCustomerScreen()));
+                 Navigator.push(context,MaterialPageRoute(builder:(context)=>AddCustomerScreen()));
               },
               icon: const Icon(Icons.add_circle_outline, color: Colors.white),
               label: const Text(
@@ -123,6 +125,28 @@ class _CustomersDefineScreenState extends State<CustomersDefineScreen> {
                   IconButton(
                     icon: const Icon(Icons.edit, color: Colors.blue),
                     onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => UpdateCustomerScreen(
+                            customer: {
+                              "_id": customer.id,
+                              "salesArea": customer.salesArea,
+                              "customerName": customer.customerName,
+                              "address": customer.address,
+                              "phoneNumber": customer.phoneNumber,
+                              "salesBalance": customer.salesBalance,
+                              "creditLimit": customer.creditLimit,
+                              "creditTime": customer.creditTime,
+                              //"salesman": customer.salesman,
+                              "openingBalanceDate": customer.openingBalanceDate,
+                              "paymentTerms": customer.paymentTerms,
+                            },
+                          ),
+                        ),
+                      );
+
+
                       // TODO: Add update screen navigation
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(
@@ -161,10 +185,12 @@ class _CustomersDefineScreenState extends State<CustomersDefineScreen> {
           ),
           TextButton(
             child: const Text("Delete", style: TextStyle(color: Colors.red)),
-            onPressed: () {
+            onPressed: () async {
               Navigator.pop(context);
 
-              // TODO: Call delete API here
+              final provider = Provider.of<CustomerProvider>(context, listen: false);
+              await provider.DeleteCustomer(customerId);
+
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(content: Text("Deleted successfully")),
               );
@@ -174,4 +200,5 @@ class _CustomersDefineScreenState extends State<CustomersDefineScreen> {
       ),
     );
   }
+
 }

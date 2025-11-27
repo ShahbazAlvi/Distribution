@@ -1,3 +1,4 @@
+import 'package:distribution/compoents/AppButton.dart';
 import 'package:distribution/compoents/AppTextfield.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -19,6 +20,7 @@ class _EmployeeAddScreenState extends State<EmployeeAddScreen> {
   Widget build(BuildContext context) {
     final provider = Provider.of<SaleManProvider>(context);
     return Scaffold(
+      backgroundColor: Color(0xFFEEEEEE),
       appBar: AppBar(
         iconTheme: const IconThemeData(color: Colors.white),
         title: const Center(
@@ -161,24 +163,28 @@ class _EmployeeAddScreenState extends State<EmployeeAddScreen> {
                 ),
               ),
               const SizedBox(height: 20),
-              ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.secondary,
-                  padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 14),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                ),
-                onPressed: () async {
-                  await provider.createEmployee(context);
-                },
-                child: provider.isLoading
-                    ? const CircularProgressIndicator(color: Colors.white)
-                    : const Text(
-                  "Save Employee",
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white),
-                ),
-              ),
+              AppButton(title: provider.isLoading
+                  ? "Loading...":"Save Employee", press: () async {
+                await provider.createEmployee(context);
+              }, width:double.infinity),
+              // ElevatedButton(
+              //   style: ElevatedButton.styleFrom(
+              //     backgroundColor: AppColors.secondary,
+              //     padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 14),
+              //     shape: RoundedRectangleBorder(
+              //       borderRadius: BorderRadius.circular(12),
+              //     ),
+              //   ),
+              //   onPressed: () async {
+              //     await provider.createEmployee(context);
+              //   },
+              //   child: provider.isLoading
+              //       ? const CircularProgressIndicator(color: Colors.white)
+              //       : const Text(
+              //     "Save Employee",
+              //     style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white),
+              //   ),
+              // ),
 
 
             ],

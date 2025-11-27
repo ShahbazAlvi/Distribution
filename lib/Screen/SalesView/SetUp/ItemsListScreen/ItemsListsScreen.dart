@@ -96,18 +96,23 @@ class _ItemListScreenState extends State<ItemListScreen> {
               return Card(
                 margin: const EdgeInsets.all(8),
                 child: ListTile(
-                  leading: item.itemImage != null && item.itemImage!.url.isNotEmpty
-                      ? Image.network(
-                    item.itemImage!.url,
-                    height: 50,
-                    width: 50,
-                    fit: BoxFit.cover,
-                  )
-                      : Container(
-                    height: 50,
-                    width: 50,
-                    color: Colors.grey.shade300,
-                    child: const Icon(Icons.image_not_supported),
+                  leading: SizedBox(
+                    width: 60,
+                    height: 60,
+                    child: item.itemImage != null && item.itemImage!.url.isNotEmpty
+                        ? Image.network(
+                     // item.itemImage!.url,
+                      item.itemImage!.url,
+                      height: 50,
+                      width: 50,
+                      fit: BoxFit.cover,
+                    )
+                        : Container(
+                      height: 50,
+                      width: 50,
+                      color: Colors.grey.shade300,
+                      child: const Icon(Icons.image_not_supported),
+                    ),
                   ),
 
 
@@ -137,15 +142,7 @@ class _ItemListScreenState extends State<ItemListScreen> {
                         },
                       ),
 
-                      // ✅ Delete Button
-                      // IconButton(
-                      //   icon: const Icon(Icons.delete, color: Colors.red),
-                      //   onPressed: () {
-                      //     Provider.of<ItemDetailsProvider>(context,
-                      //         listen: false)
-                      //         .deleteItem(item.id);
-                      //   },
-                      // ),
+
                       IconButton(
                         icon: const Icon(Icons.delete, color: Colors.red),
                         onPressed: () async {

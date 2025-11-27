@@ -1,8 +1,10 @@
+import 'package:distribution/Screen/SalesView/SetUp/supplier/AddSupplier.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../../../Provider/SupplierProvider/supplierProvider.dart';
 import '../../../../compoents/AppColors.dart';
+import 'UpdateSupplier.dart';
 
 
 class SupplierListScreen extends StatefulWidget {
@@ -24,6 +26,7 @@ class _SupplierListScreenState extends State<SupplierListScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Color(0xFFEEEEEE),
       appBar: AppBar(
         iconTheme: const IconThemeData(color: Colors.white),
         title: Center(child: const Text("Supplier List",
@@ -34,6 +37,28 @@ class _SupplierListScreenState extends State<SupplierListScreen> {
               letterSpacing: 1.2,
             )),
         ),
+        actions: [
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+            child: ElevatedButton.icon(
+              onPressed: () {
+                Navigator.push(context,MaterialPageRoute(builder:(context)=>AddSupplierScreen()));
+              },
+              icon: const Icon(Icons.add_circle_outline, color: Colors.white),
+              label: const Text(
+                "Add Supplier",
+                style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+              ),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.transparent,
+                shadowColor: Colors.transparent,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20),
+                ),
+              ),
+            ),
+          ),
+        ],
         centerTitle: true,
         elevation: 6,
         flexibleSpace: Container(
@@ -66,7 +91,7 @@ class _SupplierListScreenState extends State<SupplierListScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text("Email: ${data.email}"),
-                      Text("Phone: ${data.phoneNumber}"),
+                      Text("Phone: ${data.contactNumber}"),
                       Text("Address: ${data.address}"),
                       Text("Payment: ${data.paymentTerms}"),
                     ],
@@ -77,16 +102,46 @@ class _SupplierListScreenState extends State<SupplierListScreen> {
                       // ✅ Update
                       IconButton(
                         icon: const Icon(Icons.edit, color: Colors.blue),
-                        onPressed: () => _showUpdateSheet(context, data),
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => UpdateSupplierScreen(supplier: data),
+                            ),
+                          );
+                        },
+
                       ),
 
                       // ✅ Delete
                       IconButton(
                         icon: const Icon(Icons.delete, color: Colors.red),
-                        // onPressed: () =>
-                        //     provider.deleteSupplier(data.id),
-                          onPressed: (){},
-                      ),
+                        onPressed: () {
+                          showDialog(
+                            context: context,
+                            builder: (context) => AlertDialog(
+                              title: const Text("Confirm Delete"),
+                              content: const Text("Are you sure you want to delete this supplier?"),
+                              actions: [
+                                TextButton(
+                                  child: const Text("No"),
+                                  onPressed: () {
+                                    Navigator.pop(context); // Close dialog
+                                  },
+                                ),
+                                TextButton(
+                                  child: const Text("Yes", style: TextStyle(color: Colors.red)),
+                                  onPressed: () async {
+                                    Navigator.pop(context); // close popup
+                                    provider.deleteSupplier(data.id); // delete supplier
+                                  },
+                                ),
+                              ],
+                            ),
+                          );
+                        },
+                      )
+
                     ],
                   ),
                 ),
@@ -98,76 +153,6 @@ class _SupplierListScreenState extends State<SupplierListScreen> {
     );
   }
 
-  /// ✅ Update Bottom Sheet
-  void _showUpdateSheet(context, supplier) {
-    final provider = Provider.of<SupplierProvider>(context, listen: false);
 
-    TextEditingController nameCtrl =
-    TextEditingController(text: supplier.supplierName);
-    TextEditingController emailCtrl =
-    TextEditingController(text: supplier.email);
-    TextEditingController phoneCtrl =
-    TextEditingController(text: supplier.phoneNumber);
-    TextEditingController addressCtrl =
-    TextEditingController(text: supplier.address);
-    TextEditingController paymentCtrl =
-    TextEditingController(text: supplier.paymentTerms);
 
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      builder: (_) {
-        return Padding(
-          padding: const EdgeInsets.all(15),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Text("Update Supplier",
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-              const SizedBox(height: 10),
-
-              TextField(
-                controller: nameCtrl,
-                decoration: const InputDecoration(labelText: "Supplier Name"),
-              ),
-              TextField(
-                controller: emailCtrl,
-                decoration: const InputDecoration(labelText: "Email"),
-              ),
-              TextField(
-                controller: phoneCtrl,
-                decoration: const InputDecoration(labelText: "Phone Number"),
-              ),
-              TextField(
-                controller: addressCtrl,
-                decoration: const InputDecoration(labelText: "Address"),
-              ),
-              TextField(
-                controller: paymentCtrl,
-                decoration: const InputDecoration(labelText: "Payment Terms"),
-              ),
-
-              const SizedBox(height: 20),
-
-              ElevatedButton(
-                onPressed: () {
-                  provider.updateSupplier(
-                    id: supplier.id,
-                    name: nameCtrl.text,
-                    email: emailCtrl.text,
-                    phone: phoneCtrl.text,
-                    address: addressCtrl.text,
-                    paymentTerms: paymentCtrl.text,
-                  );
-
-                  Navigator.pop(context);
-                },
-                child: const Text("Update"),
-              )
-            ],
-          ),
-        );
-      },
-    );
-  }
 }

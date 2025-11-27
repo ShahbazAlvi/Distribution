@@ -1,12 +1,13 @@
 import 'dart:convert';
 import 'package:distribution/ApiLink/ApiEndpoint.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../model/SupplierModel/SupplierModel.dart';
 
 
 class SupplierApi {
-  static const String baseUrl = "YOUR_BASE_URL"; // example: https://yourapi.com/api
+  static const String baseUrl = "${ApiEndpoints.baseUrl}"; // example: https://yourapi.com/api
 
   /// ✅ Fetch Supplier List
   static Future<List<SupplierModel>> fetchSuppliers() async {
@@ -24,8 +25,21 @@ class SupplierApi {
   }
 
   /// ✅ Delete Supplier
+
   static Future<bool> deleteSupplier(String id) async {
-    final response = await http.delete(Uri.parse("$baseUrl/deleteSupplier/$id"));
+    String? token = await TokenStorage.getToken();
+
+    final response = await http.delete(
+      Uri.parse("$baseUrl/suppliers/$id"),
+      headers: {
+        "Authorization": "Bearer $token",
+        "Content-Type": "application/json",
+      },
+    );
+
+    print("🟢 DELETE Status: ${response.statusCode}");
+    print("🟡 DELETE Response: ${response.body}");
+
     return response.statusCode == 200;
   }
 
@@ -38,13 +52,17 @@ class SupplierApi {
     required String address,
     required String paymentTerms,
   }) async {
+    String? token = await TokenStorage.getToken();
     final response = await http.put(
-      Uri.parse("$baseUrl/updateSupplier/$id"),
-      headers: {"Content-Type": "application/json"},
+      Uri.parse("$baseUrl/suppliers/$id"),
+      headers: {
+        "Authorization": "Bearer $token",
+        "Content-Type": "application/json",
+      },
       body: jsonEncode({
         "supplierName": name,
         "email": email,
-        "phoneNumber": phone,
+        "contactNumber": phone,
         "address": address,
         "paymentTerms": paymentTerms,
       }),
@@ -52,4 +70,23 @@ class SupplierApi {
 
     return response.statusCode == 200;
   }
+
+
+
 }
+
+
+
+class TokenStorage {
+  static Future<void> saveToken(String token) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString("token", token);
+    print("🔐 Token Saved: $token");
+  }
+
+  static Future<String?> getToken() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getString("token");
+  }
+}
+

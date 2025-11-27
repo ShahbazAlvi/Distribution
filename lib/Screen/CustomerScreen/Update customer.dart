@@ -50,15 +50,27 @@ class _UpdateCustomerScreenState extends State<UpdateCustomerScreen> {
     final provider = Provider.of<CustomerProvider>(context);
 
     return Scaffold(
+      backgroundColor: Color(0xFFEEEEEE),
       appBar: AppBar(
-        title: const Text("Update Customer"),
-        backgroundColor: AppColors.primary,
-        foregroundColor: Colors.white,
+        iconTheme: IconThemeData(color: AppColors.text),
+        title: const Text("Update Customer",style: TextStyle(color: AppColors.text),),
+        centerTitle: true,
+        elevation: 6,
+        flexibleSpace: Container(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              colors: [AppColors.secondary, AppColors.primary],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+          ),
+        ),
       ),
 
       body: SingleChildScrollView(
         padding: EdgeInsets.all(16),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             AppTextField(controller: provider.AreaNameController, label: "Area Name", validator: (value) {  },),
             SizedBox(height: 10),
@@ -123,7 +135,7 @@ class _UpdateCustomerScreenState extends State<UpdateCustomerScreen> {
                   child: RadioListTile(
                     title: Text("Credit"),
                     value: "Credit",
-                    activeColor: AppColors.primary,
+                    activeColor: AppColors.secondary,
                     groupValue: paymentType,
                     onChanged: (v) {
                       setState(() => paymentType = v.toString());
@@ -134,7 +146,7 @@ class _UpdateCustomerScreenState extends State<UpdateCustomerScreen> {
                   child: RadioListTile(
                     title: Text("Cash"),
                     value: "Cash",
-                    activeColor: AppColors.primary,
+                    activeColor: AppColors.secondary,
                     groupValue: paymentType,
                     onChanged: (v) {
                       setState(() => paymentType = v.toString());

@@ -28,6 +28,7 @@ class _CustomersDefineScreenState extends State<CustomersDefineScreen> {
     final provider = Provider.of<CustomerProvider>(context);
 
     return Scaffold(
+      backgroundColor: Color(0xFFEEEEEE),
       appBar: AppBar(
         iconTheme: const IconThemeData(color: Colors.white),
         title: const Center(

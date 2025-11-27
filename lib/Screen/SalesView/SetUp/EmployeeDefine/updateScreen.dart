@@ -1,3 +1,4 @@
+import 'package:distribution/compoents/AppButton.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -45,6 +46,7 @@ class _EmployeeUpdateScreenState extends State<EmployeeUpdateScreen> {
     final provider = Provider.of<SaleManProvider>(context);
 
     return Scaffold(
+      backgroundColor: Color(0xFFEEEEEE),
       appBar: AppBar(
         title: const Text("Update Employee", style: TextStyle(color: Colors.white)),
         iconTheme: const IconThemeData(color: Colors.white),
@@ -180,18 +182,10 @@ class _EmployeeUpdateScreenState extends State<EmployeeUpdateScreen> {
             ),
             const SizedBox(height: 20),
 
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.primary,
-                padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 40),
-              ),
-              onPressed: () async {
-                await provider.updateEmployee(widget.employee.id, context);
-              },
-              child: provider.isLoading
-                  ? const CircularProgressIndicator(color: Colors.white)
-                  : const Text("Update Employee", style: TextStyle(color: Colors.white)),
-            ),
+            AppButton(
+                title: provider.isLoading ?"Loading...":"Update Employee", press: ()async {
+              await provider.updateEmployee(widget.employee.id, context);
+            }, width:double.infinity),
           ],
         ),
       ),

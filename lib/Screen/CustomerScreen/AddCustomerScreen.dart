@@ -35,6 +35,7 @@ class _AddCustomerScreenState extends State<AddCustomerScreen> {
     final provider=Provider.of<CustomerProvider>(context);
 
     return Scaffold(
+      backgroundColor: Color(0xFFEEEEEE),
       appBar: AppBar(
         iconTheme: IconThemeData(color: AppColors.text),
         title:  Center(

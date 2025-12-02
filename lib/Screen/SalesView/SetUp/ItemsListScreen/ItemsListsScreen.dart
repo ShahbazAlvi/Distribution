@@ -100,15 +100,28 @@ class _ItemListScreenState extends State<ItemListScreen> {
                     width: 60,
                     height: 60,
                     child: item.itemImage != null && item.itemImage!.url.isNotEmpty
-                        ? Image.network(
-                     // item.itemImage!.url,
+                    //     ? Image.network(
+                    //  // item.itemImage!.url,
+                    //   item.itemImage!.url,
+                    //   height: 50,
+                    //   width: 50,
+                    //   fit: BoxFit.cover,
+                    // )
+                    ? Image.network(
                       item.itemImage!.url,
                       height: 50,
                       width: 50,
                       fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) {
+                        return Container(
+                          color: Colors.grey.shade300,
+                          child: Icon(Icons.broken_image),
+                        );
+                      },
                     )
+
                         : Container(
-                      height: 50,
+                      height: 50,  
                       width: 50,
                       color: Colors.grey.shade300,
                       child: const Icon(Icons.image_not_supported),

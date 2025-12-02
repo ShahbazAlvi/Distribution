@@ -3,10 +3,12 @@ import 'package:distribution/ApiLink/ApiEndpoint.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../model/SaleManModel/EmployeesModel.dart';
 import '../../model/SaleManModel/SaleManModel.dart';
+import '../DashBoardProvider.dart';
 
 class SaleManProvider with ChangeNotifier {
   List<SaleManModel> _salesmen = [];
@@ -194,7 +196,11 @@ class SaleManProvider with ChangeNotifier {
 
         // Clear fields
         clearFields();
-        fetchEmployees(); // refresh list
+        fetchEmployees();
+        final dashboardProvider =
+        Provider.of<DashBoardProvider>(context, listen: false);
+        await dashboardProvider.fetchDashboardData();// refresh list
+        notifyListeners();
       } else {
         print("${response.body}");
         ScaffoldMessenger.of(context).showSnackBar(

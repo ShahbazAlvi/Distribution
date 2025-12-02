@@ -1,5 +1,6 @@
 
 import 'dart:io';
+import 'package:distribution/compoents/AppButton.dart';
 import 'package:distribution/compoents/AppTextfield.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -182,11 +183,15 @@ class _AddItemScreenState extends State<AddItemScreen> {
                 const SizedBox(height: 30),
                 provider.isLoading
                     ? const CircularProgressIndicator()
-                    : ElevatedButton(
-                  onPressed: submit,
-                  style: ElevatedButton.styleFrom(backgroundColor: Colors.green, padding: const EdgeInsets.all(16)),
-                  child: const Text("Submit Item", style: TextStyle(fontSize: 18)),
-                ),
+
+                :AppButton(title: "Save Item", press:(){
+                  submit();
+                }, width:double.infinity)
+                //     : ElevatedButton(
+                //   onPressed: submit,
+                //   style: ElevatedButton.styleFrom(backgroundColor: Colors.green, padding: const EdgeInsets.all(16)),
+                //   child: const Text("Submit Item", style: TextStyle(fontSize: 18)),
+                // ),
               ],
             ),
           );

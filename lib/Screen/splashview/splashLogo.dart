@@ -1,5 +1,7 @@
 import 'dart:async';
 import 'package:distribution/Screen/splashview/splashOne.dart';
+import 'package:distribution/compoents/AppButton.dart';
+import 'package:distribution/compoents/AppColors.dart';
 import 'package:flutter/material.dart';
 
 class SplashLogo extends StatefulWidget {
@@ -31,12 +33,23 @@ class _SplashLogoState extends State<SplashLogo> {
       onTap: _goNext, // 👈 User can tap anywhere to go next
       child: Scaffold(
         backgroundColor: Colors.white,
-        body: Center(
-          child: Image.asset(
-            "assets/images/logo.jpg",
-            width: 180,
-            height: 180,
-          ),
+        body: Column(
+          children: [
+            const Spacer(),
+            Center(
+              child: Image.asset(
+                "assets/images/logo.jpg",
+                width: 180,
+                height: 180,
+              ),
+            ),
+            const Spacer(),
+            Padding(
+              padding: const EdgeInsets.only(bottom: 40),
+              child: AppButton(title: "Get Started", press:_goNext, width: 200)
+            ),
+
+          ],
         ),
       ),
     );

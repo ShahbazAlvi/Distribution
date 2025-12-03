@@ -97,6 +97,50 @@ class SaleManProvider with ChangeNotifier {
 
   /// ✅ Delete (You can plug API later)
 
+  // Future<void> deleteEmployee(String id) async {
+  //   _isLoading = true;
+  //   notifyListeners();
+  //
+  //   try {
+  //     SharedPreferences prefs = await SharedPreferences.getInstance();
+  //     final token = prefs.getString("token");
+  //
+  //     if (token == null) {
+  //       _error = "No token found. Please login again.";
+  //       _isLoading = false;
+  //       notifyListeners();
+  //       return;
+  //     }
+  //
+  //     final url = Uri.parse("${ApiEndpoints.baseUrl}/employees/$id");
+  //
+  //     final response = await http.delete(
+  //       url,
+  //       headers: {
+  //         "Authorization": "Bearer $token",
+  //         "Content-Type": "application/json"
+  //       },
+  //     );
+  //
+  //     print("DELETE RESPONSE: ${response.body}");
+  //
+  //     if (response.statusCode == 200) {
+  //       // Remove locally
+  //       _employees.removeWhere((e) => e.id == id);
+  //       // Refresh list from server
+  //       await fetchEmployees();
+  //     } else {
+  //       _error = "Delete failed: ${response.body}";
+  //     }
+  //   } catch (e) {
+  //     _error = "Error: $e";
+  //   }
+  //
+  //   _isLoading = false;
+  //   notifyListeners();
+  // }
+
+
   Future<void> deleteEmployee(String id) async {
     _isLoading = true;
     notifyListeners();
@@ -122,13 +166,11 @@ class SaleManProvider with ChangeNotifier {
         },
       );
 
-      print("DELETE RESPONSE: ${response.body}");
-
       if (response.statusCode == 200) {
-        // Remove locally
+        // Remove from list
         _employees.removeWhere((e) => e.id == id);
 
-        // Refresh list from server
+        // Refresh server list
         await fetchEmployees();
       } else {
         _error = "Delete failed: ${response.body}";
@@ -140,6 +182,7 @@ class SaleManProvider with ChangeNotifier {
     _isLoading = false;
     notifyListeners();
   }
+
 
 
   Future<void> createEmployee(BuildContext context) async {

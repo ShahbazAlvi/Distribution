@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../Provider/CustomerProvider/CustomerProvider.dart';
+import '../../Provider/DashBoardProvider.dart';
 import '../../compoents/AppColors.dart';
 import '../../model/CustomerModel/CustomersDefineModel.dart';
 import 'AddCustomerScreen.dart';
@@ -173,6 +174,38 @@ class _CustomersDefineScreenState extends State<CustomersDefineScreen> {
   }
 
   /// ✅ Delete Confirmation Dialog
+  // void _confirmDelete(BuildContext context, String customerId) {
+  //   showDialog(
+  //     context: context,
+  //     builder: (_) => AlertDialog(
+  //       title: const Text("Delete Customer"),
+  //       content: const Text("Are you sure you want to delete this customer?"),
+  //       actions: [
+  //         TextButton(
+  //           child: const Text("Cancel"),
+  //           onPressed: () => Navigator.pop(context),
+  //         ),
+  //         TextButton(
+  //           child: const Text("Delete", style: TextStyle(color: Colors.red)),
+  //           onPressed: () async {
+  //             Navigator.pop(context);
+  //
+  //             final provider = Provider.of<CustomerProvider>(context, listen: false);
+  //             await provider.DeleteCustomer(customerId);
+  //             final dashProvider =
+  //             Provider.of<DashBoardProvider>(context, listen: false);
+  //             await dashProvider.fetchDashboardData();
+  //
+  //             ScaffoldMessenger.of(context).showSnackBar(
+  //               const SnackBar(content: Text("Deleted successfully")),
+  //             );
+  //           },
+  //         ),
+  //       ],
+  //     ),
+  //   );
+  // }
+
   void _confirmDelete(BuildContext context, String customerId) {
     showDialog(
       context: context,
@@ -189,17 +222,26 @@ class _CustomersDefineScreenState extends State<CustomersDefineScreen> {
             onPressed: () async {
               Navigator.pop(context);
 
-              final provider = Provider.of<CustomerProvider>(context, listen: false);
-              await provider.DeleteCustomer(customerId);
+              final customerProvider = Provider.of<CustomerProvider>(context, listen: false);
+              final dashProvider = Provider.of<DashBoardProvider>(context, listen: false);
 
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text("Deleted successfully")),
-              );
+              bool success = await customerProvider.DeleteCustomer(customerId, dashProvider);
+
+              if (success) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text("Deleted successfully")),
+                );
+              } else {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text(customerProvider.error ?? "Failed to delete")),
+                );
+              }
             },
           ),
         ],
       ),
     );
   }
+
 
 }

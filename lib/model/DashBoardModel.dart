@@ -146,12 +146,60 @@ class CustomerBalance {
   };
 }
 
+// class RecentBooking {
+//   String id;
+//   String orderId;
+//   DateTime date;
+//   String salesmanId;
+//   CustomerId customerId;
+//   List<Product> products;
+//   String status;
+//   DateTime createdAt;
+//   DateTime updatedAt;
+//
+//   RecentBooking({
+//     required this.id,
+//     required this.orderId,
+//     required this.date,
+//     required this.salesmanId,
+//     required this.customerId,
+//     required this.products,
+//     required this.status,
+//     required this.createdAt,
+//     required this.updatedAt,
+//   });
+//
+//   factory RecentBooking.fromJson(Map<String, dynamic> json) => RecentBooking(
+//     id: json['_id'] ?? '',
+//     orderId: json['orderId'] ?? '',
+//     date: DateTime.parse(json['date']),
+//     salesmanId: json['salesmanId'] ?? '',
+//     customerId: CustomerId.fromJson(json['customerId']),
+//     products:
+//     List<Product>.from(json['products'].map((x) => Product.fromJson(x))),
+//     status: json['status'] ?? '',
+//     createdAt: DateTime.parse(json['createdAt']),
+//     updatedAt: DateTime.parse(json['updatedAt']),
+//   );
+//
+//   Map<String, dynamic> toJson() => {
+//     '_id': id,
+//     'orderId': orderId,
+//     'date': date.toIso8601String(),
+//     'salesmanId': salesmanId,
+//     'customerId': customerId.toJson(),
+//     'products': List<dynamic>.from(products.map((x) => x.toJson())),
+//     'status': status,
+//     'createdAt': createdAt.toIso8601String(),
+//     'updatedAt': updatedAt.toIso8601String(),
+//   };
+// }
 class RecentBooking {
   String id;
   String orderId;
   DateTime date;
   String salesmanId;
-  CustomerId customerId;
+  CustomerId? customerId; // nullable
   List<Product> products;
   String status;
   DateTime createdAt;
@@ -162,7 +210,7 @@ class RecentBooking {
     required this.orderId,
     required this.date,
     required this.salesmanId,
-    required this.customerId,
+    this.customerId, // nullable
     required this.products,
     required this.status,
     required this.createdAt,
@@ -174,9 +222,11 @@ class RecentBooking {
     orderId: json['orderId'] ?? '',
     date: DateTime.parse(json['date']),
     salesmanId: json['salesmanId'] ?? '',
-    customerId: CustomerId.fromJson(json['customerId']),
-    products:
-    List<Product>.from(json['products'].map((x) => Product.fromJson(x))),
+    customerId: json['customerId'] != null
+        ? CustomerId.fromJson(json['customerId'])
+        : null, // null check
+    products: List<Product>.from(
+        json['products'].map((x) => Product.fromJson(x))),
     status: json['status'] ?? '',
     createdAt: DateTime.parse(json['createdAt']),
     updatedAt: DateTime.parse(json['updatedAt']),
@@ -187,13 +237,14 @@ class RecentBooking {
     'orderId': orderId,
     'date': date.toIso8601String(),
     'salesmanId': salesmanId,
-    'customerId': customerId.toJson(),
+    'customerId': customerId?.toJson(), // safe access
     'products': List<dynamic>.from(products.map((x) => x.toJson())),
     'status': status,
     'createdAt': createdAt.toIso8601String(),
     'updatedAt': updatedAt.toIso8601String(),
   };
 }
+
 
 class CustomerId {
   String id;

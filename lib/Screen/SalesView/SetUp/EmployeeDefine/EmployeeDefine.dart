@@ -1,6 +1,7 @@
 import 'package:distribution/Screen/SalesView/SetUp/EmployeeDefine/updateScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../../../../Provider/DashBoardProvider.dart';
 import '../../../../Provider/SaleManProvider/SaleManProvider.dart';
 import '../../../../compoents/AppColors.dart';
 import '../../../../model/SaleManModel/EmployeesModel.dart';
@@ -212,16 +213,41 @@ class _EmployeesScreenState extends State<EmployeesScreen> {
           ),
           TextButton(
             child: const Text("Delete", style: TextStyle(color: Colors.red)),
-            onPressed: () {
+            // onPressed: () {
+            //   Navigator.pop(context);
+            //
+            //   Provider.of<SaleManProvider>(context, listen: false)
+            //       .deleteEmployee(id);
+            //   // refresh dashboard safely
+            //   Provider.of<DashBoardProvider>(context, listen: false)
+            //       .fetchDashboardData();
+            //
+            //   ScaffoldMessenger.of(context).showSnackBar(
+            //     const SnackBar(content: Text("Deleted successfully")),
+            //   );
+            // },
+            onPressed: () async {
               Navigator.pop(context);
 
-              Provider.of<SaleManProvider>(context, listen: false)
-                  .deleteEmployee(id);
+              final saleManProvider =
+              Provider.of<SaleManProvider>(context, listen: false);
 
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text("Deleted successfully")),
-              );
+              final dashProvider =
+              Provider.of<DashBoardProvider>(context, listen: false);
+
+              // ❗ Call async functions WITHOUT using context afterward
+              await saleManProvider.deleteEmployee(id);
+              await dashProvider.fetchDashboardData();
+
+              if (mounted) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text("Employee deleted successfully")),
+                );
+              }
             },
+
+
+
           ),
         ],
       ),

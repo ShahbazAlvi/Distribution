@@ -3,9 +3,11 @@ import 'dart:io';
 import 'package:distribution/ApiLink/ApiEndpoint.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../model/ProductModel/itemsdetailsModel.dart';
+import '../DashBoardProvider.dart';
 
 
 class ItemDetailsProvider with ChangeNotifier {
@@ -47,7 +49,7 @@ class ItemDetailsProvider with ChangeNotifier {
 
 
 
-  Future<void> deleteItem(String id) async {
+  Future<void> deleteItem(String id,BuildContext context) async {
     final storedToken = await getToken();
     // 🔥 load token from SharedPreferences
 
@@ -70,10 +72,14 @@ class ItemDetailsProvider with ChangeNotifier {
 
       if (res.statusCode == 200) {
         items.removeWhere((item) => item.id == id);
-        notifyListeners();
+
 
         // refresh list from server
         fetchItems();
+        final dashboardProvider =
+        Provider.of<DashBoardProvider>(context, listen: false);
+        await dashboardProvider.fetchDashboardData();
+        notifyListeners();
       }
     } catch (e) {
       print("Delete error: $e");
@@ -104,6 +110,7 @@ class ItemDetailsProvider with ChangeNotifier {
   }
 
   Future<bool> addItem({
+    required BuildContext context,
     required String itemId,
     required String itemName,
     required String itemCategory,
@@ -157,6 +164,9 @@ class ItemDetailsProvider with ChangeNotifier {
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         await fetchItems();
+        final dashboardProvider =
+        Provider.of<DashBoardProvider>(context, listen: false);
+        await dashboardProvider.fetchDashboardData();
         isLoading = false;
         notifyListeners();
         return true;

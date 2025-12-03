@@ -84,6 +84,7 @@ class _AddItemScreenState extends State<AddItemScreen> {
     }
 
     bool success = await provider.addItem(
+      context: context,
       itemId: widget.nextItemId,
       itemName: itemNameCtrl.text,
       itemCategory: selectedCategoryId!,

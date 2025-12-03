@@ -4,9 +4,11 @@ import 'package:distribution/model/CustomerModel/CustomerModel.dart';
 import 'package:distribution/model/CustomerModel/CustomersDefineModel.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:http/http.dart'as http;
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../ApiLink/ApiEndpoint.dart';
+import '../DashBoardProvider.dart';
 
 class CustomerProvider with ChangeNotifier{
   List<CustomerModel>_customer=[];
@@ -105,6 +107,7 @@ bool get isLoading=>_isLoading;
 
   // Customers add
   Future<bool> addCustomer({
+    required BuildContext context,
     required String salesmanId,
     required String paymentType,
     required String openingBalanceDate,
@@ -151,6 +154,12 @@ bool get isLoading=>_isLoading;
 
       if (response.statusCode == 201 || response.statusCode == 200) {
         clearForm();
+        fetchCustomers();
+        final dashboardProvider =
+        Provider.of<DashBoardProvider>(context, listen: false);
+        await dashboardProvider.fetchDashboardData();
+        notifyListeners();
+
         return true;
       } else {
         _error = "Failed: ${response.body}";
@@ -177,12 +186,46 @@ bool get isLoading=>_isLoading;
   }
 
 
-  Future<void>DeleteCustomer(String idCustomer)async{
-    try{
-      _isLoading=true;
+  // Future<void>DeleteCustomer(String idCustomer)async{
+  //   try{
+  //     _isLoading=true;
+  //     notifyListeners();
+  //     final prefs=await SharedPreferences.getInstance();
+  //     final token=prefs.getString("token");
+  //
+  //     final url = Uri.parse("${ApiEndpoints.baseUrl}/customers/$idCustomer");
+  //     final response = await http.delete(
+  //       url,
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //         "Authorization": "Bearer $token",
+  //       },
+  //     );
+  //     if (response.statusCode == 200) {
+  //       debugPrint("✅ Order deleted successfully");
+  //
+  //       _isLoading = false; // re-fetch
+  //       await fetchCustomers();
+  //       notifyListeners();
+  //     } else {
+  //       _error = "Failed to delete: ${response.statusCode} - ${response.body}";
+  //     }
+  //
+  //   }catch (e) {
+  //     _error = "Error deleting: $e";
+  //   } finally {
+  //     _isLoading = false;
+  //     notifyListeners();
+  //   }
+  //
+  // }
+  Future<bool> DeleteCustomer(String idCustomer, DashBoardProvider dashProvider) async {
+    try {
+      _isLoading = true;
       notifyListeners();
-      final prefs=await SharedPreferences.getInstance();
-      final token=prefs.getString("token");
+
+      final prefs = await SharedPreferences.getInstance();
+      final token = prefs.getString("token");
 
       final url = Uri.parse("${ApiEndpoints.baseUrl}/customers/$idCustomer");
       final response = await http.delete(
@@ -192,23 +235,33 @@ bool get isLoading=>_isLoading;
           "Authorization": "Bearer $token",
         },
       );
-      if (response.statusCode == 200) {
-        debugPrint("✅ Order deleted successfully");
 
-        _isLoading = false; // re-fetch
+      if (response.statusCode == 200) {
+        debugPrint("✅ Customer deleted successfully");
+
+        // Re-fetch customers
         await fetchCustomers();
+
+        // ⭐ Refresh dashboard immediately
+        await dashProvider.fetchDashboardData();
+
+        _isLoading = false;
+        notifyListeners();
+        return true;
       } else {
         _error = "Failed to delete: ${response.statusCode} - ${response.body}";
+        _isLoading = false;
+        notifyListeners();
+        return false;
       }
-
-    }catch (e) {
+    } catch (e) {
       _error = "Error deleting: $e";
-    } finally {
       _isLoading = false;
       notifyListeners();
+      return false;
     }
-
   }
+
 
 
   Future<bool> updateCustomer({

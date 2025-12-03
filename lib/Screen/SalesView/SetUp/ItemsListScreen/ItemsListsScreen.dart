@@ -182,7 +182,7 @@ class _ItemListScreenState extends State<ItemListScreen> {
                           // If user pressed Yes
                           if (confirm == true) {
                             Provider.of<ItemDetailsProvider>(context, listen: false)
-                                .deleteItem(item.id);
+                                .deleteItem(item.id,context);
                           }
                         },
                       ),

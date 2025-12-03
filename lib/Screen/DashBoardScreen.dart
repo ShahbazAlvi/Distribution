@@ -75,6 +75,15 @@ class _DashboardscreenState extends State<Dashboardscreen> {
     }
   }
   @override
+  void initState() {
+    super.initState();
+    Future.delayed(Duration.zero, () {
+      Provider.of<DashBoardProvider>(context, listen: false)
+          .fetchDashboardData();
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Color(0xFFEEEEEE),
@@ -299,95 +308,172 @@ class _DashboardscreenState extends State<Dashboardscreen> {
               //
               // ),
             const SizedBox(height: 16),
-            FutureBuilder<DashboardModel?>(
-                future: Provider.of<DashBoardProvider>(context,
-                    listen: false)
-                    .fetchDashboardData(),
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const Center(
-                      child: CircularProgressIndicator(),
-                    );
-                  } else if (snapshot.hasError || !snapshot.hasData) {
-                    return const Center(
-                      child: Text("Failed to load data"),
-                    );
+            // FutureBuilder<DashboardModel?>(
+            //     future: Provider.of<DashBoardProvider>(context,
+            //         listen: false)
+            //         .fetchDashboardData(),
+            //     builder: (context, snapshot) {
+            //       if (snapshot.connectionState == ConnectionState.waiting) {
+            //         return const Center(
+            //           child: CircularProgressIndicator(),
+            //         );
+            //       } else if (snapshot.hasError || !snapshot.hasData) {
+            //         return const Center(
+            //           child: Text("Failed to load data"),
+            //         );
+            //       }
+            //
+            //       final dashboardData = snapshot.data!;
+            //       salesData = dashboardData.charts.salesProfit
+            //           .map((e) => e.value.toDouble())
+            //           .toList();
+            //       final recovered = dashboardData.charts.customerBalance
+            //           .map((e) => e.value.toDouble())
+            //           .toList();
+            //       final due = recovered
+            //           .map((e) => e * 0.8) // Example: due = 80% of recovered
+            //           .toList();
+            //
+            //       return Column(
+            //           children: [
+            //             Padding(
+            //               padding: const EdgeInsets.all(8.0),
+            //               child: Wrap(
+            //                 spacing: 16,
+            //                 runSpacing: 16,
+            //                 children: [
+            //                   GestureDetector(
+            //                     onTap: (){
+            //                       Navigator.push(context,MaterialPageRoute(builder: (context)=>DailySaleReportScreen()));
+            //                     },
+            //                     child: AnimatedDashboardCard(
+            //                         icon: Icons.person,
+            //                         title: 'Total Sales',
+            //                         count: dashboardData.stats.totalSales
+            //                             .toString(),
+            //                         bcolor: Colors.green),
+            //                   ),
+            //                   GestureDetector(
+            //                     onTap: (){
+            //                       Navigator.push(context,MaterialPageRoute(builder: (context)=>ItemListScreen()));
+            //                     },
+            //                     child: AnimatedDashboardCard(
+            //                         icon: Icons.shop,
+            //                         title: 'Total Products',
+            //                         count: dashboardData.stats.totalProducts
+            //                             .toString(),
+            //                         bcolor: Colors.red),
+            //                   ),
+            //                   GestureDetector(
+            //                     onTap: (){
+            //                       Navigator.push(context, MaterialPageRoute(builder: (context)=>CustomersDefineScreen()));
+            //                     },
+            //                     child: AnimatedDashboardCard(
+            //                         icon: Icons.people_alt,
+            //                         title: 'Total Customer',
+            //                         count: dashboardData.stats.totalCustomers
+            //                             .toString(),
+            //                         bcolor: Colors.blue),
+            //                   ),
+            //                   GestureDetector(
+            //                     onTap: (){
+            //                       Navigator.push(context, MaterialPageRoute(builder: (context)=>EmployeesScreen()));
+            //                     },
+            //                     child: AnimatedDashboardCard(
+            //                         icon: Icons.account_balance_wallet,
+            //                         title: 'Total Staff',
+            //                         count: dashboardData.stats.totalStaff
+            //                             .toString(),
+            //                         bcolor: Colors.orange),
+            //                   ),
+            //                 ],
+            //               ),
+            //             )
+            //
+            //
+            //           ]
+            //       );
+            //
+            //     }
+            //
+            //           ),
+
+              Consumer<DashBoardProvider>(
+                builder: (context, provider, child) {
+
+                  if (provider.isLoading || provider.dashboardData == null) {
+                    return const Center(child: CircularProgressIndicator());
                   }
 
-                  final dashboardData = snapshot.data!;
-                  salesData = dashboardData.charts.salesProfit
-                      .map((e) => e.value.toDouble())
-                      .toList();
-                  final recovered = dashboardData.charts.customerBalance
-                      .map((e) => e.value.toDouble())
-                      .toList();
-                  final due = recovered
-                      .map((e) => e * 0.8) // Example: due = 80% of recovered
-                      .toList();
+                  final dashboardData = provider.dashboardData!;
 
                   return Column(
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Wrap(
-                            spacing: 16,
-                            runSpacing: 16,
-                            children: [
-                              GestureDetector(
-                                onTap: (){
-                                  Navigator.push(context,MaterialPageRoute(builder: (context)=>DailySaleReportScreen()));
-                                },
-                                child: AnimatedDashboardCard(
-                                    icon: Icons.person,
-                                    title: 'Total Sales',
-                                    count: dashboardData.stats.totalSales
-                                        .toString(),
-                                    bcolor: Colors.green),
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Wrap(
+                          spacing: 16,
+                          runSpacing: 16,
+                          children: [
+                            GestureDetector(
+                              onTap: () {
+                                Navigator.push(context,
+                                    MaterialPageRoute(builder: (_) => DailySaleReportScreen()));
+                              },
+                              child: AnimatedDashboardCard(
+                                icon: Icons.person,
+                                title: 'Total Sales',
+                                count: dashboardData.stats.totalSales.toString(),
+                                bcolor: Colors.green,
                               ),
-                              GestureDetector(
-                                onTap: (){
-                                  Navigator.push(context,MaterialPageRoute(builder: (context)=>ItemListScreen()));
-                                },
-                                child: AnimatedDashboardCard(
-                                    icon: Icons.shop,
-                                    title: 'Total Products',
-                                    count: dashboardData.stats.totalProducts
-                                        .toString(),
-                                    bcolor: Colors.red),
-                              ),
-                              GestureDetector(
-                                onTap: (){
-                                  Navigator.push(context, MaterialPageRoute(builder: (context)=>CustomersDefineScreen()));
-                                },
-                                child: AnimatedDashboardCard(
-                                    icon: Icons.people_alt,
-                                    title: 'Total Customer',
-                                    count: dashboardData.stats.totalCustomers
-                                        .toString(),
-                                    bcolor: Colors.blue),
-                              ),
-                              GestureDetector(
-                                onTap: (){
-                                  Navigator.push(context, MaterialPageRoute(builder: (context)=>EmployeesScreen()));
-                                },
-                                child: AnimatedDashboardCard(
-                                    icon: Icons.account_balance_wallet,
-                                    title: 'Total Staff',
-                                    count: dashboardData.stats.totalStaff
-                                        .toString(),
-                                    bcolor: Colors.orange),
-                              ),
-                            ],
-                          ),
-                        )
+                            ),
 
+                            GestureDetector(
+                              onTap: () {
+                                Navigator.push(context,
+                                    MaterialPageRoute(builder: (_) => ItemListScreen()));
+                              },
+                              child: AnimatedDashboardCard(
+                                icon: Icons.shop,
+                                title: 'Total Products',
+                                count: dashboardData.stats.totalProducts.toString(),
+                                bcolor: Colors.red,
+                              ),
+                            ),
 
-                      ]
+                            GestureDetector(
+                              onTap: () {
+                                Navigator.push(context,
+                                    MaterialPageRoute(builder: (_) => CustomersDefineScreen()));
+                              },
+                              child: AnimatedDashboardCard(
+                                icon: Icons.people_alt,
+                                title: 'Total Customer',
+                                count: dashboardData.stats.totalCustomers.toString(),
+                                bcolor: Colors.blue,
+                              ),
+                            ),
+
+                            GestureDetector(
+                              onTap: () {
+                                Navigator.push(context,
+                                    MaterialPageRoute(builder: (_) => EmployeesScreen()));
+                              },
+                              child: AnimatedDashboardCard(
+                                icon: Icons.account_balance_wallet,
+                                title: 'Total Staff',
+                                count: dashboardData.stats.totalStaff.toString(),
+                                bcolor: Colors.orange,
+                              ),
+                            ),
+                          ],
+                        ),
+                      )
+                    ],
                   );
+                },
+              ),
 
-                }
-
-                      ),
               const SizedBox(height: 16),
 
               Text('Sales',style: TextStyle(fontWeight: FontWeight.bold),),

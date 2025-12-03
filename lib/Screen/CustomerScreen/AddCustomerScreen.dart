@@ -173,6 +173,7 @@ class _AddCustomerScreenState extends State<AddCustomerScreen> {
                   }
 
                   final success = await provider.addCustomer(
+                    context: context,
                     salesmanId: selectedSalesmanId!,
                     paymentType: paymentType,
                     openingBalanceDate: selectedDate!,

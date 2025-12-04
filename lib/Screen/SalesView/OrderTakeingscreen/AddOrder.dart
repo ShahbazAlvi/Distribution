@@ -65,14 +65,14 @@ class _AddOrderScreenState extends State<AddOrderScreen> {
 
       /// ✅ Load Customer
       selectedCustomer = CustomerModel(
-        id: order.customerId.id,
-        customerName: order.customerId.customerName,
-        address: order.customerId.address,
-        phoneNumber: order.customerId.phoneNumber,
-        creditTime: order.customerId.creditTime,
-        salesBalance: order.customerId.salesBalance,
-        timeLimit: order.customerId.timeLimit.toString(),
-        formattedTimeLimit: order.customerId.timeLimit.toString(), // ✅ Added FIX
+        id: order.customerId!.id,
+        customerName: order.customerId!.customerName,
+        address: order.customerId!.address,
+        phoneNumber: order.customerId!.phoneNumber,
+        creditTime: order.customerId!.creditTime,
+        salesBalance: order.customerId!.salesBalance,
+        timeLimit: order.customerId!.timeLimit.toString(),
+        formattedTimeLimit: order.customerId!.timeLimit.toString(), // ✅ Added FIX
       );
 
 
@@ -97,6 +97,16 @@ class _AddOrderScreenState extends State<AddOrderScreen> {
         Provider.of<SaleManProvider>(context, listen: false).fetchEmployees());
 
   }
+  double get grandTotal {
+    return orderItems.fold(0.0, (sum, item) {
+      bool isNew = item.containsKey("product");
+
+      double total = isNew ? item["total"] : item["totalAmount"];
+
+      return sum + total;
+    });
+  }
+
 
   void addProductToOrder() {
     if (selectedProduct != null && qtyController.text.isNotEmpty) {
@@ -322,60 +332,64 @@ class _AddOrderScreenState extends State<AddOrderScreen> {
                             const SizedBox(height: 14),
 
                             // Unit + Price badges
-                            Row(
-                              children: [
-                                Container(
-                                  padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 14),
-                                  decoration: BoxDecoration(
-                                    color: Colors.blue.shade100,
-                                    borderRadius: BorderRadius.circular(12),
-                                  ),
-                                  child: Text(
-                                    "Qty: $qty",
-                                    style: const TextStyle(
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w600,
+                            SingleChildScrollView(
+                              scrollDirection: Axis.horizontal,
+                              child: Row(
+                                children: [
+                                  Container(
+                                    padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 14),
+                                    decoration: BoxDecoration(
+                                      color: Colors.blue.shade100,
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
+                                    child: Text(
+                                      "Qty: $qty",
+                                      style: const TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w600,
+                                      ),
                                     ),
                                   ),
-                                ),
-                                const SizedBox(width: 12),
+                                  const SizedBox(width: 12),
 
-                                Container(
-                                  padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 14),
-                                  decoration: BoxDecoration(
-                                    color: Colors.orange.shade100,
-                                    borderRadius: BorderRadius.circular(12),
-                                  ),
-                                  child: Text(
-                                    "Price: $price",
-                                    style: const TextStyle(
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w600,
+                                  Container(
+                                    padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 14),
+                                    decoration: BoxDecoration(
+                                      color: Colors.orange.shade100,
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
+                                    child: Text(
+                                      "Price: $price",
+                                      style: const TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w600,
+                                      ),
                                     ),
                                   ),
-                                ),
-                                const SizedBox(width: 12),
-                                Container(
-                                  padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 14),
-                                  decoration: BoxDecoration(
-                                    color: Colors.green.shade100,
-                                    borderRadius: BorderRadius.circular(12),
-                                  ),
-                                  child: Text(
-                                    "Total: $total",
-                                    style: const TextStyle(
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w600,
+                                  const SizedBox(width: 12),
+                                  Container(
+                                    padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 14),
+                                    decoration: BoxDecoration(
+                                      color: Colors.green.shade100,
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
+                                    child: Text(
+                                      "Total: $total",
+                                      style: const TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w600,
 
+                                      ),
                                     ),
                                   ),
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
 
                             const SizedBox(height: 12),
 
                             // Qty + Total (highlighted)
+
 
                           ],
                         ),
@@ -383,7 +397,30 @@ class _AddOrderScreenState extends State<AddOrderScreen> {
                     );
 
 
-                  })
+                  }),
+                  const SizedBox(height: 20),
+
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      const Text(
+                        "Grand Total:",
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      Text(
+                        grandTotal.toStringAsFixed(2),
+                        style: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w700,
+                          color: Colors.green,
+                        ),
+                      ),
+                    ],
+                  ),
+
 
 
 

@@ -56,14 +56,14 @@ class _UpdateOrderScreenState extends State<UpdateOrderScreen> {
     selectedSalesmanId = order.salesmanId?.id;
 
     selectedCustomer = CustomerModel(
-      id: order.customerId.id,
-      customerName: order.customerId.customerName,
-      address: order.customerId.address,
-      phoneNumber: order.customerId.phoneNumber,
-      creditTime: order.customerId.creditTime,
-      salesBalance: order.customerId.salesBalance,
-      timeLimit: order.customerId.timeLimit.toString(),
-      formattedTimeLimit: order.customerId.timeLimit.toString(),
+      id: order.customerId!.id,
+      customerName: order.customerId!.customerName,
+      address: order.customerId!.address,
+      phoneNumber: order.customerId!.phoneNumber,
+      creditTime: order.customerId!.creditTime,
+      salesBalance: order.customerId!.salesBalance,
+      timeLimit: order.customerId!.timeLimit.toString(),
+      formattedTimeLimit: order.customerId!.timeLimit.toString(),
     );
 
     for (var p in order.products) {

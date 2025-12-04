@@ -349,14 +349,6 @@ class SalesDashboard extends StatelessWidget {
                   },
                 ),
                 DashboardCard(
-                  icon: Icons.newspaper,
-                  title: "Recovery",
-                  color: Colors.amberAccent,
-                  onTap: () {
-                    Navigator.push(context, MaterialPageRoute(builder: (_) => const RecoveryListScreen()));
-                  },
-                ),
-                DashboardCard(
                   icon: Icons.add_chart_rounded,
                   title: "Sales Invoice",
                   color: Colors.pinkAccent,
@@ -365,13 +357,15 @@ class SalesDashboard extends StatelessWidget {
                   },
                 ),
                 DashboardCard(
-                  icon: Icons.sim_card_alert_rounded,
-                  title: "Daily Sales",
-                  color: Colors.lightBlueAccent,
+                  icon: Icons.newspaper,
+                  title: "Recovery",
+                  color: Colors.amberAccent,
                   onTap: () {
-                    Navigator.push(context, MaterialPageRoute(builder: (_) => const DailySaleReportScreen()));
+                    Navigator.push(context, MaterialPageRoute(builder: (_) => const RecoveryListScreen()));
                   },
                 ),
+
+
                 // DashboardCard(
                 //   icon: Icons.wallet,
                 //   title: "Cash Deposit",
@@ -416,6 +410,14 @@ class SalesDashboard extends StatelessWidget {
                     Navigator.push(context, MaterialPageRoute(builder: (_) => const CreditAgingScreen()));
                   },
                 ),
+                DashboardCard(
+                  icon: Icons.sim_card_alert_rounded,
+                  title: "Daily Sales",
+                  color: Colors.lightBlueAccent,
+                  onTap: () {
+                    Navigator.push(context, MaterialPageRoute(builder: (_) => const DailySaleReportScreen()));
+                  },
+                ),
                 // DashboardCard(
                 //   icon: Icons.cloud_upload_rounded,
                 //   title: "Daily Sales Report",
@@ -438,31 +440,31 @@ class SalesDashboard extends StatelessWidget {
                 //     Navigator.push(context, MaterialPageRoute(builder: (_) => const SalesAreaScreen()));
                 //   },
                 // ),
-                DashboardCard(
-                  icon: Icons.category,
-                  title: "Category Item",
-                  color: Colors.orangeAccent,
-                  onTap: () {
-                    Navigator.push(context, MaterialPageRoute(builder: (_) => const CategoriesScreen()));
-                  },
-                ),
+                // DashboardCard(
+                //   icon: Icons.category,
+                //   title: "Category Item",
+                //   color: Colors.orangeAccent,
+                //   onTap: () {
+                //     Navigator.push(context, MaterialPageRoute(builder: (_) => const CategoriesScreen()));
+                //   },
+                // ),
 
-                DashboardCard(
-                  icon: Icons.layers,
-                  title: "Items Type ",
-                  color: Colors.blueAccent,
-                  onTap: () {
-                    Navigator.push(context, MaterialPageRoute(builder: (_) => const ItemTypeScreen()));
-                  },
-                ),
-                DashboardCard(
-                  icon: Icons.straighten,
-                  title: "Item Unit ",
-                  color: Colors.tealAccent  ,
-                  onTap: () {
-                    Navigator.push(context, MaterialPageRoute(builder: (_) => const ItemUnitScreen()));
-                  },
-                ),
+                // DashboardCard(
+                //   icon: Icons.layers,
+                //   title: "Items Type ",
+                //   color: Colors.blueAccent,
+                //   onTap: () {
+                //     Navigator.push(context, MaterialPageRoute(builder: (_) => const ItemTypeScreen()));
+                //   },
+                // ),
+                // DashboardCard(
+                //   icon: Icons.straighten,
+                //   title: "Item Unit ",
+                //   color: Colors.tealAccent  ,
+                //   onTap: () {
+                //     Navigator.push(context, MaterialPageRoute(builder: (_) => const ItemUnitScreen()));
+                //   },
+                // ),
                 DashboardCard(
                   icon: Icons.inventory_2,
                   title: "List of Items",

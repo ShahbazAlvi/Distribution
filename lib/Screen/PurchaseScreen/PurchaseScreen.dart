@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../compoents/AppColors.dart';
 import '../SalesView/AnimationCard.dart';
+import '../SalesView/SetUp/supplier/SupplierScreen.dart';
 import 'DateWisePurchaseScreen/DateWisePurchaseScreen.dart';
 import 'GRNScreen/GRN_Screen.dart';
 import 'ItemWisePurchase/ItemWisePurchaseScreen.dart';
@@ -152,16 +153,18 @@ class PurchaseDashboard extends StatelessWidget {
               const SizedBox(height: 30),
 
               // 🔸 Setup Section
-              // _buildSectionTitle("🧩 Setup"),
-              // const SizedBox(height: 14),
-              // _buildCardGrid([
-              //   DashboardCard(
-              //     icon: Icons.add_business_rounded,
-              //     title: "Define Supplier",
-              //     color: Colors.limeAccent,
-              //     onTap: () {},
-              //   ),
-              // ]),
+              _buildSectionTitle("🧩 Setup"),  
+              const SizedBox(height: 14),
+              _buildCardGrid([
+                DashboardCard(
+                  icon: Icons.local_shipping_rounded,
+                  title: "Supplier",
+                  color: Color(0xFF00C9A7),
+                  onTap: () {
+                    Navigator.push(context, MaterialPageRoute(builder: (_) => const SupplierListScreen()));
+                  },
+                ),
+              ]),
 
               const SizedBox(height: 40),
             ],

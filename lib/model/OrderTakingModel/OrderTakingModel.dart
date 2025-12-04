@@ -32,7 +32,8 @@ class OrderData {
   final String orderId;
   final DateTime date;
   final Salesman? salesmanId;
-  final Customer customerId;
+  //final Customer customerId;
+  final Customer? customerId;
   final List<Product> products;
   final String status;
   final DateTime createdAt;
@@ -44,7 +45,8 @@ class OrderData {
     required this.orderId,
     required this.date,
     this.salesmanId,
-    required this.customerId,
+    //required this.customerId,
+    this.customerId,
     required this.products,
     required this.status,
     required this.createdAt,
@@ -60,7 +62,10 @@ class OrderData {
       salesmanId: json['salesmanId'] != null
           ? Salesman.fromJson(json['salesmanId'])
           : null,
-      customerId: Customer.fromJson(json['customerId']),
+      // customerId: Customer.fromJson(json['customerId']),
+      customerId: json['customerId'] != null     // <-- FIXED
+          ? Customer.fromJson(json['customerId'])
+          : null,
       products: (json['products'] as List<dynamic>?)
           ?.map((e) => Product.fromJson(e))
           .toList() ??
@@ -77,7 +82,7 @@ class OrderData {
     'orderId': orderId,
     'date': date.toIso8601String(),
     'salesmanId': salesmanId?.toJson(),
-    'customerId': customerId.toJson(),
+    'customerId': customerId?.toJson(),
     'products': products.map((e) => e.toJson()).toList(),
     'status': status,
     'createdAt': createdAt.toIso8601String(),

@@ -133,6 +133,17 @@ class _EmployeeAddScreenState extends State<EmployeeAddScreen> {
                 ),
               ),
               GestureDetector(
+                // onTap: () async {
+                //   final DateTime? picked = await showDatePicker(
+                //     context: context,
+                //     initialDate: provider.dateOfBirth ?? DateTime.now(),
+                //     firstDate: DateTime(1950),
+                //     lastDate: DateTime.now(),
+                //   );
+                //   if (picked != null) {
+                //     provider.setDateOfBirth(picked);
+                //   }
+                // },
                 onTap: () async {
                   final DateTime? picked = await showDatePicker(
                     context: context,
@@ -140,10 +151,31 @@ class _EmployeeAddScreenState extends State<EmployeeAddScreen> {
                     firstDate: DateTime(1950),
                     lastDate: DateTime.now(),
                   );
+
                   if (picked != null) {
+                    // ---- AGE VALIDATION (15+ years) ----
+                    int age = DateTime.now().year - picked.year;
+
+                    if (DateTime.now().month < picked.month ||
+                        (DateTime.now().month == picked.month &&
+                            DateTime.now().day < picked.day)) {
+                      age--;
+                    }
+
+                    if (age < 15) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text("⚠️ Age must be at least 15 years old."),
+                        ),
+                      );
+                      return; // ❌ Don't update provider
+                    }
+
+                    // ✔ Valid age, save to provider
                     provider.setDateOfBirth(picked);
                   }
                 },
+
                 child: Container(
                   width: double.infinity,
                   padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 12),
@@ -200,4 +232,5 @@ class _EmployeeAddScreenState extends State<EmployeeAddScreen> {
     }
     return null;
   }
+
 }

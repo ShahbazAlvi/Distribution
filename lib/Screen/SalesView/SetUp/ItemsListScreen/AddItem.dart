@@ -38,13 +38,28 @@ class _AddItemScreenState extends State<AddItemScreen> {
 
   File? pickedImage;
 
+
   @override
+  // void initState() {
+  //   super.initState();
+  //   Future.microtask(() {
+  //     final unitProvider =
+  //     Provider.of<ItemUnitProvider>(context, listen: false);
+  //
+  //     if (unitProvider.units.isEmpty) {
+  //       unitProvider.fetchItemUnits();
+  //     }
+  //
+  //     Provider.of<CategoriesProvider>(context, listen: false).fetchCategories();
+  //     Provider.of<ItemTypeProvider>(context, listen: false).fetchItemTypes();
+  //   });
+  // }
   @override
   void initState() {
     super.initState();
-    Future.microtask(() {
-      final unitProvider =
-      Provider.of<ItemUnitProvider>(context, listen: false);
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final unitProvider = Provider.of<ItemUnitProvider>(context, listen: false);
 
       if (unitProvider.units.isEmpty) {
         unitProvider.fetchItemUnits();
@@ -54,6 +69,7 @@ class _AddItemScreenState extends State<AddItemScreen> {
       Provider.of<ItemTypeProvider>(context, listen: false).fetchItemTypes();
     });
   }
+
 
   Future pickImage() async {
     // Request permission first
@@ -163,23 +179,64 @@ class _AddItemScreenState extends State<AddItemScreen> {
                 AppTextField(controller: itemKindCtrl, label: "Item Kind" ,  validator: (value) => validator(value as String?)),
                 const SizedBox(height: 20),
 
-                Row(
+                // Row(
+                //   children: [
+                //     ElevatedButton(
+                //       onPressed: pickImage,
+                //       child: const Text("Pick Image"),
+                //     ),
+                //     const SizedBox(width: 10),
+                //     Expanded(
+                //       child: pickedImage == null
+                //           ? const Text("No image selected")
+                //           : Text(
+                //         pickedImage!.path,
+                //         overflow: TextOverflow.ellipsis,
+                //       ),
+                //     ),
+                //   ],
+                // ),
+                // IMAGE PREVIEW + PICKER
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    ElevatedButton(
-                      onPressed: pickImage,
-                      child: const Text("Pick Image"),
+                    const Text(
+                      "Item Image",
+                      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                     ),
-                    const SizedBox(width: 10),
-                    Expanded(
-                      child: pickedImage == null
-                          ? const Text("No image selected")
-                          : Text(
-                        pickedImage!.path,
-                        overflow: TextOverflow.ellipsis,
+                    const SizedBox(height: 10),
+
+                    // IMAGE PREVIEW BOX
+                    Container(
+                      height: 150,
+                      width: double.infinity,
+                      decoration: BoxDecoration(
+                        border: Border.all(color: Colors.grey.shade400),
+                        borderRadius: BorderRadius.circular(12),
+                        color: Colors.grey.shade200,
                       ),
+                      child: pickedImage == null
+                          ? const Center(child: Text("No Image Selected"))
+                          : ClipRRect(
+                        borderRadius: BorderRadius.circular(12),
+                        child: Image.file(
+                          pickedImage!,
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                    ),
+
+                    const SizedBox(height: 10),
+
+                    // PICK IMAGE BUTTON
+                    ElevatedButton.icon(
+                      onPressed: pickImage,
+                      icon: const Icon(Icons.image),
+                      label: const Text("Pick Image"),
                     ),
                   ],
                 ),
+
 
                 const SizedBox(height: 30),
                 provider.isLoading

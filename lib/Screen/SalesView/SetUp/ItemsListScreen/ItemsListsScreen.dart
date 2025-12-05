@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import '../../../../Provider/ProductProvider/ItemListsProvider.dart';
 import '../../../../compoents/AppColors.dart';
 import 'AddItem.dart';
+import 'UpdateItem.dart';
 
 
 class ItemListScreen extends StatefulWidget {
@@ -150,6 +151,12 @@ class _ItemListScreenState extends State<ItemListScreen> {
                       IconButton(
                         icon: const Icon(Icons.edit, color: Colors.blue),
                         onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => UpdateItemScreen(item: item),
+                            ),
+                          );
                           // Navigate to update page (you can create update screen)
                           // Navigator.push(context, MaterialPageRoute(builder: (_) => UpdateItemScreen(item: item)));
                         },

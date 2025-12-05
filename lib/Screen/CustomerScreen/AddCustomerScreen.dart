@@ -156,7 +156,7 @@ class _AddCustomerScreenState extends State<AddCustomerScreen> {
               AppTextField(controller: provider.CreditCashLimitController, label: "credit cash Limit", validator: validator),
               SizedBox(height: 10,),
               AppButton(
-                title: "Save Customer",
+                title: provider.isLoading?"Loading...": "Save Customer",
                 press: () async {
                   if (selectedSalesmanId == null) {
                     ScaffoldMessenger.of(context).showSnackBar(

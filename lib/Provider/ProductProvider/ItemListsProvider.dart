@@ -148,15 +148,10 @@ class ItemDetailsProvider with ChangeNotifier {
     request.fields['isEnable'] = "true";
 
     request.files.add(await http.MultipartFile.fromPath('itemImage', itemImage.path));
-    print("📤 SENDING DATA TO API -------------------------");
-    print("URL: ${uri.toString()}");
-    print("Headers: ${request.headers}");
-    print("Fields:");
+
     request.fields.forEach((key, value) {
-      print("  ➤ $key : $value");
+
     });
-    print("Image File: ${itemImage.path}");
-    print("--------------------");
 
     try {
       final response = await request.send();
@@ -172,17 +167,84 @@ class ItemDetailsProvider with ChangeNotifier {
         return true;
       } else {
         errorMessage = "Failed: $resBody";
-        print(resBody);
       }
     } catch (e) {
       errorMessage = "Error: $e";
-      print(e);
     }
 
     isLoading = false;
     notifyListeners();
     return false;
   }
+
+  Future<bool> updateItem({
+    required BuildContext context,
+    required String id,
+    required String itemName,
+    required String itemCategory,
+    required String itemType,
+    required String itemUnit,
+    required String perUnit,
+    required String reorder,
+    required String itemKind,
+    File? itemImage, // OPTIONAL
+  }) async {
+    isLoading = true;
+    errorMessage = null;
+    notifyListeners();
+
+    final storedToken = await getToken();
+    if (storedToken == null) {
+      errorMessage = "Token not found";
+      isLoading = false;
+      notifyListeners();
+      return false;
+    }
+
+    final uri = Uri.parse("${ApiEndpoints.baseUrl}/item-details/$id");
+    final request = http.MultipartRequest("PUT", uri);
+
+    request.headers["Authorization"] = "Bearer $storedToken";
+
+    request.fields["itemName"] = itemName;
+    request.fields["itemCategory"] = itemCategory;
+    request.fields["itemType"] = itemType;
+    request.fields["itemUnit"] = itemUnit;
+    request.fields["perUnit"] = perUnit;
+    request.fields["reorder"] = reorder;
+    request.fields["itemKind"] = itemKind;
+
+    if (itemImage != null) {
+      request.files.add(
+          await http.MultipartFile.fromPath("itemImage", itemImage.path));
+    }
+
+    try {
+      final response = await request.send();
+      final body = await response.stream.bytesToString();
+
+      if (response.statusCode == 200) {
+        await fetchItems();
+
+        final dashboardProvider =
+        Provider.of<DashBoardProvider>(context, listen: false);
+        await dashboardProvider.fetchDashboardData();
+
+        isLoading = false;
+        notifyListeners();
+        return true;
+      } else {
+        errorMessage = body;
+      }
+    } catch (e) {
+      errorMessage = e.toString();
+    }
+
+    isLoading = false;
+    notifyListeners();
+    return false;
+  }
+
 
 
 

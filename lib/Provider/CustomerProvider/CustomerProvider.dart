@@ -305,6 +305,8 @@ bool get isLoading=>_isLoading;
       notifyListeners();
 
       if (response.statusCode == 200) {
+        fetchCustomers();
+        notifyListeners();
         return true;
       } else {
         _error = response.body;

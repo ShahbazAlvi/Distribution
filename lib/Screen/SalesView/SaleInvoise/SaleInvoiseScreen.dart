@@ -264,7 +264,7 @@ class _SaleInvoiseScreenState extends State<SaleInvoiseScreen> {
 
                           const SizedBox(height: 4),
 
-                          Text("Salesman: ${order.salesmanId.employeeName}"),
+                          Text("Salesman: ${order.salesmanId?.employeeName}"),
 
                           const SizedBox(height: 10),
 

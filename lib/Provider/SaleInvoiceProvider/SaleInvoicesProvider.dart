@@ -137,7 +137,7 @@ class SaleInvoicesProvider with ChangeNotifier {
       final body = {
         "invoiceDate": DateFormat('yyyy-MM-dd').format(order.date),
         "customerId": order.customerId.id,
-        "salesmanId": order.salesmanId.id,
+        "salesmanId": order.salesmanId!.id,
         "orderTakingId": order.id,
         "products": products,
         "totalAmount": totalAmount,

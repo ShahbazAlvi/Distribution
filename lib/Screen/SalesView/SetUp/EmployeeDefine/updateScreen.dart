@@ -48,7 +48,7 @@ class _EmployeeUpdateScreenState extends State<EmployeeUpdateScreen> {
     return Scaffold(
       backgroundColor: Color(0xFFEEEEEE),
       appBar: AppBar(
-        title: const Text("Update Employee", style: TextStyle(color: Colors.white)),
+        title: const Text("Update Salesman", style: TextStyle(color: Colors.white)),
         iconTheme: const IconThemeData(color: Colors.white),
         flexibleSpace: Container(
           decoration: const BoxDecoration(
@@ -183,7 +183,7 @@ class _EmployeeUpdateScreenState extends State<EmployeeUpdateScreen> {
             const SizedBox(height: 20),
 
             AppButton(
-                title: provider.isLoading ?"Loading...":"Update Employee", press: ()async {
+                title: provider.isLoading ?"Loading...":"Update Salesman", press: ()async {
               await provider.updateEmployee(widget.employee.id, context);
             }, width:double.infinity),
           ],

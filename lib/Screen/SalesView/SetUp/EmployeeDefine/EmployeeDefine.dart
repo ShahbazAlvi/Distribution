@@ -42,7 +42,7 @@ class _EmployeesScreenState extends State<EmployeesScreen> {
         iconTheme: const IconThemeData(color: Colors.white),
         title: const Center(
           child: Text(
-            "Employee",
+            "Salesman",
             style: TextStyle(
               color: Colors.white,
               fontWeight: FontWeight.bold,
@@ -61,7 +61,7 @@ class _EmployeesScreenState extends State<EmployeesScreen> {
               },
               icon: const Icon(Icons.add_circle_outline, color: Colors.white),
               label: const Text(
-                "Add Employee",
+                "Add Salesman",
                 style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
               ),
               style: ElevatedButton.styleFrom(
@@ -94,7 +94,7 @@ class _EmployeesScreenState extends State<EmployeesScreen> {
             padding: const EdgeInsets.all(10),
             child: TextField(
               decoration: InputDecoration(
-                hintText: "Search employee or department...",
+                hintText: "Search Salesman or department...",
                 prefixIcon: const Icon(Icons.search),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(10),
@@ -117,7 +117,7 @@ class _EmployeesScreenState extends State<EmployeesScreen> {
             )
 
                 : filteredEmployees.isEmpty
-                ? const Center(child: Text("No employees found"))
+                ? const Center(child: Text("No Salesman found"))
 
                 : ListView.builder(
               itemCount: filteredEmployees.length,
@@ -157,15 +157,6 @@ class _EmployeesScreenState extends State<EmployeesScreen> {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         /// ✅ Update Button
-                        // IconButton(
-                        //   icon: const Icon(Icons.edit, color: Colors.blue),
-                        //   onPressed: () {
-                        //     ScaffoldMessenger.of(context).showSnackBar(
-                        //       const SnackBar(
-                        //           content: Text("Update clicked")),
-                        //     );
-                        //   },
-                        // ),
                         IconButton(
                           icon: const Icon(Icons.edit, color: Colors.blue),
                           onPressed: () {
@@ -204,8 +195,8 @@ class _EmployeesScreenState extends State<EmployeesScreen> {
     showDialog(
       context: context,
       builder: (_) => AlertDialog(
-        title: const Text("Delete Employee"),
-        content: const Text("Are you sure you want to delete this employee?"),
+        title: const Text("Delete Salesman"),
+        content: const Text("Are you sure you want to delete this salesman?"),
         actions: [
           TextButton(
             child: const Text("Cancel"),
@@ -213,19 +204,6 @@ class _EmployeesScreenState extends State<EmployeesScreen> {
           ),
           TextButton(
             child: const Text("Delete", style: TextStyle(color: Colors.red)),
-            // onPressed: () {
-            //   Navigator.pop(context);
-            //
-            //   Provider.of<SaleManProvider>(context, listen: false)
-            //       .deleteEmployee(id);
-            //   // refresh dashboard safely
-            //   Provider.of<DashBoardProvider>(context, listen: false)
-            //       .fetchDashboardData();
-            //
-            //   ScaffoldMessenger.of(context).showSnackBar(
-            //     const SnackBar(content: Text("Deleted successfully")),
-            //   );
-            // },
             onPressed: () async {
               Navigator.pop(context);
 
@@ -241,7 +219,7 @@ class _EmployeesScreenState extends State<EmployeesScreen> {
 
               if (mounted) {
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text("Employee deleted successfully")),
+                  const SnackBar(content: Text("Salesman deleted successfully")),
                 );
               }
             },

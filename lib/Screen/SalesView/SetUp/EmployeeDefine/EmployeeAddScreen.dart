@@ -25,7 +25,7 @@ class _EmployeeAddScreenState extends State<EmployeeAddScreen> {
         iconTheme: const IconThemeData(color: Colors.white),
         title: const Center(
           child: Text(
-            "Add Employee",
+            "Add Salesman",
             style: TextStyle(
               color: Colors.white,
               fontWeight: FontWeight.bold,
@@ -196,27 +196,10 @@ class _EmployeeAddScreenState extends State<EmployeeAddScreen> {
               ),
               const SizedBox(height: 20),
               AppButton(title: provider.isLoading
-                  ? "Loading...":"Save Employee", press: () async {
+                  ? "Loading...":"Save Salesman", press: () async {
                 await provider.createEmployee(context);
               }, width:double.infinity),
-              // ElevatedButton(
-              //   style: ElevatedButton.styleFrom(
-              //     backgroundColor: AppColors.secondary,
-              //     padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 14),
-              //     shape: RoundedRectangleBorder(
-              //       borderRadius: BorderRadius.circular(12),
-              //     ),
-              //   ),
-              //   onPressed: () async {
-              //     await provider.createEmployee(context);
-              //   },
-              //   child: provider.isLoading
-              //       ? const CircularProgressIndicator(color: Colors.white)
-              //       : const Text(
-              //     "Save Employee",
-              //     style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white),
-              //   ),
-              // ),
+
 
 
             ],

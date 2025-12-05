@@ -15,7 +15,7 @@ class CategoriesProvider extends ChangeNotifier {
 
   Future<void> fetchCategories() async {
     loading = true;
-    notifyListeners();
+    //notifyListeners();
 
     final url = Uri.parse('${ApiEndpoints.baseUrl}/categories');
 

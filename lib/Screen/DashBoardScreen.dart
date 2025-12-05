@@ -461,7 +461,7 @@ class _DashboardscreenState extends State<Dashboardscreen> {
                               },
                               child: AnimatedDashboardCard(
                                 icon: Icons.account_balance_wallet,
-                                title: 'Total Staff',
+                                title: 'Total Salesman',
                                 count: dashboardData.stats.totalStaff.toString(),
                                 bcolor: Colors.orange,
                               ),

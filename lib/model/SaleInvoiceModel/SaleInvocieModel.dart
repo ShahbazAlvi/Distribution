@@ -30,7 +30,8 @@ class SaleInvoiceData {
   final String id;
   final String orderId;
   final DateTime date;
-  final Salesman salesmanId;
+  //final Salesman salesmanId;
+  final Salesman? salesmanId;
   final Customer customerId;
   final List<ProductItem> products;
   final String status;
@@ -56,7 +57,11 @@ class SaleInvoiceData {
       id: json["_id"],
       orderId: json["orderId"],
       date: DateTime.parse(json["date"]),
-      salesmanId: Salesman.fromJson(json["salesmanId"]),
+     // salesmanId: Salesman.fromJson(json["salesmanId"]),
+      salesmanId: json["salesmanId"] != null
+          ? Salesman.fromJson(json["salesmanId"])
+          : null,
+
       customerId: Customer.fromJson(json["customerId"]),
       products: (json["products"] as List)
           .map((e) => ProductItem.fromJson(e))

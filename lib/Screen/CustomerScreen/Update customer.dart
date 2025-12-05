@@ -96,37 +96,83 @@ class _UpdateCustomerScreenState extends State<UpdateCustomerScreen> {
             AppTextField(controller: provider.OpeningBalanceController, label: "Sales Balance", validator: (value) {  },),
             SizedBox(height: 10),
 
-            GestureDetector(
-              onTap: () async {
-                DateTime? picked = await showDatePicker(
-                  context: context,
-                  initialDate: DateTime.parse(selectedDate!),
-                  firstDate: DateTime(2020),
-                  lastDate: DateTime(2030),
-                );
+            // GestureDetector(
+            //   onTap: () async {
+            //     DateTime? picked = await showDatePicker(
+            //       context: context,
+            //       initialDate: DateTime.parse(selectedDate!),
+            //       firstDate: DateTime(2020),
+            //       lastDate: DateTime(2030),
+            //     );
+            //
+            //     if (picked != null) {
+            //       selectedDate = DateFormat('yyyy-MM-dd').format(picked);
+            //       setState(() {});
+            //     }
+            //   },
+            //   child: Container(
+            //     padding: EdgeInsets.all(14),
+            //     decoration: BoxDecoration(
+            //       color: Colors.grey.shade200,
+            //       borderRadius: BorderRadius.circular(10),
+            //     ),
+            //     child: Row(
+            //       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            //       children: [
+            //         Text(selectedDate ?? "Select Date"),
+            //         Icon(Icons.calendar_month),
+            //       ],
+            //     ),
+            //   ),
+            // ),
+          GestureDetector(
+            onTap: () async {
+              DateTime initialDate;
 
-                if (picked != null) {
-                  selectedDate = DateFormat('yyyy-MM-dd').format(picked);
-                  setState(() {});
-                }
-              },
-              child: Container(
-                padding: EdgeInsets.all(14),
-                decoration: BoxDecoration(
-                  color: Colors.grey.shade200,
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(selectedDate ?? "Select Date"),
-                    Icon(Icons.calendar_month),
-                  ],
-                ),
+              // Safely convert your selectedDate (String) to DateTime
+              try {
+                initialDate = DateTime.parse(selectedDate ?? "");
+              } catch (e) {
+                initialDate = DateTime.now();
+              }
+
+              DateTime? picked = await showDatePicker(
+                context: context,
+                initialDate: initialDate,
+                firstDate: DateTime(2020),
+                lastDate: DateTime(2030),
+              );
+
+              if (picked != null) {
+                selectedDate = DateFormat('yyyy-MM-dd').format(picked); // backend-friendly
+                setState(() {});
+              }
+            },
+            child: Container(
+              padding: EdgeInsets.all(14),
+              decoration: BoxDecoration(
+                color: Colors.grey.shade200,
+                borderRadius: BorderRadius.circular(10),
+                border: Border.all(width: 1)
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    selectedDate == null
+                        ? "Select Date"
+                        : DateFormat('dd-MM-yyyy').format(
+                      DateTime.parse(selectedDate!), // simple date for UI
+                    ),
+                  ),
+                  Icon(Icons.calendar_month),
+                ],
               ),
             ),
+          ),
 
-            SizedBox(height: 10),
+
+          SizedBox(height: 10),
 
             Text("Payment Terms"),
             Row(
@@ -163,7 +209,7 @@ class _UpdateCustomerScreenState extends State<UpdateCustomerScreen> {
             SizedBox(height: 20),
 
             AppButton(
-              title: "Update Customer",
+              title:provider.isLoading ?"Loading...": "Update Customer",
               press: () async {
                 final success = await provider.updateCustomer(
                   id: widget.customer["_id"],

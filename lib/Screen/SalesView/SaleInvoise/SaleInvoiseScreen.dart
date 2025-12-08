@@ -18,6 +18,8 @@ class SaleInvoiseScreen extends StatefulWidget {
 class _SaleInvoiseScreenState extends State<SaleInvoiseScreen> {
   String? selectedDate;
   String? selectedSalesmanId;
+  int currentPage = 1;
+  int itemsPerPage = 5;
 
   @override
   void initState() {
@@ -25,6 +27,15 @@ class _SaleInvoiseScreenState extends State<SaleInvoiseScreen> {
     Future.microtask(() {
       Provider.of<SaleInvoicesProvider>(context, listen: false).fetchOrders();
     });
+  }
+  List getPaginatedData(List data) {
+    int start = (currentPage - 1) * itemsPerPage;
+    int end = start + itemsPerPage;
+
+    if (start >= data.length) return [];
+    if (end > data.length) end = data.length;
+
+    return data.sublist(start, end);
   }
 
   @override
@@ -52,13 +63,129 @@ class _SaleInvoiseScreenState extends State<SaleInvoiseScreen> {
           ),
         ),
 
+        // body: Column(
+        //   children: [
+        //     Padding(
+        //       padding: const EdgeInsets.all(12),
+        //       child: Column(
+        //         children: [
+        //           // ✅ Date Picker
+        //           GestureDetector(
+        //             onTap: () async {
+        //               DateTime? picked = await showDatePicker(
+        //                 context: context,
+        //                 initialDate: DateTime.now(),
+        //                 firstDate: DateTime(2020),
+        //                 lastDate: DateTime(2030),
+        //               );
+        //
+        //               if (picked != null) {
+        //                 selectedDate = DateFormat('yyyy-MM-dd').format(picked);
+        //                 setState(() {});
+        //
+        //                 provider.fetchOrders(
+        //                   date: selectedDate,
+        //                   salesmanId: selectedSalesmanId,
+        //                 );
+        //               }
+        //             },
+        //             child: Container(
+        //               padding: const EdgeInsets.all(12),
+        //               decoration: BoxDecoration(
+        //                 borderRadius: BorderRadius.circular(12),
+        //                 color: Colors.grey.shade200,
+        //               ),
+        //               child: Row(
+        //                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        //                 children: [
+        //                   Text(selectedDate ?? "Select Date"),
+        //                   const Icon(Icons.calendar_today),
+        //                 ],
+        //               ),
+        //             ),
+        //           ),
+        //
+        //           const SizedBox(height: 10),
+        //
+        //           // ✅ Salesman Dropdown
+        //           SalesmanDropdown(
+        //             selectedId: selectedSalesmanId,
+        //             onChanged: (value) {
+        //               selectedSalesmanId = value;
+        //               setState(() {});
+        //
+        //               provider.fetchOrders(
+        //                 date: selectedDate,
+        //                 salesmanId: selectedSalesmanId,
+        //               );
+        //             },
+        //           ),
+        //         ],
+        //       ),
+        //     ),
+        //
+        //     // ✅ Loading
+        //     if (provider.isLoading)
+        //       const Expanded(
+        //         child: Center(child: CircularProgressIndicator()),
+        //       )
+        //
+        //     // ✅ Error
+        //     else if (provider.error != null)
+        //       Expanded(
+        //         child: Center(
+        //           child: Text(provider.error!,
+        //               style: const TextStyle()),
+        //         ),
+        //       )
+        //
+        //     // ✅ Order List
+        //     else
+        //       Expanded(
+        //
+        //         child: orders.isEmpty
+        //             ? const Center(child: Text("No Orders Found"))
+        //             : ListView.builder(
+        //           // itemCount: orders.length,
+        //           // itemBuilder: (context, index) {
+        //           //   final order = orders[index];
+        //           itemCount: getPaginatedData(orders).length,
+        //           itemBuilder: (context, index) {
+        //             final order = getPaginatedData(orders)[index];
+        //
+        //             return Card(
+        //               margin: const EdgeInsets.all(8),
+        //               child: ListTile(
+        //                 title: Text("INV: ${order.orderId}"),
+        //                 subtitle: Column(
+        //                   crossAxisAlignment: CrossAxisAlignment.start,
+        //                   children: [
+        //                     Text(order.customerId.customerName),
+        //                     Text(order.customerId.phoneNumber),
+        //                     Text("Balance: ${order.customerId.salesBalance}"),
+        //                     Text(order.salesmanId?.employeeName ??
+        //                         "No Salesman"),
+        //                   ],
+        //                 ),
+        //                 trailing: const Icon(Icons.receipt_long,
+        //                     color: AppColors.secondary),
+        //                 onTap: () {
+        //                   showOrderDetailsSheet(context, order.orderId);
+        //                 },
+        //               ),
+        //             );
+        //           },
+        //         ),
+        //       ),
+        //   ],
+        // ),
         body: Column(
           children: [
             Padding(
               padding: const EdgeInsets.all(12),
               child: Column(
                 children: [
-                  // ✅ Date Picker
+                  // DATE PICKER
                   GestureDetector(
                     onTap: () async {
                       DateTime? picked = await showDatePicker(
@@ -70,7 +197,7 @@ class _SaleInvoiseScreenState extends State<SaleInvoiseScreen> {
 
                       if (picked != null) {
                         selectedDate = DateFormat('yyyy-MM-dd').format(picked);
-                        setState(() {});
+                        setState(() { currentPage = 1; });
 
                         provider.fetchOrders(
                           date: selectedDate,
@@ -96,12 +223,12 @@ class _SaleInvoiseScreenState extends State<SaleInvoiseScreen> {
 
                   const SizedBox(height: 10),
 
-                  // ✅ Salesman Dropdown
+                  // SALESMAN DROPDOWN
                   SalesmanDropdown(
                     selectedId: selectedSalesmanId,
                     onChanged: (value) {
                       selectedSalesmanId = value;
-                      setState(() {});
+                      setState(() { currentPage = 1; });
 
                       provider.fetchOrders(
                         date: selectedDate,
@@ -113,30 +240,27 @@ class _SaleInvoiseScreenState extends State<SaleInvoiseScreen> {
               ),
             ),
 
-            // ✅ Loading
+            // LOADING
             if (provider.isLoading)
               const Expanded(
                 child: Center(child: CircularProgressIndicator()),
               )
 
-            // ✅ Error
+            // ERROR
             else if (provider.error != null)
               Expanded(
-                child: Center(
-                  child: Text(provider.error!,
-                      style: const TextStyle()),
-                ),
+                child: Center(child: Text(provider.error!)),
               )
 
-            // ✅ Order List
+            // LIST WITH PAGINATION
             else
               Expanded(
                 child: orders.isEmpty
                     ? const Center(child: Text("No Orders Found"))
                     : ListView.builder(
-                  itemCount: orders.length,
+                  itemCount: getPaginatedData(orders).length,
                   itemBuilder: (context, index) {
-                    final order = orders[index];
+                    final order = getPaginatedData(orders)[index];
 
                     return Card(
                       margin: const EdgeInsets.all(8),
@@ -148,8 +272,7 @@ class _SaleInvoiseScreenState extends State<SaleInvoiseScreen> {
                             Text(order.customerId.customerName),
                             Text(order.customerId.phoneNumber),
                             Text("Balance: ${order.customerId.salesBalance}"),
-                            Text(order.salesmanId?.employeeName ??
-                                "No Salesman"),
+                            Text(order.salesmanId?.employeeName ?? "No Salesman"),
                           ],
                         ),
                         trailing: const Icon(Icons.receipt_long,
@@ -162,8 +285,41 @@ class _SaleInvoiseScreenState extends State<SaleInvoiseScreen> {
                   },
                 ),
               ),
+
+            // PAGINATION ROW
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 10),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  ElevatedButton(
+                    onPressed: currentPage > 1
+                        ? () {
+                      setState(() => currentPage--);
+                    }
+                        : null,
+                    child: const Text("Previous"),
+                  ),
+                  const SizedBox(width: 20),
+                  Text(
+                    "Page $currentPage",
+                    style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(width: 20),
+                  ElevatedButton(
+                    onPressed: (currentPage * itemsPerPage) < orders.length
+                        ? () {
+                      setState(() => currentPage++);
+                    }
+                        : null,
+                    child: const Text("Next"),
+                  ),
+                ],
+              ),
+            )
           ],
         ),
+
       ),
     );
   }

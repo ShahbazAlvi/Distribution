@@ -244,7 +244,7 @@ bool get isLoading=>_isLoading;
 
         // ⭐ Refresh dashboard immediately
         await dashProvider.fetchDashboardData();
-
+  
         _isLoading = false;
         notifyListeners();
         return true;

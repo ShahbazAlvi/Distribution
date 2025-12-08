@@ -14,13 +14,27 @@ class OrderTakingScreen extends StatefulWidget {
 }
 
 class _OrderTakingScreenState extends State<OrderTakingScreen> {
+  int currentPage = 1;
+  int itemsPerPage = 10;
   @override
   void initState() {
     super.initState();
-    Future.microtask(() =>
-        Provider.of<OrderTakingProvider>(context, listen: false)
-            .FetchOrderTaking());
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Provider.of<OrderTakingProvider>(context, listen: false).FetchOrderTaking();
+    });
   }
+
+
+  List getPaginatedData(List data) {
+    int start = (currentPage - 1) * itemsPerPage;
+    int end = start + itemsPerPage;
+
+    if (start >= data.length) return [];
+    if (end > data.length) end = data.length;
+
+    return data.sublist(start, end);
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -113,174 +127,221 @@ class _OrderTakingScreenState extends State<OrderTakingScreen> {
           ? Center(child: Text(provider.error!))
           : provider.orderData == null
           ? const Center(child: Text("No data found"))
-          : Padding(
-        padding: const EdgeInsets.all(12.0),
-        child: ListView.builder(
-          itemCount: provider.orderData!.data.length,
-          itemBuilder: (context, index) {
-            final order = provider.orderData!.data[index];
-            final customer = order.customerId;
-            final salesman =
-                order.salesmanId?.employeeName ?? "N/A";
-            final orderId = order.orderId;
-            final date =
-            order.date.toLocal().toString().split(' ')[0];
+          : Column(
+            children: [
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.all(12.0),
+                  child: Builder(
+                    builder: (context) {
+                      final paginatedList = getPaginatedData(provider.orderData!.data);
+                      return ListView.builder(
+                        itemCount: paginatedList.length + 1,   // +1 for pagination row
+                        itemBuilder: (context, index) {
+                          // 👉 If last index → Show Pagination Buttons
+                          if (index == paginatedList.length) {
+                            return Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 10),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  ElevatedButton(
+                                    onPressed: currentPage > 1
+                                        ? () {
+                                      setState(() {
+                                        currentPage--;
+                                      });
+                                    }
+                                        : null,
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: AppColors.secondary,
+                                    ),
+                                    child: const Text("Previous",style: TextStyle(color: AppColors.text),),
+                                  ),
 
-            return Container(
-              margin: const EdgeInsets.only(bottom: 12),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(16),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.grey.withOpacity(0.15),
-                    spreadRadius: 2,
-                    blurRadius: 6,
-                    offset: const Offset(0, 3),
+                                  const SizedBox(width: 20),
+
+                                  Text(
+                                    "Page $currentPage",
+                                    style: const TextStyle(
+                                        fontSize: 16, fontWeight: FontWeight.bold),
+                                  ),
+
+                                  const SizedBox(width: 20),
+
+                                  ElevatedButton(
+                                    onPressed: (currentPage * itemsPerPage) <
+                                        provider.orderData!.data.length
+                                        ? () {
+                                      setState(() {
+                                        currentPage++;
+                                      });
+                                    }
+                                        : null,
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: AppColors.secondary,
+                                    ),
+                                    child: const Text("Next",style: TextStyle(color: AppColors.text),),
+                                  ),
+                                ],
+                              ),
+                            );
+                          }
+
+                          // 👉 Normal Order Card
+                          final order = paginatedList[index];
+                          final customer = order.customerId;
+                          final salesman = order.salesmanId?.employeeName ?? "N/A";
+                          final orderId = order.orderId;
+                          final date = order.date.toLocal().toString().split(' ')[0];
+
+                          return Container(
+                            margin: const EdgeInsets.only(bottom: 12),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(16),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.grey.withOpacity(0.15),
+                                  spreadRadius: 2,
+                                  blurRadius: 6,
+                                  offset: const Offset(0, 3),
+                                ),
+                              ],
+                            ),
+                            child: Padding(
+                              padding: const EdgeInsets.all(14.0),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text("Order ID: $orderId",
+                                          style: const TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 16,
+                                          )),
+                                      Container(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 10, vertical: 4),
+                                        decoration: BoxDecoration(
+                                          color: Colors.blueAccent.withOpacity(0.1),
+                                          borderRadius: BorderRadius.circular(8),
+                                        ),
+                                        child: Text(
+                                          date,
+                                          style: const TextStyle(
+                                            color: Colors.blueAccent,
+                                            fontWeight: FontWeight.w500,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+
+                                  const SizedBox(height: 8),
+                                  const Divider(),
+
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Expanded(
+                                        child: Column(
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          children: [
+                                            Text("Salesman: $salesman",
+                                                style: const TextStyle(
+                                                    fontWeight: FontWeight.w500)),
+                                            const SizedBox(height: 4),
+                                            Text("Customer: ${customer?.customerName}"),
+                                            const SizedBox(height: 4),
+                                            Text("Phone: ${customer?.phoneNumber}"),
+                                          ],
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+
+                                  const SizedBox(height: 10),
+
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.end,
+                                    children: [
+                                      ElevatedButton(
+                                        onPressed: () {
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (context) =>
+                                                  UpdateOrderScreen(order: order),
+                                            ),
+                                          );
+                                        },
+                                        style: ElevatedButton.styleFrom(
+                                          backgroundColor: AppColors.betprologo,
+                                          padding: const EdgeInsets.all(8),
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(10),
+                                          ),
+                                        ),
+                                        child:
+                                        const Icon(Icons.edit, color: AppColors.text),
+                                      ),
+                                      SizedBox(width: 8),
+                                      ElevatedButton(
+                                        onPressed: () {
+                                          _confirmDelete(context, order.id);
+                                        },
+                                        style: ElevatedButton.styleFrom(
+                                          backgroundColor: AppColors.Instructions,
+                                          padding: const EdgeInsets.all(8),
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(10),
+                                          ),
+                                        ),
+                                        child:
+                                        const Icon(Icons.delete, color: AppColors.text),
+                                      ),
+                                      SizedBox(width: 8),
+                                      ElevatedButton(
+                                        onPressed: () {
+                                          showModalBottomSheet(
+                                            context: context,
+                                            shape: const RoundedRectangleBorder(
+                                              borderRadius:
+                                              BorderRadius.vertical(top: Radius.circular(20)),
+                                            ),
+                                            builder: (_) =>
+                                                _OrderDetailsSheet(orderId: orderId),
+                                          );
+                                        },
+                                        style: ElevatedButton.styleFrom(
+                                          backgroundColor: AppColors.secondary,
+                                          padding: const EdgeInsets.all(8),
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(10),
+                                          ),
+                                        ),
+                                        child: const Icon(Icons.visibility,
+                                            color: AppColors.text),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ),
+                          );
+                        },
+                      );
+
+                    },
                   ),
-                ],
-              ),
-              child: Padding(
-                padding: const EdgeInsets.all(14.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // 🔹 Top Row (Order ID + Date)
-                    Row(
-                      mainAxisAlignment:
-                      MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          "Order ID: $orderId",
-                          style: const TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 16,
-                          ),
-                        ),
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 10, vertical: 4),
-                          decoration: BoxDecoration(
-                            color: Colors.blueAccent
-                                .withOpacity(0.1),
-                            borderRadius:
-                            BorderRadius.circular(8),
-                          ),
-                          child: Text(
-                            date,
-                            style: const TextStyle(
-                              color: Colors.blueAccent,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-
-                    const SizedBox(height: 8),
-                    const Divider(),
-
-                    // 🔹 Salesman / Customer Info
-                    Row(
-                      mainAxisAlignment:
-                      MainAxisAlignment.spaceBetween,
-                      children: [
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment:
-                            CrossAxisAlignment.start,
-                            children: [
-                              Text("Salesman: $salesman",
-                                  style: const TextStyle(
-                                      fontWeight:
-                                      FontWeight.w500)),
-                              const SizedBox(height: 4),
-                              Text(
-                                  "Customer: ${customer?.customerName}"),
-                              const SizedBox(height: 4),
-                              Text("Phone: ${customer?.phoneNumber}"),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-
-                    const SizedBox(height: 10),
-
-                    // 🔹 Action Buttons
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-
-                 // Update         Button in Order Taking
-                        ElevatedButton(
-                          onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => UpdateOrderScreen(order: order),
-                              ),
-                            );
-                          },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: AppColors.betprologo,
-                            padding: const EdgeInsets.all(8),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                          ),
-                          child: const Icon(Icons.edit, color: AppColors.text),
-                        ),
-
-                        SizedBox(width: 8),
-
-// DELETE Button in Order Taking
-                        ElevatedButton(
-                          onPressed: () {
-                            _confirmDelete(context, order.id);
-                          },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: AppColors.Instructions,
-                            padding: const EdgeInsets.all(8),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                          ),
-                          child: const Icon(Icons.delete, color: AppColors.text),
-                        ),
-
-                        SizedBox(width: 8),
-
-// DETAILS  Button in Order Taking
-                        ElevatedButton(
-                          onPressed: () {
-                            showModalBottomSheet(
-                              context: context,
-                              shape: const RoundedRectangleBorder(
-                                borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-                              ),
-                              builder: (_) => _OrderDetailsSheet(orderId: orderId),
-                            );
-                          },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: AppColors.secondary,
-                            padding: const EdgeInsets.all(8),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                          ),
-                          child: const Icon(Icons.visibility, color: AppColors.text),
-                        ),
-
-                      ],
-                    ),
-                  ],
                 ),
               ),
-            );
-          },
-        ),
-      ),
+
+            ],
+          ),
     );
   }
   Future<void> _confirmDelete(BuildContext context, String orderId) async {
@@ -318,21 +379,6 @@ class _OrderTakingScreenState extends State<OrderTakingScreen> {
               },
               child: const Text("Delete"),
             ),
-            // ElevatedButton(
-            //   // style: ElevatedButton.styleFrom(
-            //   //   backgroundColor: Colors.red,
-            //   // ),
-            //   onPressed: () async {
-            //     Navigator.pop(context); // close dialog first
-            //
-            //     await provider.deleteOrder(orderId);
-            //
-            //     ScaffoldMessenger.of(context).showSnackBar(
-            //       const SnackBar(content: Text("Order deleted successfully")),
-            //     );
-            //   },
-            //   child: const Text("Delete"),
-            // ),
           ],
         );
       },
